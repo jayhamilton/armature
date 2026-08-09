@@ -47,6 +47,42 @@ mat-card-title {
     color: var(--app-brand);
 }
 
+/* The help/configure/remove buttons are absolutely positioned (out of flow),
+   so a long title/subtitle would otherwise render underneath them instead of
+   stopping short. Space for them is reserved exactly once, as padding on the
+   header itself (below) - the title/subtitle then just fill whatever's
+   actually left in that already-narrowed box and ellipsize only if it still
+   doesn't fit, rather than also subtracting their own fixed amount on top
+   (which was reserving the button width twice over and over-truncating).
+   All CSS-native, so it recalculates correctly on every resize with no JS. */
+mat-card-title,
+mat-card-subtitle {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .move-cursor {
     cursor: move;
+    padding-right: 128px;
+    box-sizing: border-box;
+}
+
+/* MatCardHeader wraps title/subtitle in its own internal
+   .mat-mdc-card-header-text div (see its template), which is a flex item of
+   mat-card-header but never gets min-width: 0 from Material's own styles -
+   a flex item's default min-width is auto, which means it refuses to shrink
+   below its content's natural width no matter what max-width/overflow rules
+   the title inside it has. That's why text was pushing past the padding
+   reservation above and past the card edge entirely, not just truncating
+   late. Needs ::ng-deep because that div belongs to MatCardHeader's own
+   template, not this component's, so normal view-encapsulated styles here
+   can't reach it - scoped under :host so it only affects this component's
+   own card headers, not every mat-card-header in the app.
+*/
+:host ::ng-deep .mat-mdc-card-header-text {
+    min-width: 0;
+    overflow: hidden;
 }

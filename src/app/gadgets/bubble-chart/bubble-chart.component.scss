@@ -1,3 +1,9 @@
 mat-card-content.chart-content {
   height: 380px;
+  width: 100%;
+  /* ngx-charts auto-sizes to this container, but its legend doesn't always
+     shrink to fit long labels - clip rather than let it spill past the
+     gadget's right edge. */
+  overflow: hidden;
+  box-sizing: border-box;
 }
