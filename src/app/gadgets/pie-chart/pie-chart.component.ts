@@ -56,7 +56,7 @@ export class PieChartComponent extends GadgetBase implements OnInit {
   }
 
   private loadChartData(): void {
-    const chartData = this.getJson<any[] | undefined>('chartData', undefined);
+    const chartData = this.getArray<any[] | undefined>('chartData', undefined);
     this.chartData = chartData ?? [
       { name: 'Q1', value: 8940 },
       { name: 'Q2', value: 5000 },

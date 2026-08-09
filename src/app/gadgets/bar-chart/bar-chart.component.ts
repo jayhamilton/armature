@@ -73,7 +73,7 @@ export class BarChartComponent extends GadgetBase implements AfterViewInit, OnIn
   }
 
   private loadChartData(): void {
-    const chartData = this.getJson<any[] | undefined>('chartData', undefined);
+    const chartData = this.getArray<any[] | undefined>('chartData', undefined);
     if (chartData) {
       this.footballstats = chartData;
       this.footballstats.sort((a, b) => b.value - a.value);

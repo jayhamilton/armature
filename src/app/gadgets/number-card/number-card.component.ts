@@ -50,7 +50,7 @@ export class NumberCardComponent extends GadgetBase implements OnInit {
   }
 
   private loadChartData(): void {
-    const chartData = this.getJson<any[] | undefined>('chartData', undefined);
+    const chartData = this.getArray<any[] | undefined>('chartData', undefined);
     this.chartData = chartData ?? [
       { name: 'Revenue', value: 312000 },
       { name: 'Units', value: 1540 },

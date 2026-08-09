@@ -175,11 +175,48 @@
             "controlType": "ace-editor",
             "key": "chartData",
             "label": "Chart Data (JSON)",
-            "value": "[\n  { \"name\": \"Alpha\", \"value\": 850 },\n  { \"name\": \"Beta\", \"value\": 750 },\n  { \"name\": \"Gamma\", \"value\": 550 },\n  { \"name\": \"Delta\", \"value\": 350 },\n  { \"name\": \"Epsilon\", \"value\": 150 }\n]",
+            "value": [
+              {
+                "name": "Alpha",
+                "value": 850
+              },
+              {
+                "name": "Beta",
+                "value": 750
+              },
+              {
+                "name": "Gamma",
+                "value": 550
+              },
+              {
+                "name": "Delta",
+                "value": 350
+              },
+              {
+                "name": "Epsilon",
+                "value": 150
+              }
+            ],
             "required": false,
             "order": 1,
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
             }
           }
         ]
@@ -367,11 +404,94 @@
             "controlType": "ace-editor",
             "key": "chartData",
             "label": "Chart Data (JSON)",
-            "value": "[\n  {\n    \"name\": \"Series 1\",\n    \"series\": [\n      {\"name\": \"Mon\", \"value\": 320},\n      {\"name\": \"Tue\", \"value\": 730},\n      {\"name\": \"Wed\", \"value\": 294},\n      {\"name\": \"Thu\", \"value\": 510},\n      {\"name\": \"Fri\", \"value\": 420}\n    ]\n  },\n  {\n    \"name\": \"Series 2\",\n    \"series\": [\n      {\"name\": \"Mon\", \"value\": 480},\n      {\"name\": \"Tue\", \"value\": 300},\n      {\"name\": \"Wed\", \"value\": 180},\n      {\"name\": \"Thu\", \"value\": 390},\n      {\"name\": \"Fri\", \"value\": 620}\n    ]\n  }\n]",
+            "value": [
+              {
+                "name": "Series 1",
+                "series": [
+                  {
+                    "name": "Mon",
+                    "value": 320
+                  },
+                  {
+                    "name": "Tue",
+                    "value": 730
+                  },
+                  {
+                    "name": "Wed",
+                    "value": 294
+                  },
+                  {
+                    "name": "Thu",
+                    "value": 510
+                  },
+                  {
+                    "name": "Fri",
+                    "value": 420
+                  }
+                ]
+              },
+              {
+                "name": "Series 2",
+                "series": [
+                  {
+                    "name": "Mon",
+                    "value": 480
+                  },
+                  {
+                    "name": "Tue",
+                    "value": 300
+                  },
+                  {
+                    "name": "Wed",
+                    "value": 180
+                  },
+                  {
+                    "name": "Thu",
+                    "value": 390
+                  },
+                  {
+                    "name": "Fri",
+                    "value": 620
+                  }
+                ]
+              }
+            ],
             "required": false,
             "order": 1,
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "series": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "series"
+                ],
+                "additionalProperties": false
+              }
             }
           }
         ]
@@ -504,11 +624,44 @@
             "controlType": "ace-editor",
             "key": "chartData",
             "label": "Chart Data (JSON)",
-            "value": "[\n  { \"name\": \"Q1\", \"value\": 8940 },\n  { \"name\": \"Q2\", \"value\": 5000 },\n  { \"name\": \"Q3\", \"value\": 7200 },\n  { \"name\": \"Q4\", \"value\": 6100 }\n]",
+            "value": [
+              {
+                "name": "Q1",
+                "value": 8940
+              },
+              {
+                "name": "Q2",
+                "value": 5000
+              },
+              {
+                "name": "Q3",
+                "value": 7200
+              },
+              {
+                "name": "Q4",
+                "value": 6100
+              }
+            ],
             "required": false,
             "order": 1,
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
             }
           }
         ]
@@ -685,11 +838,98 @@
             "controlType": "ace-editor",
             "key": "chartData",
             "label": "Chart Data (JSON)",
-            "value": "[\n  {\n    \"name\": \"Group A\",\n    \"series\": [\n      { \"name\": \"Jan\", \"x\": 10, \"y\": 20, \"r\": 8 },\n      { \"name\": \"Feb\", \"x\": 30, \"y\": 40, \"r\": 15 },\n      { \"name\": \"Mar\", \"x\": 50, \"y\": 25, \"r\": 10 }\n    ]\n  },\n  {\n    \"name\": \"Group B\",\n    \"series\": [\n      { \"name\": \"Jan\", \"x\": 20, \"y\": 50, \"r\": 12 },\n      { \"name\": \"Feb\", \"x\": 45, \"y\": 15, \"r\": 6 },\n      { \"name\": \"Mar\", \"x\": 60, \"y\": 35, \"r\": 18 }\n    ]\n  }\n]",
+            "value": [
+              {
+                "name": "Group A",
+                "series": [
+                  {
+                    "name": "Jan",
+                    "x": 10,
+                    "y": 20,
+                    "r": 8
+                  },
+                  {
+                    "name": "Feb",
+                    "x": 30,
+                    "y": 40,
+                    "r": 15
+                  },
+                  {
+                    "name": "Mar",
+                    "x": 50,
+                    "y": 25,
+                    "r": 10
+                  }
+                ]
+              },
+              {
+                "name": "Group B",
+                "series": [
+                  {
+                    "name": "Jan",
+                    "x": 20,
+                    "y": 50,
+                    "r": 12
+                  },
+                  {
+                    "name": "Feb",
+                    "x": 45,
+                    "y": 15,
+                    "r": 6
+                  },
+                  {
+                    "name": "Mar",
+                    "x": 60,
+                    "y": 35,
+                    "r": 18
+                  }
+                ]
+              }
+            ],
             "required": false,
             "order": 1,
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "series": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "r": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "x",
+                        "y",
+                        "r"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "series"
+                ],
+                "additionalProperties": false
+              }
             }
           }
         ]
@@ -789,11 +1029,44 @@
             "controlType": "ace-editor",
             "key": "chartData",
             "label": "Chart Data (JSON)",
-            "value": "[\n  { \"name\": \"Revenue\", \"value\": 312000 },\n  { \"name\": \"Units\", \"value\": 1540 },\n  { \"name\": \"Customers\", \"value\": 248 },\n  { \"name\": \"Returns\", \"value\": 12 }\n]",
+            "value": [
+              {
+                "name": "Revenue",
+                "value": 312000
+              },
+              {
+                "name": "Units",
+                "value": 1540
+              },
+              {
+                "name": "Customers",
+                "value": 248
+              },
+              {
+                "name": "Returns",
+                "value": 12
+              }
+            ],
             "required": false,
             "order": 1,
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
             }
           }
         ]
@@ -970,11 +1243,94 @@
             "controlType": "ace-editor",
             "key": "chartData",
             "label": "Chart Data (JSON)",
-            "value": "[\n  {\n    \"name\": \"Series 1\",\n    \"series\": [\n      {\"name\": \"Mon\", \"value\": 320},\n      {\"name\": \"Tue\", \"value\": 730},\n      {\"name\": \"Wed\", \"value\": 294},\n      {\"name\": \"Thu\", \"value\": 510},\n      {\"name\": \"Fri\", \"value\": 420}\n    ]\n  },\n  {\n    \"name\": \"Series 2\",\n    \"series\": [\n      {\"name\": \"Mon\", \"value\": 480},\n      {\"name\": \"Tue\", \"value\": 300},\n      {\"name\": \"Wed\", \"value\": 180},\n      {\"name\": \"Thu\", \"value\": 390},\n      {\"name\": \"Fri\", \"value\": 620}\n    ]\n  }\n]",
+            "value": [
+              {
+                "name": "Series 1",
+                "series": [
+                  {
+                    "name": "Mon",
+                    "value": 320
+                  },
+                  {
+                    "name": "Tue",
+                    "value": 730
+                  },
+                  {
+                    "name": "Wed",
+                    "value": 294
+                  },
+                  {
+                    "name": "Thu",
+                    "value": 510
+                  },
+                  {
+                    "name": "Fri",
+                    "value": 420
+                  }
+                ]
+              },
+              {
+                "name": "Series 2",
+                "series": [
+                  {
+                    "name": "Mon",
+                    "value": 480
+                  },
+                  {
+                    "name": "Tue",
+                    "value": 300
+                  },
+                  {
+                    "name": "Wed",
+                    "value": 180
+                  },
+                  {
+                    "name": "Thu",
+                    "value": 390
+                  },
+                  {
+                    "name": "Fri",
+                    "value": 620
+                  }
+                ]
+              }
+            ],
             "required": false,
             "order": 1,
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "series": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "series"
+                ],
+                "additionalProperties": false
+              }
             }
           }
         ]

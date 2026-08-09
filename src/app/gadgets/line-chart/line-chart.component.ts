@@ -68,7 +68,7 @@ export class LineChartComponent extends GadgetBase implements OnInit {
   }
 
   private loadChartData(): void {
-    const chartData = this.getJson<any[] | undefined>('chartData', undefined);
+    const chartData = this.getArray<any[] | undefined>('chartData', undefined);
     this.chartData = chartData ?? [
       {
         name: 'Series 1',

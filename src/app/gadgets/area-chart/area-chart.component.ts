@@ -80,7 +80,7 @@ colorScheme:Color = {
   }
 
   private loadChartData(): void {
-    const chartData = this.getJson<any[] | undefined>('chartData', undefined);
+    const chartData = this.getArray<any[] | undefined>('chartData', undefined);
     if (chartData) {
       this.multi = chartData;
     } else {

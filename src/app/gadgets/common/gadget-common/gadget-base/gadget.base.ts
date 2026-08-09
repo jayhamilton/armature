@@ -94,8 +94,18 @@ export abstract class GadgetBase implements IGadget {
   }
 
   protected getStringArray(key: string, fallback: string[] = []): string[] {
+    return this.getArray(key, fallback);
+  }
+
+  /**
+   * For properties whose schema is a real array/object (e.g. chartData on
+   * the chart-family gadgets), not a stringified-JSON string. No parsing -
+   * mergePropertyValues is what turns a form-submitted string back into a
+   * real array before it ever reaches here.
+   */
+  protected getArray<T>(key: string, fallback: T): T {
     const property = this.findProperty(key);
-    return Array.isArray(property?.value) ? property.value : fallback;
+    return Array.isArray(property?.value) ? (property.value as T) : fallback;
   }
 
   protected getJson<T>(key: string, fallback: T): T {
@@ -126,9 +136,23 @@ export abstract class GadgetBase implements IGadget {
     }
     for (const page of this.propertyPages ?? []) {
       for (const property of page.properties ?? []) {
-        if (Object.prototype.hasOwnProperty.call(values, property.key)) {
-          property.value = values[property.key];
+        if (!Object.prototype.hasOwnProperty.call(values, property.key)) {
+          continue;
         }
+        let value = values[property.key];
+        // The form always emits ace-editor content as a string, regardless
+        // of what the property's schema actually declares - AceEditorComponent
+        // is a string-in/string-out ControlValueAccessor. Parse it back to
+        // real JSON when the schema says it should be something else.
+        if (typeof value === 'string' && property.schema?.type && property.schema.type !== 'string') {
+          try {
+            value = JSON.parse(value);
+          } catch (error) {
+            console.error(`Failed to parse JSON for property "${property.key}":`, error);
+            continue;
+          }
+        }
+        property.value = value;
       }
     }
   }

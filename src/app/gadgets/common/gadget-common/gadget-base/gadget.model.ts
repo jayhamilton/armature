@@ -22,9 +22,14 @@ export interface IPropertyPage {
   properties:IProperty[];
 }
 
+// A JSON Schema fragment. Only `type` is read at runtime (by GadgetBase's
+// mergePropertyValues and PropertyControlService, to know whether an
+// ace-editor's string needs parsing back to real JSON) - everything else
+// (items/properties/required/...) passes through untyped for the backend's
+// benefit, which is the actual consumer of the full nested shape.
 export interface IPropertySchema {
   type: string;
-  items?: { type: string };
+  [key: string]: unknown;
 }
 
 export interface IProperty {

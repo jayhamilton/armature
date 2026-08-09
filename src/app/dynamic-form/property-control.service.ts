@@ -14,7 +14,14 @@ export class PropertyControlService {
     propertyPages.forEach((propertyPage) => {
       propertyPage.properties.forEach((property: any) => {
         if (property.controlType === 'section') return;
-        const val = (property.value !== undefined && property.value !== null) ? property.value : '';
+        let val = (property.value !== undefined && property.value !== null) ? property.value : '';
+        // ace-editor is a string-only ControlValueAccessor, but some
+        // properties (e.g. chartData) now declare a real array/object
+        // schema and store a real array/object, not a JSON string -
+        // stringify it just for display/editing.
+        if (property.controlType === 'ace-editor' && typeof val !== 'string') {
+          val = JSON.stringify(val, null, 2);
+        }
         group[property.key] = property.required
           ? new UntypedFormControl(val, Validators.required)
           : new UntypedFormControl(val);
