@@ -5,16 +5,18 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { forkJoin, interval, map, Observable, of, Subscription, take } from 'rxjs';
-import { AgentService, AgentResponse, AgentUiPart } from './agent.service';
+import { interval, map, Observable, of, Subscription } from 'rxjs';
+import { AgentService, AgentUiPart, AgUiEvent } from './agent.service';
 import { AgentActionService, BoardSummary, GadgetMoveDirection } from './agent-action.service';
 import { EventService } from '../eventservice/event.service';
 import { IGadget } from '../gadgets/common/gadget-common/gadget-base/gadget.model';
 import { LayoutType } from '../layout/layout.model';
+import { A2uiNode } from './a2ui/a2ui.model';
+import { A2uiRendererComponent } from './a2ui/a2ui-renderer.component';
 
 interface ChatPart extends AgentUiPart {
   gadgetPreview?: IGadget;
-  gadgetAdded?: boolean;
+  a2uiResolution?: 'confirmed' | 'cancelled';
   boardSummaries?: BoardSummary[];
   gadgetMoveTarget?: IGadget;
   gadgetMoveQuery?: string;
@@ -40,7 +42,15 @@ interface ChatMessage {
 @Component({
   selector: 'app-agent-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatInputModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    A2uiRendererComponent,
+  ],
   template: `
     <div class="agent-panel">
       <div class="agent-panel__header">
@@ -82,24 +92,6 @@ interface ChatMessage {
                 @for (part of message.parts; track part.id) {
                   @if (part.type === 'text') {
                     <p>{{ part.text }}</p>
-                  }
-
-                  @if (part.type === 'component' && part.componentType === 'gadget-suggestion') {
-                    <div class="agent-panel__component-card">
-                      <div class="agent-panel__component-label">Suggested gadget</div>
-                      @if (part.gadgetPreview) {
-                        <div class="agent-panel__gadget-preview">
-                          <mat-icon>{{ part.gadgetPreview.icon }}</mat-icon>
-                          <div>
-                            <div class="agent-panel__gadget-title">{{ part.gadgetPreview.title }}</div>
-                            <div class="agent-panel__gadget-subtitle">{{ part.gadgetPreview.subtitle }}</div>
-                          </div>
-                        </div>
-                        <span class="agent-panel__applied-badge">Added ✓</span>
-                      } @else {
-                        <p>This gadget type isn't in the library.</p>
-                      }
-                    </div>
                   }
 
                   @if (part.type === 'component' && part.componentType === 'board-list') {
@@ -175,10 +167,49 @@ interface ChatMessage {
                     </div>
                   }
 
+                  @if (part.type === 'component' && part.componentType === 'gadget-suggestion') {
+                    <div class="agent-panel__component-card">
+                      <div class="agent-panel__component-label">Suggested gadget</div>
+                      @if (part.gadgetPreview) {
+                        <div class="agent-panel__gadget-preview">
+                          <mat-icon>{{ part.gadgetPreview.icon }}</mat-icon>
+                          <div>
+                            <div class="agent-panel__gadget-title">{{ part.gadgetPreview.title }}</div>
+                            <div class="agent-panel__gadget-subtitle">{{ part.gadgetPreview.subtitle }}</div>
+                          </div>
+                        </div>
+                        <span class="agent-panel__applied-badge">Added ✓</span>
+                      } @else {
+                        <p>This gadget type isn't in the library.</p>
+                      }
+                    </div>
+                  }
+
                   @if (part.type === 'component' && part.componentType === 'a2ui-card') {
                     <div class="agent-panel__component-card">
-                      <div class="agent-panel__component-label">{{ parsedPayload(part)?.title }}</div>
-                      <p>{{ parsedPayload(part)?.summary }}</p>
+                      <div class="agent-panel__component-label">Suggested gadget</div>
+                      @if (part.gadgetPreview) {
+                        <div class="agent-panel__gadget-preview">
+                          <mat-icon>{{ part.gadgetPreview.icon }}</mat-icon>
+                          <div>
+                            <div class="agent-panel__gadget-title">{{ part.gadgetPreview.title }}</div>
+                            <div class="agent-panel__gadget-subtitle">{{ part.gadgetPreview.subtitle }}</div>
+                          </div>
+                        </div>
+                      } @else {
+                        <p>This gadget type isn't in the library.</p>
+                      }
+
+                      @if (!part.a2uiResolution) {
+                        <app-a2ui-renderer
+                          [node]="a2uiNode(part)"
+                          (action)="handleA2uiAction(part, $event)"
+                        ></app-a2ui-renderer>
+                      } @else if (part.a2uiResolution === 'confirmed') {
+                        <span class="agent-panel__applied-badge">Added ✓</span>
+                      } @else {
+                        <span class="agent-panel__applied-badge">Dismissed</span>
+                      }
                     </div>
                   }
 
@@ -313,6 +344,10 @@ export class AgentPanelComponent implements OnDestroy {
   messages: ChatMessage[] = [];
   sending = false;
 
+  // The assistant message currently being filled in by an in-flight AG-UI run -
+  // TEXT_MESSAGE_CONTENT deltas and resolved CUSTOM ui-part events both append to it.
+  private currentAssistantMessage?: ChatMessage;
+
   typingDotScales: number[] = [0.5, 0.5, 0.5, 0.5];
   private typingAnimationSub?: Subscription;
 
@@ -423,49 +458,64 @@ export class AgentPanelComponent implements OnDestroy {
     this.startTypingAnimation();
     this.scrollToBottom();
 
-    this.agentService.chat(userMessage.content!).subscribe({
-      next: (response: AgentResponse) => {
-        this.resolveParts(response.parts ?? []).subscribe({
-          next: (resolvedParts) => this.revealAssistantMessage(response, resolvedParts),
-          error: () => this.showAssistantError(),
-        });
+    this.agentService.chatStream(userMessage.content!).subscribe({
+      next: (event) => this.handleAgUiEvent(event),
+      error: () => {
+        this.currentAssistantMessage = undefined;
+        this.showAssistantError();
       },
-      error: () => this.showAssistantError(),
     });
   }
 
-  /**
-   * Simulates a streaming reply by revealing response.message word-by-word,
-   * then attaching the resolved cards once the text finishes — a stand-in
-   * for real token streaming until a live ChatClient backs Phase 2.
-   */
-  private revealAssistantMessage(response: AgentResponse, resolvedParts: ChatPart[]) {
-    const assistantMessage: ChatMessage = { id: Date.now() + 1, role: 'assistant', content: '' };
-    this.messages = [...this.messages, assistantMessage];
-    this.sending = false;
-    this.stopTypingAnimation();
-    this.cdr.markForCheck();
-    this.landReply();
-    this.speak(response.message);
-
-    const words = response.message.split(' ');
-    interval(45)
-      .pipe(take(words.length))
-      .subscribe({
-        next: (i) => {
-          assistantMessage.content = words.slice(0, i + 1).join(' ');
+  private handleAgUiEvent(event: AgUiEvent) {
+    switch (event.type) {
+      case 'TEXT_MESSAGE_START': {
+        const assistantMessage: ChatMessage = { id: Date.now() + 1, role: 'assistant', content: '', parts: [] };
+        this.currentAssistantMessage = assistantMessage;
+        this.messages = [...this.messages, assistantMessage];
+        this.sending = false;
+        this.stopTypingAnimation();
+        this.cdr.markForCheck();
+        break;
+      }
+      case 'TEXT_MESSAGE_CONTENT': {
+        if (!this.currentAssistantMessage) break;
+        this.currentAssistantMessage.content = (this.currentAssistantMessage.content ?? '') + event.delta;
+        this.cdr.markForCheck();
+        if (this.userIsNearBottom) {
+          this.scrollToBottom();
+        }
+        break;
+      }
+      case 'CUSTOM': {
+        if (event.name !== 'ui-part' || !this.currentAssistantMessage) break;
+        const message = this.currentAssistantMessage;
+        this.resolvePart(event.value as AgentUiPart).subscribe((resolved) => {
+          message.parts = [...(message.parts ?? []), resolved];
           this.cdr.markForCheck();
           if (this.userIsNearBottom) {
             this.scrollToBottom();
           }
-        },
-        complete: () => {
-          assistantMessage.parts = resolvedParts;
-          assistantMessage.toolCalls = response.toolCalls ?? [];
-          this.cdr.markForCheck();
-          this.landReply();
-        },
-      });
+        });
+        break;
+      }
+      case 'RUN_FINISHED': {
+        const message = this.currentAssistantMessage;
+        this.currentAssistantMessage = undefined;
+        if (message) {
+          this.speak(message.content ?? '');
+        }
+        this.landReply();
+        break;
+      }
+      case 'RUN_ERROR': {
+        this.currentAssistantMessage = undefined;
+        this.showAssistantError();
+        break;
+      }
+      // TEXT_MESSAGE_END, TOOL_CALL_START/ARGS/END: no UI affordance yet, reserved
+      // for a future "using tools…" indicator.
+    }
   }
 
   private showAssistantError() {
@@ -534,8 +584,8 @@ export class AgentPanelComponent implements OnDestroy {
     this.agentActionService.selectBoard(boardId);
   }
 
-  parsedPayload(part: AgentUiPart): { title?: string; summary?: string } | undefined {
-    if (typeof part.payload !== 'string') return part.payload as { title?: string; summary?: string } | undefined;
+  parsedPayload(part: AgentUiPart): Record<string, unknown> | undefined {
+    if (typeof part.payload !== 'string') return part.payload as Record<string, unknown> | undefined;
     try {
       return JSON.parse(part.payload);
     } catch {
@@ -543,17 +593,38 @@ export class AgentPanelComponent implements OnDestroy {
     }
   }
 
-  private resolveParts(parts: AgentUiPart[]): Observable<ChatPart[]> {
-    if (!parts.length) return of([]);
-    return forkJoin(parts.map((part) => this.resolvePart(part)));
+  a2uiNode(part: AgentUiPart): A2uiNode | undefined {
+    return this.parsedPayload(part)?.['ui'] as A2uiNode | undefined;
+  }
+
+  /** Confirm/cancel click handler for an a2ui-card. Cancel is a no-op besides marking the card resolved. */
+  handleA2uiAction(part: ChatPart, action: string) {
+    if (part.a2uiResolution) return;
+    if (action === 'confirm') {
+      this.applyGadgetSuggestion(part);
+      part.a2uiResolution = 'confirmed';
+    } else if (action === 'cancel') {
+      part.a2uiResolution = 'cancelled';
+    }
+    this.cdr.markForCheck();
+  }
+
+  private applyGadgetSuggestion(part: ChatPart) {
+    if (part.gadgetPreview) {
+      this.agentActionService.addGadgetToBoard(part.gadgetPreview);
+    }
   }
 
   /**
-   * Suggestion parts apply themselves as soon as they resolve to a real
-   * gadget/target, rather than waiting for a manual confirm click — the
-   * model only calls add_gadget/move_gadget when it has a grounded gadget
-   * library or an explicit direction+query to act on, so the tool call
-   * itself is the confirmation.
+   * All parts apply themselves as soon as they resolve to a real gadget/target,
+   * rather than waiting for a manual confirm click — the model only calls these
+   * tools when it has a grounded gadget library or an explicit direction+query to
+   * act on, so the tool call itself is the confirmation. (a2ui-card is the one
+   * exception, and nothing currently produces that componentType — add_gadget went
+   * back to auto-applying via gadget-suggestion after users found the extra confirm
+   * click unwanted friction. The a2ui-card branch below, and
+   * handleA2uiAction/applyGadgetSuggestion, are kept in place unused for a future
+   * flow that genuinely needs a confirm/cancel step, e.g. a destructive remove.)
    */
   private resolvePart(part: AgentUiPart): Observable<ChatPart> {
     if (part.componentType === 'gadget-suggestion') {
@@ -566,7 +637,7 @@ export class AgentPanelComponent implements OnDestroy {
       return this.agentActionService.findGadgetDefinition(gadgetComponentType).pipe(
         map((definition) => {
           if (!definition) {
-            return { ...part, gadgetPreview: definition, gadgetAdded: false };
+            return { ...part, gadgetPreview: definition };
           }
           // propertyValues comes from a second, schema-constrained model call
           // (see AgentService.enrichAddGadgetPartsWithPropertyValues) — when
@@ -576,7 +647,30 @@ export class AgentPanelComponent implements OnDestroy {
             ? this.agentActionService.applyPropertyValues(definition, payload.propertyValues)
             : definition;
           this.agentActionService.addGadgetToBoard(gadgetPreview);
-          return { ...part, gadgetPreview, gadgetAdded: true };
+          return { ...part, gadgetPreview };
+        })
+      );
+    }
+
+    // Nothing produces a2ui-card today (see the class doc above resolvePart) - kept
+    // dormant for a future confirm-required flow. Deliberately does NOT auto-apply;
+    // that only happens via handleA2uiAction on a confirm click.
+    if (part.componentType === 'a2ui-card') {
+      const payload = this.parsedPayload(part) as
+        | { gadgetComponentType?: string; propertyValues?: Record<string, unknown> }
+        | undefined;
+      const gadgetComponentType = payload?.gadgetComponentType;
+      if (!gadgetComponentType) return of({ ...part });
+
+      return this.agentActionService.findGadgetDefinition(gadgetComponentType).pipe(
+        map((definition) => {
+          if (!definition) {
+            return { ...part, gadgetPreview: definition };
+          }
+          const gadgetPreview = payload?.propertyValues
+            ? this.agentActionService.applyPropertyValues(definition, payload.propertyValues)
+            : definition;
+          return { ...part, gadgetPreview };
         })
       );
     }

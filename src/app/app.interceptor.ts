@@ -19,13 +19,18 @@ export class TokenInterceptor implements HttpInterceptor {
 
     let token = sessionStorage.getItem(environment.sessionToken);
     if (token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: token,
-          'Content-type': 'application/json',
-          Accept: 'application/json',
-        },
-      });
+      const headers: Record<string, string> = {
+        Authorization: token,
+        'Content-type': 'application/json',
+      };
+      // Don't clobber a caller-specified Accept (e.g. the agent chat stream needs
+      // text/event-stream) - forcing application/json here made the streaming
+      // endpoint 406 for any logged-in user, since its @PostMapping only produces
+      // text/event-stream and Spring's content negotiation rejects the mismatch.
+      if (!request.headers.has('Accept')) {
+        headers['Accept'] = 'application/json';
+      }
+      request = request.clone({ setHeaders: headers });
     }
     return next.handle(request);
   }
