@@ -1,15 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { forkJoin, interval, map, Observable, of, take } from 'rxjs';
+import { forkJoin, interval, map, Observable, of, Subscription, take } from 'rxjs';
 import { AgentService, AgentResponse, AgentUiPart } from './agent.service';
 import { AgentActionService, BoardSummary, GadgetMoveDirection } from './agent-action.service';
 import { EventService } from '../eventservice/event.service';
 import { IGadget } from '../gadgets/common/gadget-common/gadget-base/gadget.model';
+import { LayoutType } from '../layout/layout.model';
 
 interface ChatPart extends AgentUiPart {
   gadgetPreview?: IGadget;
@@ -19,6 +20,13 @@ interface ChatPart extends AgentUiPart {
   gadgetMoveQuery?: string;
   direction?: GadgetMoveDirection;
   moved?: boolean;
+  gadgetRemoveTarget?: IGadget;
+  gadgetRemoveQuery?: string;
+  removed?: boolean;
+  rowAdded?: boolean;
+  rowIndex?: number;
+  rowStructure?: LayoutType;
+  rowLayoutApplied?: boolean;
 }
 
 interface ChatMessage {
@@ -55,7 +63,7 @@ interface ChatMessage {
         </div>
       </div>
 
-      <div class="agent-panel__conversation">
+      <div class="agent-panel__conversation" #conversation (scroll)="onConversationScroll()">
         @if (messages.length === 0) {
           <div class="agent-panel__empty-state">
             <p>Ask the dashboard to create boards, add widgets, or explain the current view.</p>
@@ -87,13 +95,7 @@ interface ChatMessage {
                             <div class="agent-panel__gadget-subtitle">{{ part.gadgetPreview.subtitle }}</div>
                           </div>
                         </div>
-                        <button
-                          mat-stroked-button
-                          [disabled]="part.gadgetAdded"
-                          (click)="addGadget(part)"
-                        >
-                          {{ part.gadgetAdded ? 'Added ✓' : 'Add to board' }}
-                        </button>
+                        <span class="agent-panel__applied-badge">Added ✓</span>
                       } @else {
                         <p>This gadget type isn't in the library.</p>
                       }
@@ -129,15 +131,46 @@ interface ChatMessage {
                             <div class="agent-panel__gadget-subtitle">Move {{ part.direction }}</div>
                           </div>
                         </div>
-                        <button
-                          mat-stroked-button
-                          [disabled]="part.moved"
-                          (click)="moveGadgetPart(part)"
-                        >
-                          {{ part.moved ? 'Moved ✓' : 'Move ' + part.direction }}
-                        </button>
+                        <span class="agent-panel__applied-badge">Moved {{ part.direction }} ✓</span>
                       } @else {
                         <p>Couldn't find a gadget matching "{{ part.gadgetMoveQuery }}" on this board.</p>
+                      }
+                    </div>
+                  }
+
+                  @if (part.type === 'component' && part.componentType === 'gadget-remove') {
+                    <div class="agent-panel__component-card">
+                      <div class="agent-panel__component-label">Remove gadget</div>
+                      @if (part.gadgetRemoveTarget) {
+                        <div class="agent-panel__gadget-preview">
+                          <mat-icon>{{ part.gadgetRemoveTarget.icon }}</mat-icon>
+                          <div>
+                            <div class="agent-panel__gadget-title">{{ part.gadgetRemoveTarget.title }}</div>
+                          </div>
+                        </div>
+                        <span class="agent-panel__applied-badge">Removed ✓</span>
+                      } @else {
+                        <p>Couldn't find a gadget matching "{{ part.gadgetRemoveQuery }}" on this board.</p>
+                      }
+                    </div>
+                  }
+
+                  @if (part.type === 'component' && part.componentType === 'row-add') {
+                    <div class="agent-panel__component-card">
+                      <div class="agent-panel__component-label">Add row</div>
+                      <span class="agent-panel__applied-badge">Row added ✓</span>
+                    </div>
+                  }
+
+                  @if (part.type === 'component' && part.componentType === 'row-layout') {
+                    <div class="agent-panel__component-card">
+                      <div class="agent-panel__component-label">Row layout</div>
+                      @if (part.rowLayoutApplied) {
+                        <span class="agent-panel__applied-badge">
+                          Row {{ (part.rowIndex ?? 0) + 1 }} set to {{ part.rowStructure }} ✓
+                        </span>
+                      } @else {
+                        <p>Couldn't find row {{ (part.rowIndex ?? 0) + 1 }} on this board.</p>
                       }
                     </div>
                   }
@@ -175,12 +208,20 @@ interface ChatMessage {
         @if (sending) {
           <div class="agent-panel__message agent-panel__message--assistant">
             <div class="agent-panel__message-role">Assistant</div>
-            <div class="agent-panel__typing" aria-label="Assistant is typing">
-              <span></span><span></span><span></span>
+            <div class="agent-panel__typing" aria-label="Assistant is working">
+              @for (scale of typingDotScales; track $index) {
+                <span [style.transform]="'scale(' + scale + ')'" [style.opacity]="scale"></span>
+              }
             </div>
           </div>
         }
       </div>
+
+      @if (newReplyAvailable) {
+        <button class="agent-panel__jump-latest" mat-stroked-button (click)="jumpToLatest()">
+          <mat-icon>arrow_downward</mat-icon> New reply
+        </button>
+      }
 
       <div class="agent-panel__composer">
         <mat-form-field appearance="outline" class="agent-panel__input">
@@ -244,15 +285,17 @@ interface ChatMessage {
     `.agent-panel__gadget-preview { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }`,
     `.agent-panel__gadget-title { font-weight: 600; }`,
     `.agent-panel__gadget-subtitle { color: var(--app-text-secondary); font-size: 0.85rem; }`,
+    `.agent-panel__applied-badge { color: var(--app-text-secondary); font-size: 0.85rem; font-weight: 600; }`,
     `.agent-panel__board-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }`,
     `.agent-panel__board-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; }`,
     `.agent-panel__iframe-card iframe { width: 100%; min-height: 220px; border: 0; border-radius: 8px; background: white; }`,
     `.agent-panel__empty-state p { margin: 0; color: var(--app-text-secondary); }`,
     `.agent-panel__typing { display: flex; gap: 4px; align-items: center; height: 20px; }`,
-    `.agent-panel__typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--app-text-secondary); opacity: 0.4; animation: agent-panel-typing 1s infinite ease-in-out; }`,
-    `.agent-panel__typing span:nth-child(2) { animation-delay: 0.15s; }`,
-    `.agent-panel__typing span:nth-child(3) { animation-delay: 0.3s; }`,
-    `@keyframes agent-panel-typing { 0%, 60%, 100% { opacity: 0.4; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }`,
+    // Scale/opacity are randomized in the component on an interval rather than
+    // via a repeating @keyframes loop, so the motion doesn't visibly cycle -
+    // the transition here just smooths each jump into the next one.
+    `.agent-panel__typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--app-text-secondary); transition: transform 260ms ease, opacity 260ms ease; }`,
+    `.agent-panel__jump-latest { align-self: center; font-size: 0.85rem; }`,
     `.agent-panel__composer-actions { display: flex; gap: 8px; align-self: flex-end; }`,
     `.agent-panel__send { width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; border-radius: 50%; background: var(--app-brand); color: var(--app-brand-contrast); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); display: inline-flex; align-items: center; justify-content: center; line-height: 1; }`,
     `.agent-panel__send:hover { background: var(--app-brand-tint-strong); color: var(--app-brand); }`,
@@ -264,9 +307,21 @@ interface ChatMessage {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AgentPanelComponent implements OnDestroy {
+  @ViewChild('conversation') private conversationRef?: ElementRef<HTMLDivElement>;
+
   prompt = '';
   messages: ChatMessage[] = [];
   sending = false;
+
+  typingDotScales: number[] = [0.5, 0.5, 0.5, 0.5];
+  private typingAnimationSub?: Subscription;
+
+  // Tracks whether the user is following along at the bottom of the
+  // conversation; a reply lands with an auto-scroll if so, or leaves a "New
+  // reply" link if they've scrolled up to read history instead of yanking
+  // their view out from under them.
+  private userIsNearBottom = true;
+  newReplyAvailable = false;
 
   private readonly speechRecognitionCtor: any =
     (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -299,6 +354,7 @@ export class AgentPanelComponent implements OnDestroy {
     if (this.voiceOutputSupported) {
       window.speechSynthesis.cancel();
     }
+    this.typingAnimationSub?.unsubscribe();
   }
 
   toggleListening() {
@@ -364,6 +420,8 @@ export class AgentPanelComponent implements OnDestroy {
     this.messages = [...this.messages, userMessage];
     this.prompt = '';
     this.sending = true;
+    this.startTypingAnimation();
+    this.scrollToBottom();
 
     this.agentService.chat(userMessage.content!).subscribe({
       next: (response: AgentResponse) => {
@@ -385,7 +443,9 @@ export class AgentPanelComponent implements OnDestroy {
     const assistantMessage: ChatMessage = { id: Date.now() + 1, role: 'assistant', content: '' };
     this.messages = [...this.messages, assistantMessage];
     this.sending = false;
+    this.stopTypingAnimation();
     this.cdr.markForCheck();
+    this.landReply();
     this.speak(response.message);
 
     const words = response.message.split(' ');
@@ -395,17 +455,22 @@ export class AgentPanelComponent implements OnDestroy {
         next: (i) => {
           assistantMessage.content = words.slice(0, i + 1).join(' ');
           this.cdr.markForCheck();
+          if (this.userIsNearBottom) {
+            this.scrollToBottom();
+          }
         },
         complete: () => {
           assistantMessage.parts = resolvedParts;
           assistantMessage.toolCalls = response.toolCalls ?? [];
           this.cdr.markForCheck();
+          this.landReply();
         },
       });
   }
 
   private showAssistantError() {
     this.sending = false;
+    this.stopTypingAnimation();
     this.messages = [
       ...this.messages,
       {
@@ -415,24 +480,58 @@ export class AgentPanelComponent implements OnDestroy {
       },
     ];
     this.cdr.markForCheck();
+    this.landReply();
   }
 
-  addGadget(part: ChatPart) {
-    if (!part.gadgetPreview || part.gadgetAdded) return;
-    this.agentActionService.addGadgetToBoard(part.gadgetPreview);
-    part.gadgetAdded = true;
-    this.cdr.markForCheck();
+  /** Auto-scrolls if the user was already following along; otherwise surfaces the jump link. */
+  private landReply() {
+    if (this.userIsNearBottom) {
+      this.scrollToBottom();
+    } else {
+      this.newReplyAvailable = true;
+    }
+  }
+
+  private startTypingAnimation() {
+    this.typingAnimationSub?.unsubscribe();
+    this.typingAnimationSub = interval(160).subscribe(() => {
+      this.typingDotScales = this.typingDotScales.map(() => 0.45 + Math.random() * 0.65);
+      this.cdr.markForCheck();
+    });
+  }
+
+  private stopTypingAnimation() {
+    this.typingAnimationSub?.unsubscribe();
+    this.typingAnimationSub = undefined;
+  }
+
+  onConversationScroll() {
+    const el = this.conversationRef?.nativeElement;
+    if (!el) return;
+    this.userIsNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    if (this.userIsNearBottom) {
+      this.newReplyAvailable = false;
+    }
+  }
+
+  jumpToLatest() {
+    this.newReplyAvailable = false;
+    this.userIsNearBottom = true;
+    this.scrollToBottom();
+  }
+
+  private scrollToBottom() {
+    const el = this.conversationRef?.nativeElement;
+    if (!el) return;
+    // Deferred so it runs after Angular's DOM update for the content that
+    // triggered this scroll, not against the pre-update scrollHeight.
+    setTimeout(() => {
+      el.scrollTop = el.scrollHeight;
+    });
   }
 
   switchBoard(boardId: number) {
     this.agentActionService.selectBoard(boardId);
-  }
-
-  moveGadgetPart(part: ChatPart) {
-    if (!part.gadgetMoveTarget || !part.direction || part.moved) return;
-    this.agentActionService.moveGadget(part.gadgetMoveTarget.instanceId, part.direction);
-    part.moved = true;
-    this.cdr.markForCheck();
   }
 
   parsedPayload(part: AgentUiPart): { title?: string; summary?: string } | undefined {
@@ -449,14 +548,36 @@ export class AgentPanelComponent implements OnDestroy {
     return forkJoin(parts.map((part) => this.resolvePart(part)));
   }
 
+  /**
+   * Suggestion parts apply themselves as soon as they resolve to a real
+   * gadget/target, rather than waiting for a manual confirm click — the
+   * model only calls add_gadget/move_gadget when it has a grounded gadget
+   * library or an explicit direction+query to act on, so the tool call
+   * itself is the confirmation.
+   */
   private resolvePart(part: AgentUiPart): Observable<ChatPart> {
     if (part.componentType === 'gadget-suggestion') {
-      const payload = this.parsedPayload(part) as { gadgetComponentType?: string } | undefined;
+      const payload = this.parsedPayload(part) as
+        | { gadgetComponentType?: string; propertyValues?: Record<string, unknown> }
+        | undefined;
       const gadgetComponentType = payload?.gadgetComponentType;
       if (!gadgetComponentType) return of({ ...part });
 
       return this.agentActionService.findGadgetDefinition(gadgetComponentType).pipe(
-        map((gadgetPreview) => ({ ...part, gadgetPreview, gadgetAdded: false }))
+        map((definition) => {
+          if (!definition) {
+            return { ...part, gadgetPreview: definition, gadgetAdded: false };
+          }
+          // propertyValues comes from a second, schema-constrained model call
+          // (see AgentService.enrichAddGadgetPartsWithPropertyValues) — when
+          // present, it overlays real content onto the library's default
+          // template instead of adding the gadget with placeholder data.
+          const gadgetPreview = payload?.propertyValues
+            ? this.agentActionService.applyPropertyValues(definition, payload.propertyValues)
+            : definition;
+          this.agentActionService.addGadgetToBoard(gadgetPreview);
+          return { ...part, gadgetPreview, gadgetAdded: true };
+        })
       );
     }
 
@@ -473,7 +594,42 @@ export class AgentPanelComponent implements OnDestroy {
       if (!direction) return of({ ...part });
 
       return this.agentActionService.findGadgetOnBoard(gadgetMoveQuery).pipe(
-        map((gadgetMoveTarget) => ({ ...part, gadgetMoveTarget, gadgetMoveQuery, direction, moved: false }))
+        map((gadgetMoveTarget) => {
+          if (gadgetMoveTarget) {
+            this.agentActionService.moveGadget(gadgetMoveTarget.instanceId, direction);
+          }
+          return { ...part, gadgetMoveTarget, gadgetMoveQuery, direction, moved: !!gadgetMoveTarget };
+        })
+      );
+    }
+
+    if (part.componentType === 'gadget-remove') {
+      const payload = this.parsedPayload(part) as { gadgetQuery?: string } | undefined;
+      const gadgetRemoveQuery = payload?.gadgetQuery ?? '';
+
+      return this.agentActionService.findGadgetOnBoard(gadgetRemoveQuery).pipe(
+        map((gadgetRemoveTarget) => {
+          if (gadgetRemoveTarget) {
+            this.agentActionService.removeGadget(gadgetRemoveTarget.instanceId);
+          }
+          return { ...part, gadgetRemoveTarget, gadgetRemoveQuery, removed: !!gadgetRemoveTarget };
+        })
+      );
+    }
+
+    if (part.componentType === 'row-add') {
+      this.agentActionService.addRow();
+      return of({ ...part, rowAdded: true });
+    }
+
+    if (part.componentType === 'row-layout') {
+      const payload = this.parsedPayload(part) as { rowIndex?: number; structure?: string } | undefined;
+      const rowIndex = payload?.rowIndex;
+      const structure = payload?.structure as LayoutType | undefined;
+      if (rowIndex === undefined || !structure) return of({ ...part });
+
+      return this.agentActionService.changeRowLayout(rowIndex, structure).pipe(
+        map((rowLayoutApplied) => ({ ...part, rowIndex, rowStructure: structure, rowLayoutApplied }))
       );
     }
 

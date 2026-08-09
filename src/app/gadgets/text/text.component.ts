@@ -35,14 +35,7 @@ export class TextComponent extends GadgetBase implements OnInit {
   }
 
   private loadProperties(): void {
-    if (!this.propertyPages) return;
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        if (property.key === 'content') {
-          this.content = property.value || '';
-        }
-      });
-    });
+    this.content = this.getString('content');
     this.render();
   }
 
@@ -57,13 +50,8 @@ export class TextComponent extends GadgetBase implements OnInit {
   }
 
   propertyChangeEvent(propertiesJSON: string) {
-    const props = JSON.parse(propertiesJSON);
-
-    if (props.title != undefined) this.title = props.title;
-    if (props.subtitle != undefined) this.subtitle = props.subtitle;
-    if (props.content != undefined) this.content = props.content;
-    this.render();
-
+    this.mergePropertyValues(JSON.parse(propertiesJSON));
+    this.loadProperties();
     this.boardService.savePropertyPageConfigurationToDestination(propertiesJSON, this.instanceId);
   }
 }

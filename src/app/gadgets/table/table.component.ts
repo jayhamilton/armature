@@ -44,72 +44,30 @@ export class TableComponent extends GadgetBase implements OnInit {
     return this.maxRows > 0 ? this.rows.slice(0, this.maxRows) : this.rows;
   }
 
-  private toBool(value: any): boolean {
-    return value === true || value === 'true';
-  }
-
   private loadTableProperties(): void {
-    if (!this.propertyPages) return;
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        switch (property.key) {
-          case 'tableColumns':
-            this.configuredColumns = property.value || '';
-            break;
-          case 'showStriped':
-            this.showStriped = this.toBool(property.value);
-            break;
-          case 'showDense':
-            this.showDense = this.toBool(property.value);
-            break;
-          case 'showRowNumbers':
-            this.showRowNumbers = this.toBool(property.value);
-            break;
-          case 'maxRows':
-            this.maxRows = Number(property.value) || 0;
-            break;
-        }
-      });
-    });
+    this.configuredColumns = this.getString('tableColumns', this.configuredColumns);
+    this.showStriped = this.getBool('showStriped', true);
+    this.showDense = this.getBool('showDense');
+    this.showRowNumbers = this.getBool('showRowNumbers');
+    this.maxRows = this.getNumber('maxRows', 0);
   }
 
   private loadTableData(): void {
-    let found = false;
-    if (this.propertyPages && this.propertyPages.length > 0) {
-      this.propertyPages.forEach((page) => {
-        page.properties.forEach((property: any) => {
-          if (property.key === 'tableData' && property.value) {
-            found = this.applyData(property.value);
-          }
-        });
-      });
-    }
-    if (!found) {
+    const data = this.getJson<any[] | undefined>('tableData', undefined);
+    if (Array.isArray(data)) {
+      this.rows = data;
+    } else {
+      if (data !== undefined) {
+        console.error('Table gadget expects a JSON array of row objects.');
+      }
       this.rows = [
         { Line: 'Line A', Output: 1240, Defects: 12, Status: 'Running' },
         { Line: 'Line B', Output: 980, Defects: 31, Status: 'Running' },
         { Line: 'Line C', Output: 0, Defects: 0, Status: 'Stopped' },
         { Line: 'Line D', Output: 1515, Defects: 4, Status: 'Running' }
       ];
-      this.resolveColumns();
     }
-  }
-
-  /** Returns true when the JSON parsed into a usable row array. */
-  private applyData(rawJson: string): boolean {
-    try {
-      const parsed = JSON.parse(rawJson);
-      if (!Array.isArray(parsed)) {
-        console.error('Table gadget expects a JSON array of row objects.');
-        return false;
-      }
-      this.rows = parsed;
-      this.resolveColumns();
-      return true;
-    } catch (error) {
-      console.error('Invalid JSON data for table:', error);
-      return false;
-    }
+    this.resolveColumns();
   }
 
   private resolveColumns(): void {
@@ -141,34 +99,9 @@ export class TableComponent extends GadgetBase implements OnInit {
   }
 
   propertyChangeEvent(propertiesJSON: string) {
-    const props = JSON.parse(propertiesJSON);
-
-    if (props.title != undefined) this.title = props.title;
-    if (props.subtitle != undefined) this.subtitle = props.subtitle;
-    if (props.showStriped != undefined) this.showStriped = this.toBool(props.showStriped);
-    if (props.showDense != undefined) this.showDense = this.toBool(props.showDense);
-    if (props.showRowNumbers != undefined) this.showRowNumbers = this.toBool(props.showRowNumbers);
-    if (props.maxRows != undefined) this.maxRows = Number(props.maxRows) || 0;
-
-    // Column config must be applied before data so a re-parse picks it up,
-    // and re-resolved afterwards in case only the column list changed.
-    if (props.tableColumns != undefined) this.configuredColumns = props.tableColumns;
-    if (props.tableData != undefined) {
-      if (this.applyData(props.tableData)) {
-        this.updatePropertyPageValue('tableData', props.tableData);
-      }
-    } else if (props.tableColumns != undefined) {
-      this.resolveColumns();
-    }
-
+    this.mergePropertyValues(JSON.parse(propertiesJSON));
+    this.loadTableProperties();
+    this.loadTableData();
     this.boardService.savePropertyPageConfigurationToDestination(propertiesJSON, this.instanceId);
-  }
-
-  private updatePropertyPageValue(key: string, value: string) {
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        if (property.key === key) property.value = value;
-      });
-    });
   }
 }

@@ -59,51 +59,31 @@ export class BarChartComponent extends GadgetBase implements AfterViewInit, OnIn
   ngAfterViewInit(): void {}
 
   private loadChartProperties(): void {
-    if (!this.propertyPages) return;
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        switch (property.key) {
-          case 'chartLegend': this.chartLegend = property.value === true || property.value === 'true'; break;
-          case 'chartLegendTitle': if (property.value) this.chartLegendTitle = property.value; break;
-          case 'chartShowXAxis': this.chartShowXAxis = property.value === true || property.value === 'true'; break;
-          case 'chartShowYAxis': this.chartShowYAxis = property.value === true || property.value === 'true'; break;
-          case 'chartShowXAxisLabel': this.chartShowXAxisLabel = property.value === true || property.value === 'true'; break;
-          case 'chartShowYAxisLabel': this.chartShowYAxisLabel = property.value === true || property.value === 'true'; break;
-          case 'chartXAxisLabel': if (property.value) this.chartXAxisLabel = property.value; break;
-          case 'chartYAxisLabel': if (property.value) this.chartYAxisLabel = property.value; break;
-          case 'chartGradient': this.chartGradient = property.value === true || property.value === 'true'; break;
-          case 'chartRoundEdges': this.chartRoundEdges = property.value === true || property.value === 'true'; break;
-          case 'chartShowDataLabel': this.chartShowDataLabel = property.value === true || property.value === 'true'; break;
-        }
-      });
-    });
+    this.chartLegend = this.getBool('chartLegend');
+    this.chartLegendTitle = this.getString('chartLegendTitle', this.chartLegendTitle);
+    this.chartShowXAxis = this.getBool('chartShowXAxis');
+    this.chartShowYAxis = this.getBool('chartShowYAxis');
+    this.chartShowXAxisLabel = this.getBool('chartShowXAxisLabel');
+    this.chartShowYAxisLabel = this.getBool('chartShowYAxisLabel');
+    this.chartXAxisLabel = this.getString('chartXAxisLabel', this.chartXAxisLabel);
+    this.chartYAxisLabel = this.getString('chartYAxisLabel', this.chartYAxisLabel);
+    this.chartGradient = this.getBool('chartGradient');
+    this.chartRoundEdges = this.getBool('chartRoundEdges');
+    this.chartShowDataLabel = this.getBool('chartShowDataLabel');
   }
 
   private loadChartData(): void {
-    let chartDataFound = false;
-
-    if (this.propertyPages && this.propertyPages.length > 0) {
-      this.propertyPages.forEach((page) => {
-        page.properties.forEach((property) => {
-          if (property.key === 'chartData' && property.value) {
-            try {
-              this.footballstats = JSON.parse(property.value);
-              this.footballstats.sort((a, b) => b.value - a.value);
-              chartDataFound = true;
-            } catch (error) {
-              console.error('Invalid JSON data for bar chart:', error);
-            }
-          }
-        });
-      });
+    const chartData = this.getJson<any[] | undefined>('chartData', undefined);
+    if (chartData) {
+      this.footballstats = chartData;
+      this.footballstats.sort((a, b) => b.value - a.value);
+      return;
     }
 
-    if (!chartDataFound) {
-      this.restClient.get<footballstatsInterface>('assets/api/footballstats.json').subscribe(data => {
-        this.footballstats = data.stats;
-        this.footballstats.sort((a, b) => b.value - a.value);
-      });
-    }
+    this.restClient.get<footballstatsInterface>('assets/api/footballstats.json').subscribe(data => {
+      this.footballstats = data.stats;
+      this.footballstats.sort((a, b) => b.value - a.value);
+    });
   }
 
   remove() {
@@ -111,71 +91,10 @@ export class BarChartComponent extends GadgetBase implements AfterViewInit, OnIn
   }
 
   propertyChangeEvent(propertiesJSON: string) {
-    const updatedPropsObject = JSON.parse(propertiesJSON);
-
-    if (updatedPropsObject.title != undefined) {
-      this.title = updatedPropsObject.title;
-    }
-    if (updatedPropsObject.subtitle != undefined) {
-      this.subtitle = updatedPropsObject.subtitle;
-    }
-    if (updatedPropsObject.chartData != undefined) {
-      try {
-        this.footballstats = JSON.parse(updatedPropsObject.chartData);
-        this.footballstats.sort((a, b) => b.value - a.value);
-        this.updatePropertyPagesWithChartData(updatedPropsObject.chartData);
-      } catch (error) {
-        console.error('Invalid JSON data for bar chart:', error);
-      }
-    }
-    if (updatedPropsObject.chartLegend != undefined) {
-      this.chartLegend = updatedPropsObject.chartLegend === true || updatedPropsObject.chartLegend === 'true';
-    }
-    if (updatedPropsObject.chartLegendTitle != undefined) {
-      this.chartLegendTitle = updatedPropsObject.chartLegendTitle;
-    }
-    if (updatedPropsObject.chartShowXAxis != undefined) {
-      this.chartShowXAxis = updatedPropsObject.chartShowXAxis === true || updatedPropsObject.chartShowXAxis === 'true';
-    }
-    if (updatedPropsObject.chartShowYAxis != undefined) {
-      this.chartShowYAxis = updatedPropsObject.chartShowYAxis === true || updatedPropsObject.chartShowYAxis === 'true';
-    }
-    if (updatedPropsObject.chartShowXAxisLabel != undefined) {
-      this.chartShowXAxisLabel = updatedPropsObject.chartShowXAxisLabel === true || updatedPropsObject.chartShowXAxisLabel === 'true';
-    }
-    if (updatedPropsObject.chartShowYAxisLabel != undefined) {
-      this.chartShowYAxisLabel = updatedPropsObject.chartShowYAxisLabel === true || updatedPropsObject.chartShowYAxisLabel === 'true';
-    }
-    if (updatedPropsObject.chartXAxisLabel != undefined) {
-      this.chartXAxisLabel = updatedPropsObject.chartXAxisLabel;
-    }
-    if (updatedPropsObject.chartYAxisLabel != undefined) {
-      this.chartYAxisLabel = updatedPropsObject.chartYAxisLabel;
-    }
-    if (updatedPropsObject.chartGradient != undefined) {
-      this.chartGradient = updatedPropsObject.chartGradient === true || updatedPropsObject.chartGradient === 'true';
-    }
-    if (updatedPropsObject.chartRoundEdges != undefined) {
-      this.chartRoundEdges = updatedPropsObject.chartRoundEdges === true || updatedPropsObject.chartRoundEdges === 'true';
-    }
-    if (updatedPropsObject.chartShowDataLabel != undefined) {
-      this.chartShowDataLabel = updatedPropsObject.chartShowDataLabel === true || updatedPropsObject.chartShowDataLabel === 'true';
-    }
-
-    this.boardService.savePropertyPageConfigurationToDestination(
-      propertiesJSON,
-      this.instanceId
-    );
-  }
-
-  private updatePropertyPagesWithChartData(chartData: string) {
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property) => {
-        if (property.key === 'chartData') {
-          property.value = chartData;
-        }
-      });
-    });
+    this.mergePropertyValues(JSON.parse(propertiesJSON));
+    this.loadChartData();
+    this.loadChartProperties();
+    this.boardService.savePropertyPageConfigurationToDestination(propertiesJSON, this.instanceId);
   }
 
   getFootballStats() {

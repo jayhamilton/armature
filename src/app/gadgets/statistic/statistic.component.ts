@@ -57,39 +57,14 @@ export class StatisticComponent extends GadgetBase implements OnInit {
     }
   }
 
-  private toBool(value: any): boolean {
-    return value === true || value === 'true';
-  }
-
   private loadProperties(): void {
-    if (!this.propertyPages) return;
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        switch (property.key) {
-          case 'statValue':
-            if (property.value != null && property.value !== '') this.statValue = String(property.value);
-            break;
-          case 'statLabel':
-            this.statLabel = property.value || '';
-            break;
-          case 'statCaption':
-            this.statCaption = property.value || '';
-            break;
-          case 'statIcon':
-            if (property.value) this.statIcon = property.value;
-            break;
-          case 'statTheme':
-            if (property.value) this.statTheme = property.value;
-            break;
-          case 'statChange':
-            this.statChange = property.value || '';
-            break;
-          case 'showIcon':
-            this.showIcon = this.toBool(property.value);
-            break;
-        }
-      });
-    });
+    this.statValue = this.getString('statValue', this.statValue);
+    this.statLabel = this.getString('statLabel');
+    this.statCaption = this.getString('statCaption');
+    this.statIcon = this.getString('statIcon', this.statIcon);
+    this.statTheme = this.getString('statTheme', this.statTheme);
+    this.statChange = this.getString('statChange');
+    this.showIcon = this.getBool('showIcon', true);
   }
 
   remove() {
@@ -97,18 +72,8 @@ export class StatisticComponent extends GadgetBase implements OnInit {
   }
 
   propertyChangeEvent(propertiesJSON: string) {
-    const props = JSON.parse(propertiesJSON);
-
-    if (props.title != undefined) this.title = props.title;
-    if (props.subtitle != undefined) this.subtitle = props.subtitle;
-    if (props.statValue != undefined) this.statValue = String(props.statValue);
-    if (props.statLabel != undefined) this.statLabel = props.statLabel;
-    if (props.statCaption != undefined) this.statCaption = props.statCaption;
-    if (props.statIcon != undefined) this.statIcon = props.statIcon;
-    if (props.statTheme != undefined) this.statTheme = props.statTheme;
-    if (props.statChange != undefined) this.statChange = props.statChange;
-    if (props.showIcon != undefined) this.showIcon = this.toBool(props.showIcon);
-
+    this.mergePropertyValues(JSON.parse(propertiesJSON));
+    this.loadProperties();
     this.boardService.savePropertyPageConfigurationToDestination(propertiesJSON, this.instanceId);
   }
 }

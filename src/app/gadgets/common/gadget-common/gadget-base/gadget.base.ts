@@ -1,4 +1,4 @@
-import { IAction, IGadget, IPropertyPage, ITag } from './gadget.model';
+import { IAction, IGadget, IProperty, IPropertyPage, ITag } from './gadget.model';
 
 export abstract class GadgetBase implements IGadget {
   componentType: string;
@@ -66,6 +66,71 @@ export abstract class GadgetBase implements IGadget {
 
   public toggleConfigMode() {
     this.inConfig = !this.inConfig;
+  }
+
+  protected findProperty(key: string): IProperty | undefined {
+    for (const page of this.propertyPages ?? []) {
+      const found = page.properties?.find((property) => property.key === key);
+      if (found) return found;
+    }
+    return undefined;
+  }
+
+  protected getBool(key: string, fallback = false): boolean {
+    const property = this.findProperty(key);
+    if (!property || property.value == null) return fallback;
+    return property.value === true || property.value === 'true';
+  }
+
+  protected getNumber(key: string, fallback = 0): number {
+    const property = this.findProperty(key);
+    const parsed = property ? Number(property.value) : NaN;
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+
+  protected getString(key: string, fallback = ''): string {
+    const property = this.findProperty(key);
+    return typeof property?.value === 'string' && property.value !== '' ? property.value : fallback;
+  }
+
+  protected getStringArray(key: string, fallback: string[] = []): string[] {
+    const property = this.findProperty(key);
+    return Array.isArray(property?.value) ? property.value : fallback;
+  }
+
+  protected getJson<T>(key: string, fallback: T): T {
+    const property = this.findProperty(key);
+    if (typeof property?.value !== 'string' || !property.value) return fallback;
+    try {
+      return JSON.parse(property.value) as T;
+    } catch (error) {
+      console.error(`Failed to parse JSON for property "${key}":`, error);
+      return fallback;
+    }
+  }
+
+  /**
+   * Applies a flat key->value map (as emitted by the config form) onto this
+   * gadget's propertyPages in place, plus the title/subtitle top-level
+   * mirror - the same merge LocalStorageBoardRepository.applyProperties does
+   * for the persisted copy, but for the live in-memory instance so
+   * load()-driven rendering can just be re-run afterward instead of
+   * duplicating per-property coercion in propertyChangeEvent.
+   */
+  protected mergePropertyValues(values: Record<string, unknown>) {
+    if (typeof values['title'] === 'string') {
+      this.title = values['title'];
+    }
+    if (typeof values['subtitle'] === 'string') {
+      this.subtitle = values['subtitle'];
+    }
+    for (const page of this.propertyPages ?? []) {
+      for (const property of page.properties ?? []) {
+        if (Object.prototype.hasOwnProperty.call(values, property.key)) {
+          property.value = values[property.key];
+        }
+      }
+    }
   }
 
 }

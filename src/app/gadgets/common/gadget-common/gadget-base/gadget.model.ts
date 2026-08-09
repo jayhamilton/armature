@@ -22,6 +22,11 @@ export interface IPropertyPage {
   properties:IProperty[];
 }
 
+export interface IPropertySchema {
+  type: string;
+  items?: { type: string };
+}
+
 export interface IProperty {
   value:any;
   key: string ;
@@ -29,7 +34,11 @@ export interface IProperty {
   required: boolean;
   order: number;
   controlType: string;
-  options:[]
+  options:[];
+  // Data-shape declaration, separate from controlType (which only picks the
+  // form widget). Absent for controlType 'section' (a grouping header, not
+  // real data) - that's how both sides know to skip it.
+  schema?: IPropertySchema;
 }
 
 export interface IAction {

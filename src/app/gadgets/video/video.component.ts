@@ -45,13 +45,11 @@ export class VideoComponent extends GadgetBase implements OnInit {
   }
 
   private loadProperties(): void {
-    if (!this.propertyPages) return;
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        if (property.key === 'videoUrl') this.videoUrl = property.value || '';
-        if (property.key === 'autoplay') this.autoplay = !!property.value;
-      });
-    });
+    this.videoUrl = this.getString('videoUrl');
+    // Uses the same true/'true' idiom every other boolean property does now
+    // (previously !!property.value here specifically - a real inconsistency,
+    // since a stored string "false" would have rendered as autoplay-on).
+    this.autoplay = this.getBool('autoplay');
     this.render();
   }
 
@@ -80,14 +78,8 @@ export class VideoComponent extends GadgetBase implements OnInit {
   }
 
   propertyChangeEvent(propertiesJSON: string) {
-    const props = JSON.parse(propertiesJSON);
-
-    if (props.title != undefined) this.title = props.title;
-    if (props.subtitle != undefined) this.subtitle = props.subtitle;
-    if (props.videoUrl != undefined) this.videoUrl = props.videoUrl;
-    if (props.autoplay != undefined) this.autoplay = !!props.autoplay;
-    this.render();
-
+    this.mergePropertyValues(JSON.parse(propertiesJSON));
+    this.loadProperties();
     this.boardService.savePropertyPageConfigurationToDestination(propertiesJSON, this.instanceId);
   }
 }

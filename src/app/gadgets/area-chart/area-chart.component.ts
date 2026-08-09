@@ -66,47 +66,24 @@ colorScheme:Color = {
   }
 
   private loadChartProperties(): void {
-    if (!this.propertyPages) return;
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        switch (property.key) {
-          case 'chartLegend': this.chartLegend = property.value === true || property.value === 'true'; break;
-          case 'chartLegendTitle': if (property.value) this.chartLegendTitle = property.value; break;
-          case 'chartShowXAxis': this.chartShowXAxis = property.value === true || property.value === 'true'; break;
-          case 'chartShowYAxis': this.chartShowYAxis = property.value === true || property.value === 'true'; break;
-          case 'chartShowXAxisLabel': this.chartShowXAxisLabel = property.value === true || property.value === 'true'; break;
-          case 'chartShowYAxisLabel': this.chartShowYAxisLabel = property.value === true || property.value === 'true'; break;
-          case 'chartXAxisLabel': if (property.value) this.chartXAxisLabel = property.value; break;
-          case 'chartYAxisLabel': if (property.value) this.chartYAxisLabel = property.value; break;
-          case 'chartGradient': this.chartGradient = property.value === true || property.value === 'true'; break;
-          case 'chartTimeline': this.chartTimeline = property.value === true || property.value === 'true'; break;
-          case 'chartAnimations': this.chartAnimations = property.value === true || property.value === 'true'; break;
-        }
-      });
-    });
+    this.chartLegend = this.getBool('chartLegend');
+    this.chartLegendTitle = this.getString('chartLegendTitle', this.chartLegendTitle);
+    this.chartShowXAxis = this.getBool('chartShowXAxis');
+    this.chartShowYAxis = this.getBool('chartShowYAxis');
+    this.chartShowXAxisLabel = this.getBool('chartShowXAxisLabel');
+    this.chartShowYAxisLabel = this.getBool('chartShowYAxisLabel');
+    this.chartXAxisLabel = this.getString('chartXAxisLabel', this.chartXAxisLabel);
+    this.chartYAxisLabel = this.getString('chartYAxisLabel', this.chartYAxisLabel);
+    this.chartGradient = this.getBool('chartGradient');
+    this.chartTimeline = this.getBool('chartTimeline');
+    this.chartAnimations = this.getBool('chartAnimations');
   }
 
   private loadChartData(): void {
-    // Look for saved chartData in propertyPages
-    let chartDataFound = false;
-    
-    if (this.propertyPages && this.propertyPages.length > 0) {
-      this.propertyPages.forEach((page) => {
-        page.properties.forEach((property) => {
-          if (property.key === "chartData" && property.value) {
-            try {
-              this.multi = JSON.parse(property.value);
-              chartDataFound = true;
-            } catch (error) {
-              console.error('Invalid JSON data for chart:', error);
-            }
-          }
-        });
-      });
-    }
-    
-    // Load default data if no saved data found
-    if (!chartDataFound) {
+    const chartData = this.getJson<any[] | undefined>('chartData', undefined);
+    if (chartData) {
+      this.multi = chartData;
+    } else {
       this.loadDefaultData();
     }
   }
@@ -137,81 +114,10 @@ colorScheme:Color = {
     this.eventService.emitGadgetDeleteEvent({ data: this.instanceId });
   }
   propertyChangeEvent(propertiesJSON: string) {
-    //update internal props
-    const updatedPropsObject = JSON.parse(propertiesJSON);
-
-    if (updatedPropsObject.title != undefined) {
-      this.title = updatedPropsObject.title;
-    }
-    if (updatedPropsObject.subtitle != undefined) {
-      this.subtitle = updatedPropsObject.subtitle;
-    }
-    if (updatedPropsObject.chartData != undefined) {
-      try {
-        this.multi = JSON.parse(updatedPropsObject.chartData);
-        // Update property pages to sync between tabs
-        this.updatePropertyPagesWithChartData(updatedPropsObject.chartData);
-      } catch (error) {
-        console.error('Invalid JSON data for chart:', error);
-        // Keep existing data if JSON is invalid
-      }
-    }
-    if (updatedPropsObject.chartLegend != undefined) {
-      this.chartLegend = updatedPropsObject.chartLegend === true || updatedPropsObject.chartLegend === 'true';
-    }
-    if (updatedPropsObject.chartLegendTitle != undefined) {
-      this.chartLegendTitle = updatedPropsObject.chartLegendTitle;
-    }
-    if (updatedPropsObject.chartShowXAxis != undefined) {
-      this.chartShowXAxis = updatedPropsObject.chartShowXAxis === true || updatedPropsObject.chartShowXAxis === 'true';
-    }
-    if (updatedPropsObject.chartShowYAxis != undefined) {
-      this.chartShowYAxis = updatedPropsObject.chartShowYAxis === true || updatedPropsObject.chartShowYAxis === 'true';
-    }
-    if (updatedPropsObject.chartShowXAxisLabel != undefined) {
-      this.chartShowXAxisLabel = updatedPropsObject.chartShowXAxisLabel === true || updatedPropsObject.chartShowXAxisLabel === 'true';
-    }
-    if (updatedPropsObject.chartShowYAxisLabel != undefined) {
-      this.chartShowYAxisLabel = updatedPropsObject.chartShowYAxisLabel === true || updatedPropsObject.chartShowYAxisLabel === 'true';
-    }
-    if (updatedPropsObject.chartXAxisLabel != undefined) {
-      this.chartXAxisLabel = updatedPropsObject.chartXAxisLabel;
-    }
-    if (updatedPropsObject.chartYAxisLabel != undefined) {
-      this.chartYAxisLabel = updatedPropsObject.chartYAxisLabel;
-    }
-    if (updatedPropsObject.chartGradient != undefined) {
-      this.chartGradient = updatedPropsObject.chartGradient === true || updatedPropsObject.chartGradient === 'true';
-    }
-    if (updatedPropsObject.chartTimeline != undefined) {
-      this.chartTimeline = updatedPropsObject.chartTimeline === true || updatedPropsObject.chartTimeline === 'true';
-    }
-    if (updatedPropsObject.chartAnimations != undefined) {
-      this.chartAnimations = updatedPropsObject.chartAnimations === true || updatedPropsObject.chartAnimations === 'true';
-    }
-
-    //persist changes
-    this.boardService.savePropertyPageConfigurationToDestination(
-      propertiesJSON,
-      this.instanceId
-    );
-  }
-
-  private updatePropertyPagesWithChartData(chartData: string) {
-    console.log('AreaChart: Updating property pages with chart data');
-    
-    // Update all property pages that have chartData properties
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property) => {
-        if (property.key === 'chartData') {
-          console.log('AreaChart: Found chartData property, updating value from:', property.value);
-          console.log('AreaChart: To:', chartData);
-          property.value = chartData;
-        }
-      });
-    });
-    
-    console.log('AreaChart: Property pages updated');
+    this.mergePropertyValues(JSON.parse(propertiesJSON));
+    this.loadChartData();
+    this.loadChartProperties();
+    this.boardService.savePropertyPageConfigurationToDestination(propertiesJSON, this.instanceId);
   }
 
 }

@@ -44,40 +44,19 @@ export class NumberCardComponent extends GadgetBase implements OnInit {
   }
 
   private loadChartProperties(): void {
-    if (!this.propertyPages) return;
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        switch (property.key) {
-          case 'chartCardColor': if (property.value) this.chartCardColor = property.value; break;
-          case 'chartBandColor': if (property.value) this.chartBandColor = property.value; break;
-          case 'chartTextColor': if (property.value) this.chartTextColor = property.value; break;
-        }
-      });
-    });
+    this.chartCardColor = this.getString('chartCardColor', this.chartCardColor);
+    this.chartBandColor = this.getString('chartBandColor', this.chartBandColor);
+    this.chartTextColor = this.getString('chartTextColor', this.chartTextColor);
   }
 
   private loadChartData(): void {
-    let found = false;
-    if (this.propertyPages && this.propertyPages.length > 0) {
-      this.propertyPages.forEach((page) => {
-        page.properties.forEach((property: any) => {
-          if (property.key === 'chartData' && property.value) {
-            try {
-              this.chartData = JSON.parse(property.value);
-              found = true;
-            } catch (e) { console.error('Invalid JSON for number card:', e); }
-          }
-        });
-      });
-    }
-    if (!found) {
-      this.chartData = [
-        { name: 'Revenue', value: 312000 },
-        { name: 'Units', value: 1540 },
-        { name: 'Customers', value: 248 },
-        { name: 'Returns', value: 12 }
-      ];
-    }
+    const chartData = this.getJson<any[] | undefined>('chartData', undefined);
+    this.chartData = chartData ?? [
+      { name: 'Revenue', value: 312000 },
+      { name: 'Units', value: 1540 },
+      { name: 'Customers', value: 248 },
+      { name: 'Returns', value: 12 }
+    ];
   }
 
   remove() {
@@ -85,26 +64,9 @@ export class NumberCardComponent extends GadgetBase implements OnInit {
   }
 
   propertyChangeEvent(propertiesJSON: string) {
-    const props = JSON.parse(propertiesJSON);
-    if (props.title != undefined) this.title = props.title;
-    if (props.subtitle != undefined) this.subtitle = props.subtitle;
-    if (props.chartData != undefined) {
-      try {
-        this.chartData = JSON.parse(props.chartData);
-        this.updatePropertyPageChartData(props.chartData);
-      } catch (e) { console.error('Invalid JSON for number card:', e); }
-    }
-    if (props.chartCardColor != undefined) this.chartCardColor = props.chartCardColor;
-    if (props.chartBandColor != undefined) this.chartBandColor = props.chartBandColor;
-    if (props.chartTextColor != undefined) this.chartTextColor = props.chartTextColor;
+    this.mergePropertyValues(JSON.parse(propertiesJSON));
+    this.loadChartData();
+    this.loadChartProperties();
     this.boardService.savePropertyPageConfigurationToDestination(propertiesJSON, this.instanceId);
-  }
-
-  private updatePropertyPageChartData(chartData: string) {
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        if (property.key === 'chartData') property.value = chartData;
-      });
-    });
   }
 }

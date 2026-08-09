@@ -47,43 +47,22 @@ export class PieChartComponent extends GadgetBase implements OnInit {
   }
 
   private loadChartProperties(): void {
-    if (!this.propertyPages) return;
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        switch (property.key) {
-          case 'chartLegend': this.chartLegend = property.value === true || property.value === 'true'; break;
-          case 'chartLegendTitle': if (property.value) this.chartLegendTitle = property.value; break;
-          case 'chartGradient': this.chartGradient = property.value === true || property.value === 'true'; break;
-          case 'chartShowLabels': this.chartShowLabels = property.value === true || property.value === 'true'; break;
-          case 'chartDoughnut': this.chartDoughnut = property.value === true || property.value === 'true'; break;
-          case 'chartExplodeSlices': this.chartExplodeSlices = property.value === true || property.value === 'true'; break;
-        }
-      });
-    });
+    this.chartLegend = this.getBool('chartLegend');
+    this.chartLegendTitle = this.getString('chartLegendTitle', this.chartLegendTitle);
+    this.chartGradient = this.getBool('chartGradient');
+    this.chartShowLabels = this.getBool('chartShowLabels');
+    this.chartDoughnut = this.getBool('chartDoughnut');
+    this.chartExplodeSlices = this.getBool('chartExplodeSlices');
   }
 
   private loadChartData(): void {
-    let found = false;
-    if (this.propertyPages && this.propertyPages.length > 0) {
-      this.propertyPages.forEach((page) => {
-        page.properties.forEach((property: any) => {
-          if (property.key === 'chartData' && property.value) {
-            try {
-              this.chartData = JSON.parse(property.value);
-              found = true;
-            } catch (e) { console.error('Invalid JSON for pie chart:', e); }
-          }
-        });
-      });
-    }
-    if (!found) {
-      this.chartData = [
-        { name: 'Q1', value: 8940 },
-        { name: 'Q2', value: 5000 },
-        { name: 'Q3', value: 7200 },
-        { name: 'Q4', value: 6100 }
-      ];
-    }
+    const chartData = this.getJson<any[] | undefined>('chartData', undefined);
+    this.chartData = chartData ?? [
+      { name: 'Q1', value: 8940 },
+      { name: 'Q2', value: 5000 },
+      { name: 'Q3', value: 7200 },
+      { name: 'Q4', value: 6100 }
+    ];
   }
 
   remove() {
@@ -91,29 +70,9 @@ export class PieChartComponent extends GadgetBase implements OnInit {
   }
 
   propertyChangeEvent(propertiesJSON: string) {
-    const props = JSON.parse(propertiesJSON);
-    if (props.title != undefined) this.title = props.title;
-    if (props.subtitle != undefined) this.subtitle = props.subtitle;
-    if (props.chartData != undefined) {
-      try {
-        this.chartData = JSON.parse(props.chartData);
-        this.updatePropertyPageChartData(props.chartData);
-      } catch (e) { console.error('Invalid JSON for pie chart:', e); }
-    }
-    if (props.chartLegend != undefined) this.chartLegend = props.chartLegend === true || props.chartLegend === 'true';
-    if (props.chartLegendTitle != undefined) this.chartLegendTitle = props.chartLegendTitle;
-    if (props.chartGradient != undefined) this.chartGradient = props.chartGradient === true || props.chartGradient === 'true';
-    if (props.chartShowLabels != undefined) this.chartShowLabels = props.chartShowLabels === true || props.chartShowLabels === 'true';
-    if (props.chartDoughnut != undefined) this.chartDoughnut = props.chartDoughnut === true || props.chartDoughnut === 'true';
-    if (props.chartExplodeSlices != undefined) this.chartExplodeSlices = props.chartExplodeSlices === true || props.chartExplodeSlices === 'true';
+    this.mergePropertyValues(JSON.parse(propertiesJSON));
+    this.loadChartData();
+    this.loadChartProperties();
     this.boardService.savePropertyPageConfigurationToDestination(propertiesJSON, this.instanceId);
-  }
-
-  private updatePropertyPageChartData(chartData: string) {
-    this.propertyPages.forEach((page) => {
-      page.properties.forEach((property: any) => {
-        if (property.key === 'chartData') property.value = chartData;
-      });
-    });
   }
 }
