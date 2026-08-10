@@ -67,13 +67,13 @@ Most of the gadgets below are chart/data widgets, but the framework is growing t
 
 ## Features
 
-### Agentic Assistant (early support)
+### Agentic Assistant
 
-The dashboard includes an early conversational assistant experience exposed from the toolbar. It opens as a side panel and supports a chat-style flow for requests such as creating boards, adding widgets, or explaining the current view. A typing indicator shows while a request is in flight, and the reply is revealed word-by-word rather than popping in all at once.
+The dashboard includes a conversational assistant exposed from the toolbar. It opens as a side panel and supports a chat-style flow for requests such as creating boards, adding widgets, moving or removing gadgets, or explaining the current view. Replies stream in as the model actually generates them — real token-by-token text over a hand-rolled AG-UI event protocol (`RUN_STARTED`, `TEXT_MESSAGE_*`, `TOOL_CALL_*`, `RUN_FINISHED`) served over SSE, not a simulated reveal — with a non-deterministic typing indicator shown until the first token arrives.
 
-Suggestions render as real, actionable cards rather than raw data: an "Add to board" button on a suggested gadget adds it through the same path as the gadget library, and a board list offers a "Switch" button per board. The panel also supports voice, via the browser's built-in Web Speech API — a mic button transcribes spoken requests into the composer, and replies can optionally be read aloud, toggled from the header.
+Suggestions render as real, actionable cards rather than raw data: a suggested gadget is added to the board directly, with no confirmation click (that was tried and found to add unwanted friction in practice), and a board list offers a "Switch" button per board. To keep the assistant from acting on things nobody asked for, at most one board-affecting action is taken per message — a request implying more than one gets the model asking to be asked again for the rest. The panel also supports voice, via the browser's built-in Web Speech API — a mic button transcribes spoken requests into the composer, and replies can optionally be read aloud, toggled from the header.
 
-The initial implementation is intentionally lightweight and designed to grow into a richer agent workflow. Assistant responses can carry text, structured tool-calls, and richer UI payloads such as A2UI/AGUI-style component content or iframe-based MCP app previews, so the panel can eventually host interactive app experiences directly inside the conversation.
+The backend defaults to a local Ollama model, with an Anthropic-backed alternative available behind an environment variable for comparison — see the [microservice README](https://github.com/jayhamilton/armature-ms#model-provider). A2UI-style declarative component rendering is built (`AgentUiPart`'s `a2ui-card` type, a generic Card/Text/Button renderer) but not currently wired to any live flow; iframe-based MCP app previews (`AgentUiPart`'s `iframe` type) remain a landing zone for later work.
 
 ![Agentic assistant panel](https://github.com/jayhamilton/armature/blob/main/documentation/agentic-panel.jpg)
 
