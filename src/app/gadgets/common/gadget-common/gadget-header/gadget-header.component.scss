@@ -8,6 +8,14 @@
     width: 40px;
 }
 
+.help-button,
+.configure-button,
+.remove-button {
+    background-color: var(--app-surface);
+    border: 1px solid var(--app-border);
+    border-radius: 50%;
+}
+
 .remove-button {
     position: absolute;
     top: 5px;
@@ -18,13 +26,23 @@
 .configure-button {
     position: absolute;
     top: 5px;
-    right: 44px;
+    // 48px pitch (was 34px, less than each button's own 40px width) so the
+    // now-visible circular badges have a clear gap between them instead of
+    // overlapping.
+    right: 58px;
+}
+
+// Material's "tune" glyph is drawn as three horizontal slider rows - rotating
+// it 90deg turns those into vertical rows instead, without needing a custom
+// SVG icon for what's otherwise just an orientation change.
+.configure-button mat-icon {
+    transform: rotate(90deg);
 }
 
 .help-button {
     position: absolute;
     top: 5px;
-    right: 78px;
+    right: 106px;
 }
 
 .config-mode-indicator {
@@ -66,7 +84,8 @@ mat-card-subtitle {
 
 .move-cursor {
     cursor: move;
-    padding-right: 128px;
+    // help-button's right edge is now at 106px + 40px width = 146px.
+    padding-right: 156px;
     box-sizing: border-box;
 }
 

@@ -17,7 +17,7 @@
         aria-label="Help"
         (click)="openHelp()"
         >
-        <mat-icon>help_outline</mat-icon>
+        <mat-icon>chat_bubble_outline</mat-icon>
       </button>
     }
     @if (!locked) {
@@ -28,7 +28,7 @@
         [attr.aria-label]="menuLabel"
         (click)="toggleConfigMode()"
         >
-        <mat-icon>settings</mat-icon>
+        <mat-icon>tune</mat-icon>
       </button>
     }
     @if (!locked) {
@@ -39,7 +39,7 @@
         aria-label="Remove"
         (click)="remove()"
         >
-        <mat-icon>delete</mat-icon>
+        <mat-icon>close</mat-icon>
       </button>
     }
   </mat-card-header>

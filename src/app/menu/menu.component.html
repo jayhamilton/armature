@@ -20,9 +20,9 @@
 
   @if (!(locked$ | async)) {
     <span *checkPermissions>
-      <button mat-icon-button (click)="openConfigDialog()" class="example-icon"
+      <button mat-icon-button (click)="openConfigDialog()" class="example-icon config-toggle-icon"
         matTooltip="Board settings" aria-label="Board settings">
-        <mat-icon>settings</mat-icon>
+        <mat-icon>tune</mat-icon>
       </button>
     </span>
   }
