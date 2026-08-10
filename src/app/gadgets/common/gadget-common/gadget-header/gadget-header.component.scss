@@ -12,7 +12,12 @@
 .configure-button,
 .remove-button {
     background-color: var(--app-surface);
-    border: 1px solid var(--app-border);
+    // box-shadow, not border: a real border adds to the button's content box,
+    // which shifted Material's internal icon centering by ~1px off-center
+    // (confirmed via getBoundingClientRect) even though the button's own
+    // outer size stayed fixed at 40x40. An inset box-shadow paints the same
+    // hairline ring without touching the box model at all.
+    box-shadow: inset 0 0 0 1px var(--app-border);
     border-radius: 50%;
 }
 
