@@ -18,6 +18,7 @@ import { environment } from 'src/environments/environment';
 export class AppConfigService {
   APP_TITLE_KEY: string = 'applicationTitle';
   CARD_TRANSPARENT_KEY: string = 'cardBackgroundTransparent';
+  LIBRARY_COLLAPSED_KEY: string = 'libraryPanelCollapsed';
 
   private appTitleSubject = new BehaviorSubject<string>(this.getStoredTitle());
   appTitle$ = this.appTitleSubject.asObservable();
@@ -26,6 +27,11 @@ export class AppConfigService {
     this.getStoredCardBackgroundTransparent()
   );
   cardBackgroundTransparent$ = this.cardBackgroundTransparentSubject.asObservable();
+
+  private libraryPanelCollapsedSubject = new BehaviorSubject<boolean>(
+    this.getStoredLibraryPanelCollapsed()
+  );
+  libraryPanelCollapsed$ = this.libraryPanelCollapsedSubject.asObservable();
 
   constructor() {
     this.applyCardBackgroundTransparent(this.cardBackgroundTransparentSubject.value);
@@ -56,6 +62,19 @@ export class AppConfigService {
     this.applyCardBackgroundTransparent(value);
   }
 
+  get libraryPanelCollapsed(): boolean {
+    return this.libraryPanelCollapsedSubject.value;
+  }
+
+  setLibraryPanelCollapsed(value: boolean) {
+    localStorage.setItem(this.LIBRARY_COLLAPSED_KEY, JSON.stringify(value));
+    this.libraryPanelCollapsedSubject.next(value);
+  }
+
+  toggleLibraryPanelCollapsed() {
+    this.setLibraryPanelCollapsed(!this.libraryPanelCollapsed);
+  }
+
   private getStoredTitle(): string {
     const stored = localStorage.getItem(this.APP_TITLE_KEY);
     return stored != null && stored.trim() !== ''
@@ -65,6 +84,11 @@ export class AppConfigService {
 
   private getStoredCardBackgroundTransparent(): boolean {
     const stored = localStorage.getItem(this.CARD_TRANSPARENT_KEY);
+    return stored != null ? JSON.parse(stored) : false;
+  }
+
+  private getStoredLibraryPanelCollapsed(): boolean {
+    const stored = localStorage.getItem(this.LIBRARY_COLLAPSED_KEY);
     return stored != null ? JSON.parse(stored) : false;
   }
 

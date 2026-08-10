@@ -53,33 +53,35 @@
     </mat-drawer>
   }
 
-  <mat-drawer #layout class="layout-drawer" mode="side" position="end" (openedChange)="onPushDrawerAnimationDone()">
-    <app-sidelayout></app-sidelayout>
-  </mat-drawer>
-
-  <mat-drawer-container class="config-panel-container">
-    <mat-drawer #configPanel mode="over" position="end" (closed)="onConfigPanelClosed()">
-      <app-config-panel></app-config-panel>
+  <mat-drawer-container class="layout-panel-container" [hasBackdrop]="true">
+    <mat-drawer #layout class="layout-drawer" mode="side" position="end" (openedChange)="onPushDrawerAnimationDone()">
+      <app-sidelayout></app-sidelayout>
     </mat-drawer>
 
-    <mat-drawer-container class="library-panel-container">
-      <mat-drawer #library mode="over" position="end">
-        <app-library></app-library>
+    <mat-drawer-container class="config-panel-container" [hasBackdrop]="true">
+      <mat-drawer #configPanel mode="side" position="end" (closed)="onConfigPanelClosed()" (openedChange)="onPushDrawerAnimationDone()">
+        <app-config-panel></app-config-panel>
       </mat-drawer>
 
-      <mat-drawer-container class="help-panel-container">
-        <mat-drawer #helpPanel mode="over" position="end">
-          <app-help-panel></app-help-panel>
+      <mat-drawer-container class="library-panel-container" [hasBackdrop]="true" [class.library-collapsed]="libraryCollapsed">
+        <mat-drawer #library mode="side" position="end" (openedChange)="onPushDrawerAnimationDone()">
+          <app-library></app-library>
         </mat-drawer>
 
-        <mat-drawer-container class="agent-panel-container">
-          <mat-drawer #agentPanel mode="over" position="end">
-            <app-agent-panel></app-agent-panel>
+        <mat-drawer-container class="help-panel-container" [hasBackdrop]="true">
+          <mat-drawer #helpPanel mode="side" position="end" (openedChange)="onPushDrawerAnimationDone()">
+            <app-help-panel></app-help-panel>
           </mat-drawer>
 
-          <div class="example-sidenav-content">
-            <app-board></app-board>
-          </div>
+          <mat-drawer-container class="agent-panel-container" [hasBackdrop]="true">
+            <mat-drawer #agentPanel mode="side" position="end" (openedChange)="onPushDrawerAnimationDone()">
+              <app-agent-panel></app-agent-panel>
+            </mat-drawer>
+
+            <div class="example-sidenav-content">
+              <app-board></app-board>
+            </div>
+          </mat-drawer-container>
         </mat-drawer-container>
       </mat-drawer-container>
     </mat-drawer-container>

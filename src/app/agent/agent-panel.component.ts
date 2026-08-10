@@ -54,14 +54,15 @@ interface ChatMessage {
   template: `
     <div class="agent-panel">
       <div class="agent-panel__header">
-        <div class="agent-panel__header-row">
-          <div>
-            <h3>Assistant</h3>
-            <span>Conversational dashboard helper</span>
-          </div>
+        <div class="agent-panel__header-text">
+          <span class="agent-panel__header-title">Assistant</span>
+          <span class="agent-panel__header-subtitle">Conversational dashboard helper</span>
+        </div>
+        <div class="agent-panel__header-actions">
           @if (voiceOutputSupported) {
             <button
               mat-icon-button
+              class="agent-panel__header-btn"
               [class.agent-panel__voice-toggle--active]="readAloud"
               (click)="toggleReadAloud()"
               [attr.aria-pressed]="readAloud"
@@ -70,9 +71,13 @@ interface ChatMessage {
               <mat-icon>{{ readAloud ? 'volume_up' : 'volume_off' }}</mat-icon>
             </button>
           }
+          <button mat-icon-button class="agent-panel__header-btn agent-panel__close" (click)="close()" aria-label="Close assistant panel">
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
       </div>
 
+      <div class="agent-panel__body">
       <div class="agent-panel__conversation" #conversation (scroll)="onConversationScroll()">
         @if (messages.length === 0) {
           <div class="agent-panel__empty-state">
@@ -239,7 +244,10 @@ interface ChatMessage {
         @if (sending) {
           <div class="agent-panel__message agent-panel__message--assistant">
             <div class="agent-panel__message-role">Assistant</div>
-            <div class="agent-panel__typing" aria-label="Assistant is working">
+            <div class="agent-panel__typing" [attr.aria-label]="thinking ? 'Assistant is thinking' : 'Assistant is working'">
+              @if (thinking) {
+                <span class="agent-panel__thinking-label">Thinking…</span>
+              }
               @for (scale of typingDotScales; track $index) {
                 <span [style.transform]="'scale(' + scale + ')'" [style.opacity]="scale"></span>
               }
@@ -292,16 +300,30 @@ interface ChatMessage {
           </button>
         </div>
       </div>
+      </div>
     </div>
   `,
   styles: [
-    `:host { display: block; height: 100%; padding: 16px; box-sizing: border-box; }`,
-    `.agent-panel { display: flex; flex-direction: column; gap: 12px; height: 100%; }`,
-    `.agent-panel__header { display: flex; flex-direction: column; gap: 4px; }`,
-    `.agent-panel__header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }`,
-    `.agent-panel__header h3 { margin: 0; font-size: 1.1rem; }`,
-    `.agent-panel__header span { color: var(--app-text-secondary); font-size: 0.9rem; }`,
-    `.agent-panel__voice-toggle--active { color: var(--app-brand); }`,
+    `:host { display: block; height: 100%; box-sizing: border-box; }`,
+    // Header now matches the flush, colored title bar every other side panel
+    // uses (library/help/config-panel-header): full-width, --app-panel-header
+    // background, no host-level inset around it. The rest of the panel's
+    // content keeps that 16px inset via .agent-panel__body's own padding
+    // instead of relying on :host padding, which used to apply uniformly
+    // (including around the header, which is why it never looked like the
+    // other panels' flush bars).
+    `.agent-panel { display: flex; flex-direction: column; height: 100%; }`,
+    `.agent-panel__header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background-color: var(--app-panel-header); color: var(--app-brand-contrast); flex-shrink: 0; gap: 8px; }`,
+    `.agent-panel__header-text { display: flex; flex-direction: column; min-width: 0; }`,
+    `.agent-panel__header-title { font-size: 1rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }`,
+    `.agent-panel__header-subtitle { font-size: 0.75rem; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }`,
+    `.agent-panel__header-actions { display: flex; align-items: center; flex-shrink: 0; }`,
+    `.agent-panel__header-btn { color: var(--app-brand-contrast); flex-shrink: 0; }`,
+    // A color swap for the active state (the original treatment) would be low
+    // contrast now that the header itself is brand-colored - a background
+    // highlight reads clearly regardless of the exact brand hue.
+    `.agent-panel__voice-toggle--active { background-color: rgba(255, 255, 255, 0.2); }`,
+    `.agent-panel__body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 12px 16px 16px; min-height: 0; }`,
     `.agent-panel__conversation { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow: auto; padding-right: 4px; }`,
     `.agent-panel__composer { display: flex; flex-direction: column; gap: 8px; }`,
     `.agent-panel__input { width: 100%; }`,
@@ -321,7 +343,8 @@ interface ChatMessage {
     `.agent-panel__board-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; }`,
     `.agent-panel__iframe-card iframe { width: 100%; min-height: 220px; border: 0; border-radius: 8px; background: white; }`,
     `.agent-panel__empty-state p { margin: 0; color: var(--app-text-secondary); }`,
-    `.agent-panel__typing { display: flex; gap: 4px; align-items: center; height: 20px; }`,
+    `.agent-panel__typing { display: flex; gap: 6px; align-items: center; height: 20px; }`,
+    `.agent-panel__thinking-label { font-size: 0.8rem; color: var(--app-text-secondary); }`,
     // Scale/opacity are randomized in the component on an interval rather than
     // via a repeating @keyframes loop, so the motion doesn't visibly cycle -
     // the transition here just smooths each jump into the next one.
@@ -343,6 +366,12 @@ export class AgentPanelComponent implements OnDestroy {
   prompt = '';
   messages: ChatMessage[] = [];
   sending = false;
+
+  // True from RUN_STARTED until TEXT_MESSAGE_START - distinguishes "model is
+  // still reasoning" (can run many seconds for a thinking-enabled local model,
+  // with no tokens to show yet) from generic "waiting", so the typing
+  // indicator reads as expected progress rather than an ambiguous stall.
+  thinking = false;
 
   // The assistant message currently being filled in by an in-flight AG-UI run -
   // TEXT_MESSAGE_CONTENT deltas and resolved CUSTOM ui-part events both append to it.
@@ -455,6 +484,7 @@ export class AgentPanelComponent implements OnDestroy {
     this.messages = [...this.messages, userMessage];
     this.prompt = '';
     this.sending = true;
+    this.thinking = false;
     this.startTypingAnimation();
     this.scrollToBottom();
 
@@ -469,11 +499,17 @@ export class AgentPanelComponent implements OnDestroy {
 
   private handleAgUiEvent(event: AgUiEvent) {
     switch (event.type) {
+      case 'RUN_STARTED': {
+        this.thinking = true;
+        this.cdr.markForCheck();
+        break;
+      }
       case 'TEXT_MESSAGE_START': {
         const assistantMessage: ChatMessage = { id: Date.now() + 1, role: 'assistant', content: '', parts: [] };
         this.currentAssistantMessage = assistantMessage;
         this.messages = [...this.messages, assistantMessage];
         this.sending = false;
+        this.thinking = false;
         this.stopTypingAnimation();
         this.cdr.markForCheck();
         break;
@@ -520,6 +556,7 @@ export class AgentPanelComponent implements OnDestroy {
 
   private showAssistantError() {
     this.sending = false;
+    this.thinking = false;
     this.stopTypingAnimation();
     this.messages = [
       ...this.messages,
@@ -582,6 +619,10 @@ export class AgentPanelComponent implements OnDestroy {
 
   switchBoard(boardId: number) {
     this.agentActionService.selectBoard(boardId);
+  }
+
+  close() {
+    this.eventService.emitCloseAgentPanelEvent();
   }
 
   parsedPayload(part: AgentUiPart): Record<string, unknown> | undefined {

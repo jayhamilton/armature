@@ -1,10 +1,14 @@
 @use '@angular/material' as mat;
 
 .library-panel {
+  // Fills whatever width the drawer container currently has (480px expanded,
+  // 64px collapsed - see .library-collapsed on .library-panel-container in
+  // sidenav.component.scss, which is what actually drives the drawer's
+  // width). A fixed width here would fight that instead of following it.
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 480px;
+  width: 100%;
   background: var(--app-background);
   @include mat.elevation(4);
 }
@@ -17,14 +21,37 @@
   background-color: var(--app-panel-header);
   color: var(--app-brand-contrast);
   flex-shrink: 0;
+  gap: 4px;
+
+  // Two icon buttons don't fit side by side in a 64px-wide collapsed panel
+  // (a single mat-icon-button's touch target is already ~40-48px) - stack
+  // them instead of shrinking them illegibly small.
+  &.collapsed {
+    flex-direction: column;
+    padding: 8px 4px;
+    gap: 8px;
+  }
+}
+
+.library-panel-header-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  .library-panel-header.collapsed & {
+    flex-direction: column;
+  }
 }
 
 .library-panel-title {
   font-size: 1rem;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.library-panel-close {
+.library-panel-header-btn {
   color: var(--app-brand-contrast);
   flex-shrink: 0;
 }
@@ -90,6 +117,25 @@
 
 .library-viewport {
   height: 100%;
+}
+
+.library-icon-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.library-icon-button {
+  width: 48px;
+  height: 48px;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .library-icon {

@@ -1,30 +1,52 @@
 <div class="library-panel">
-  <div class="library-panel-header">
-    <span class="library-panel-title">Add Tool ({{ library?.length }})</span>
-    <button mat-icon-button class="library-panel-close" (click)="close()" aria-label="Close gadget library panel">
-      <mat-icon>close</mat-icon>
-    </button>
+  <div class="library-panel-header" [class.collapsed]="collapsed">
+    @if (!collapsed) {
+      <span class="library-panel-title">Add Tool ({{ library?.length }})</span>
+    }
+    <div class="library-panel-header-actions">
+      <button mat-icon-button class="library-panel-header-btn" (click)="toggleCollapsed()"
+        [matTooltip]="collapsed ? 'Expand' : 'Collapse'" matTooltipPosition="left"
+        [attr.aria-label]="collapsed ? 'Expand gadget library panel' : 'Collapse gadget library panel'">
+        <mat-icon>{{ collapsed ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+      </button>
+      <button mat-icon-button class="library-panel-header-btn library-panel-close" (click)="close()" aria-label="Close gadget library panel">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
   </div>
 
   <div class="library-panel-body">
-    <cdk-virtual-scroll-viewport itemSize="150" class="library-viewport">
-      <mat-card class="library-card"
-        *cdkVirtualFor="let gadget of library; let idx = index"
-        [ngStyle]="{'border-top-color': colors[idx]}">
-        <mat-card-header>
-          <mat-icon mat-card-avatar class="library-icon">{{ gadget.icon }}</mat-icon>
-          <mat-card-title>{{ gadget.title }}</mat-card-title>
-          <mat-card-subtitle>{{ gadget.subtitle }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          {{ gadget.description }}
-        </mat-card-content>
-        <mat-card-actions align="end">
-          <button mat-mini-fab color="primary" (click)="addGadget(gadget)">
-            <mat-icon>{{ gadget.actions[0].name }}</mat-icon>
+    @if (collapsed) {
+      <div class="library-icon-rail">
+        @for (gadget of library; track gadget.componentType) {
+          <button mat-icon-button class="library-icon-button"
+            [matTooltip]="gadget.title" matTooltipPosition="left"
+            [attr.aria-label]="'Add ' + gadget.title"
+            (click)="addGadget(gadget)">
+            <mat-icon [ngStyle]="{color: colors[$index]}">{{ gadget.icon }}</mat-icon>
           </button>
-        </mat-card-actions>
-      </mat-card>
-    </cdk-virtual-scroll-viewport>
+        }
+      </div>
+    } @else {
+      <cdk-virtual-scroll-viewport itemSize="150" class="library-viewport">
+        <mat-card class="library-card"
+          *cdkVirtualFor="let gadget of library; let idx = index"
+          [ngStyle]="{'border-top-color': colors[idx]}">
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="library-icon">{{ gadget.icon }}</mat-icon>
+            <mat-card-title>{{ gadget.title }}</mat-card-title>
+            <mat-card-subtitle>{{ gadget.subtitle }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            {{ gadget.description }}
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-mini-fab color="primary" (click)="addGadget(gadget)">
+              <mat-icon>{{ gadget.actions[0].name }}</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </cdk-virtual-scroll-viewport>
+    }
   </div>
 </div>

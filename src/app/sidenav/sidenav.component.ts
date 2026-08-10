@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatDrawer, MatDrawerContainer } from '@angular/material/sidenav';
 import { BoardService } from '../board/board.service';
 import { Hiearchy, IBoard, IBoardCollection } from '../board/board.model';
 import { EventService } from '../eventservice/event.service';
+import { AppConfigService } from '../app-config/app-config.service';
 import { MatNavList, MatListItem, MatListItemIcon } from '@angular/material/list';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
@@ -13,6 +14,7 @@ import { ConfigPanelComponent } from '../config-panel/config-panel.component';
 import { LibraryComponent } from '../library/library.component';
 import { HelpPanelComponent } from '../help-panel/help-panel.component';
 import { AgentPanelComponent } from '../agent/agent-panel.component';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-sidenav',
@@ -21,7 +23,7 @@ import { AgentPanelComponent } from '../agent/agent-panel.component';
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [MatDrawerContainer, MatDrawer, MatNavList, MatListItem, MatListItemIcon, MatIcon, MatIconButton, MatTooltip, SidelayoutComponent, BoardComponent, ConfigPanelComponent, LibraryComponent, HelpPanelComponent, AgentPanelComponent]
 })
-export class SidenavComponent implements OnInit {
+export class SidenavComponent implements OnInit, OnDestroy {
   @ViewChild('drawer') public drawer!: MatDrawer;
   @ViewChild('layout') public layout!: MatDrawer;
   @ViewChild('configPanel') public configPanel!: MatDrawer;
@@ -59,15 +61,32 @@ export class SidenavComponent implements OnInit {
     return this.navState === 'expanded' ? 220 : 64;
   }
 
+  // Drives .library-collapsed on .library-panel-container in
+  // sidenav.component.scss, which is what actually controls the library
+  // drawer's width (LibraryComponent itself just fills whatever width its
+  // ancestor drawer container resolves to - it can't set that width from
+  // inside, since CSS custom properties don't inherit upward).
+  libraryCollapsed = false;
+  private libraryCollapsedSub?: Subscription;
+
   constructor(
     private eventService: EventService,
-    private boardService: BoardService
+    private boardService: BoardService,
+    private appConfigService: AppConfigService
   ) {
     this.loadBoards();
     this.setupEventListeners();
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.libraryCollapsedSub = this.appConfigService.libraryPanelCollapsed$.subscribe((value) => {
+      this.libraryCollapsed = value;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.libraryCollapsedSub?.unsubscribe();
+  }
 
   /** Toolbar hamburger: switches only between the two visible rail widths. */
   toggleMenu() {
@@ -111,12 +130,18 @@ export class SidenavComponent implements OnInit {
     this.library.toggle();
   }
 
-  // Bound to (openedChange) on the two mode="side" drawers (#drawer, #layout),
-  // which push/resize the board rather than overlay it. That resize is a CSS
-  // transition, not a browser window resize, but ngx-charts only re-measures
-  // its container on the window's native 'resize' event — so without this,
-  // gadget charts stay sized for the old (drawer-open) width until an actual
-  // window resize or full page reload. openedChange fires once the drawer's
+  // Bound to (openedChange) on every mode="side" drawer except #drawer
+  // (#layout, #configPanel, #library, #helpPanel, #agentPanel) - all of
+  // them push/resize the board rather than overlay it, since the board sits
+  // nested inside all of their content areas. mode="over" was tried for the
+  // four utility panels first, but its slide is barely perceptible next to
+  // #layout's — mode="side" additionally animates the board's own
+  // margin/width, which is what actually reads as a real transition, not
+  // just the panel itself moving. That resize is a CSS transition, not a
+  // browser window resize, but ngx-charts only re-measures its container on
+  // the window's native 'resize' event — so without this, gadget charts
+  // stay sized for the old (drawer-open) width until an actual window
+  // resize or full page reload. openedChange fires once the drawer's
   // open/close animation has finished, so the board has already reached its
   // final width by the time this dispatches.
   onPushDrawerAnimationDone() {

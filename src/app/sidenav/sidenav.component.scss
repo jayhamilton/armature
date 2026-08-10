@@ -9,14 +9,43 @@
     background-color: var(--app-background);
 }
 
-.config-panel-container {
+// #layout gets its own container, sibling to .config-panel-container's nested
+// tree rather than a bare direct child of .example-container, so it can have
+// its own [hasBackdrop] independent of #drawer (the nav rail, which shares
+// .example-container and is permanently [opened]="true" - a backdrop set at
+// that level would forcibly apply to #drawer too and never go away).
+.layout-panel-container {
     width: 100%;
     height: 100%;
 
     // Material's structural .mat-drawer CSS is `width: var(--mat-sidenav-container-width, 360px)`.
-    // autosize doesn't reliably measure/set an inline width here (confirmed for both
-    // this over-mode drawer and the side-mode #layout drawer below), so it falls back
-    // to the 360px default regardless of the drawer's actual 480px content, clipping it.
+    // autosize (on the ancestor .example-container) doesn't reliably measure/set
+    // an inline width here, so it falls back to the 360px default regardless of
+    // the drawer's actual 480px content, clipping it.
+    //
+    // `> mat-drawer`, not a bare `mat-drawer` descendant selector: this container
+    // wraps the entire config/library/help/agent nesting below it, so an
+    // unscoped `mat-drawer { }` here would ALSO directly match every drawer
+    // nested inside them - and a rule that directly targets an element always
+    // wins over that element's own closer ancestor setting the same custom
+    // property through inheritance. That's exactly what broke the library
+    // panel's collapsed-width override: this rule's 480px was reaching all the
+    // way down to #library's drawer and beating its own container's 72px.
+    > mat-drawer {
+        --mat-sidenav-container-width: 480px;
+
+        // Same flush-under-the-toolbar corner issue as .config-panel-container
+        // below: M3's default shape rounds the leading corner, which cuts an
+        // odd notch where this drawer sits flush under the toolbar.
+        --mat-sidenav-container-shape: 0;
+    }
+}
+
+.config-panel-container {
+    width: 100%;
+    height: 100%;
+
+    // Same 360px-fallback issue as .layout-panel-container above.
     --mat-sidenav-container-width: 480px;
 
     // M3's default shape for an "over" drawer rounds its leading (left) corners
@@ -28,7 +57,11 @@
     // that floats with a gap around it, but this one sits flush under the
     // toolbar, so the rounded top-left corner cuts an odd notch right where
     // the two meet.
-    mat-drawer {
+    //
+    // `> mat-drawer`: same reasoning as .layout-panel-container above - this
+    // must not reach the #library/#helpPanel/#agentPanel drawers nested
+    // further down, or their own width overrides get silently outranked.
+    > mat-drawer {
         --mat-sidenav-container-shape: 0;
     }
 }
@@ -44,8 +77,18 @@
     height: 100%;
     --mat-sidenav-container-width: 480px;
 
-    mat-drawer {
+    // Slightly wider than the nav rail's 64px collapsed width: that rail holds
+    // full-width list-items (just an icon, left-aligned), while this holds
+    // circular icon buttons that need centered breathing room on both sides.
+    &.library-collapsed {
+        --mat-sidenav-container-width: 72px;
+    }
+
+    // `> mat-drawer`: same reasoning as .layout-panel-container above.
+    > mat-drawer {
         --mat-sidenav-container-shape: 0;
+        transition: width 200ms ease;
+        overflow-x: hidden;
     }
 }
 
@@ -59,17 +102,12 @@
     height: 100%;
     --mat-sidenav-container-width: 480px;
 
-    mat-drawer {
+    // `> mat-drawer`: same reasoning as .layout-panel-container above -
+    // .help-panel-container in particular wraps #agentPanel's own container,
+    // so an unscoped selector here would reach it too.
+    > mat-drawer {
         --mat-sidenav-container-shape: 0;
     }
-}
-
-.layout-drawer {
-    // Same 360px-fallback issue as .config-panel-container above.
-    --mat-sidenav-container-width: 480px;
-
-    // Same flush-under-the-toolbar corner issue as .config-panel-container above.
-    --mat-sidenav-container-shape: 0;
 }
 
 .example-sidenav {
