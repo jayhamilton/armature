@@ -69,6 +69,20 @@ export class LocalStorageBoardRepository implements IBoardRepository {
         board.title = meta.title;
         board.description = meta.description;
         board.icon = meta.icon || board.icon || 'dashboard';
+
+        // tabs[] is a denormalized {title, id} copy taken at pairing time (see
+        // createBoard above) - every board in the collection can carry an entry
+        // for this board (itself, and/or a sibling paired with it via
+        // pairWithExistingBoardId), so the rename has to be replayed into all
+        // of them or the mat-tab label goes stale permanently, unlike every
+        // other display of the title which reads board.title directly.
+        collection.boardList.forEach((b) => {
+          b.tabs?.forEach((tab) => {
+            if (tab.id === boardId) {
+              tab.title = meta.title;
+            }
+          });
+        });
       })
     );
   }

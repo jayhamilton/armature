@@ -36,7 +36,7 @@
     [opened]="true"
     (transitionend)="onNavRailTransitionEnd($event)">
     <mat-nav-list>
-      @for (board of boardData; track board) {
+      @for (board of boardData; track board.id) {
         <mat-list-item
           [class.active]="board.id === selectedBoardId"
           [matTooltip]="board.title"

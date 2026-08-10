@@ -208,6 +208,13 @@ export class TabBoardsComponent implements OnInit {
 
       this.editMode = false;
       this.loadData();
+
+      // Without this, the sidenav/header update instantly (see BoardService/
+      // BoardBannerComponent's listeners) but stay hidden behind this still-open
+      // dialog - reading as if the edit "took a while" to show up, when really
+      // the user just couldn't see it happen. create() above closes on save for
+      // the same reason; this path just never got the same treatment.
+      this.boardAddEvent.emit("");
   }
 
   delete(item: any) {

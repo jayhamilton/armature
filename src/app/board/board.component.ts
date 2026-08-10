@@ -159,6 +159,7 @@ export class BoardComponent implements OnInit {
       if (this.boardData.id === event.data['id']){
         this.boardData.description = event.data['description'];
         this.boardData.title = event.data['title'];
+        this.boardData.icon = event.data['icon'];
         this.scheduleDetectChanges();
       }
     });
