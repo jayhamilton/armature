@@ -1,3 +1,5 @@
+<img src="https://github.com/jayhamilton/armature/blob/main/documentation/logo.png?raw=true" alt="Armature logo" width="96">
+
 # Armature
 
 **A runtime for interfaces that are described rather than built.**
@@ -10,13 +12,13 @@ Armature is implemented with Angular and Angular Material. The model it implemen
 
 > Formerly **NGX Dynamic Dashboard Framework**. This project is based on the open source project https://github.com/catalogicsoftware/ngx-dynamic-dashboard-framework I created a few years ago.
 
-![Dashboard overview](https://github.com/jayhamilton/armature-ui/blob/main/documentation/dashboard-overview.jpg)
+![Dashboard overview](https://github.com/jayhamilton/armature/blob/main/documentation/dashboard-overview.jpg)
 
 ## Quick Start
 
 A fresh install has no boards yet. The empty state walks through both steps needed to get a dashboard on screen — open the settings menu to create a board, then open the gadget library to populate it.
 
-![Quick start walkthrough](https://github.com/jayhamilton/armature-ui/blob/main/documentation/quick-start.gif)
+![Quick start walkthrough](https://github.com/jayhamilton/armature/blob/main/documentation/quick-start.gif)
 
 ## Design Principles
 
@@ -73,21 +75,21 @@ Suggestions render as real, actionable cards rather than raw data: an "Add to bo
 
 The initial implementation is intentionally lightweight and designed to grow into a richer agent workflow. Assistant responses can carry text, structured tool-calls, and richer UI payloads such as A2UI/AGUI-style component content or iframe-based MCP app previews, so the panel can eventually host interactive app experiences directly inside the conversation.
 
-![Agentic assistant panel](https://github.com/jayhamilton/armature-ui/blob/main/documentation/agentic-panel.jpg)
+![Agentic assistant panel](https://github.com/jayhamilton/armature/blob/main/documentation/agentic-panel.jpg)
 
 ### Boards
 
 Multiple dashboards, each with its own title, description, and Material icon. The current board's identity is shown in a banner beneath the toolbar, and boards are switched from the navigation rail on the left. The rail collapses to icons only when you want the space back.
 
-![Board navigation](https://github.com/jayhamilton/armature-ui/blob/main/documentation/board-navigation.jpg)
+![Board navigation](https://github.com/jayhamilton/armature/blob/main/documentation/board-navigation.jpg)
 
 Boards are created and edited from the configuration dialog, which also carries the description and icon shown in the banner and navigation.
 
-![Board configuration](https://github.com/jayhamilton/armature-ui/blob/main/documentation/board-configuration.jpg)
+![Board configuration](https://github.com/jayhamilton/armature/blob/main/documentation/board-configuration.jpg)
 
 Icons are chosen with a searchable picker drawn from the Material Icons set — no image assets involved.
 
-![Icon picker](https://github.com/jayhamilton/armature-ui/blob/main/documentation/icon-picker.jpg)
+![Icon picker](https://github.com/jayhamilton/armature/blob/main/documentation/icon-picker.jpg)
 
 ### Rows and Layouts
 
@@ -95,7 +97,7 @@ A board is made of rows, and **each row has its own column layout** — so a thr
 
 Removing a row relocates its gadgets into the first remaining row rather than discarding them.
 
-![Board layouts panel](https://github.com/jayhamilton/armature-ui/blob/main/documentation/board-layouts-panel.jpg)
+![Board layouts panel](https://github.com/jayhamilton/armature/blob/main/documentation/board-layouts-panel.jpg)
 
 Available layouts: one column, two equal, two narrow/wide, two wide/narrow, and three equal. Gadgets can be dragged between columns and between rows.
 
@@ -103,7 +105,7 @@ Available layouts: one column, two equal, two narrow/wide, two wide/narrow, and 
 
 Gadgets are added from a side panel driven entirely by the library JSON. Each card shows a colored accent matching its gadget type and lifts off the panel background with a soft shadow rather than a hard outline.
 
-![Gadget library](https://github.com/jayhamilton/armature-ui/blob/main/documentation/gadget-library.jpg)
+![Gadget library](https://github.com/jayhamilton/armature/blob/main/documentation/gadget-library.jpg)
 
 | Gadget | Purpose |
 |---|---|
@@ -122,25 +124,25 @@ Gadgets are added from a side panel driven entirely by the library JSON. Each ca
 
 Each gadget's header carries three icons — **Help**, **Configure**, and **Remove** — instead of a dropdown menu. Selecting **Configure** opens a side panel whose form is generated from that gadget's property definitions; the card shows a configuration-mode indicator while the panel is open, and edits are applied live.
 
-![Gadget configuration](https://github.com/jayhamilton/armature-ui/blob/main/documentation/gadget-configuration.jpg)
+![Gadget configuration](https://github.com/jayhamilton/armature/blob/main/documentation/gadget-configuration.jpg)
 
 Supported form controls: `textbox`, `number`, `checkbox`, `dropdown`, `dropdown-ms`, `date`, `textarea`, `upload`, `hidden`, `section`, `icon-picker`, `ace-editor`, `json-forms`, and `markdown`. Gadget data is edited as JSON in an embedded Ace editor.
 
 The `markdown` control (used by the Text gadget's content field) is aimed at people who don't already know markdown syntax: a small toolbar inserts the right syntax at the cursor — bold, italic, headings, lists, quotes, inline code, links — and a live preview sits next to the raw text so the effect of each edit is immediately visible.
 
-![Markdown editor](https://github.com/jayhamilton/armature-ui/blob/main/documentation/markdown-editor.jpg)
+![Markdown editor](https://github.com/jayhamilton/armature/blob/main/documentation/markdown-editor.jpg)
 
 ### Gadget Help
 
 Selecting **Help** opens a side panel with that gadget's own documentation — its purpose, its configuration options, and the JSON shape its data control expects. Help content is markdown, one file per gadget type, so it's easy to keep in sync as gadgets evolve.
 
-![Gadget help panel](https://github.com/jayhamilton/armature-ui/blob/main/documentation/help-panel.jpg)
+![Gadget help panel](https://github.com/jayhamilton/armature/blob/main/documentation/help-panel.jpg)
 
 ### Locking a Board
 
 A toolbar lock toggle switches a board to a protected, read-only state: gadget headers shrink to bare content — no Configure/Help/Remove icons, no title, subtitle, or icon — drag-and-drop is disabled, and the toolbar's board settings, library, and layout icons hide. Useful for a shared or kiosk display where accidental edits aren't welcome.
 
-![Locked board](https://github.com/jayhamilton/armature-ui/blob/main/documentation/board-locked.jpg)
+![Locked board](https://github.com/jayhamilton/armature/blob/main/documentation/board-locked.jpg)
 
 ### Application Configuration
 
@@ -149,13 +151,13 @@ Application-wide settings, independent of any single board:
 - **Application title** — shown in the toolbar, persisted locally, with a reset back to the built-in default.
 - **Transparent card backgrounds** — a toggle that drops the card fill and shadow from every gadget on the board, so gadgets sit directly on the page background instead of inside their own card.
 
-![Application configuration](https://github.com/jayhamilton/armature-ui/blob/main/documentation/application-configuration.jpg)
+![Application configuration](https://github.com/jayhamilton/armature/blob/main/documentation/application-configuration.jpg)
 
 ### Light and Dark Themes
 
 A toolbar toggle switches the entire app — Material components, chart text, side panels, and gadgets — between light and dark. The choice is persisted across sessions.
 
-![Light theme](https://github.com/jayhamilton/armature-ui/blob/main/documentation/light-theme.jpg)
+![Light theme](https://github.com/jayhamilton/armature/blob/main/documentation/light-theme.jpg)
 
 ### Persistence
 
@@ -167,21 +169,21 @@ Boards, layouts, gadget instances, and their configured property values are stor
 
 ### 1. Define the component, service, and view
 
-* Bar Chart Component [bar-chart.component.ts](https://github.com/jayhamilton/armature-ui/blob/main/src/app/gadgets/bar-chart/bar-chart.component.ts)
-* Bar Chart View [bar-chart.component.html](https://github.com/jayhamilton/armature-ui/blob/main/src/app/gadgets/bar-chart/bar-chart.component.html)
+* Bar Chart Component [bar-chart.component.ts](https://github.com/jayhamilton/armature/blob/main/src/app/gadgets/bar-chart/bar-chart.component.ts)
+* Bar Chart View [bar-chart.component.html](https://github.com/jayhamilton/armature/blob/main/src/app/gadgets/bar-chart/bar-chart.component.html)
 * Optionally add a service to call a REST endpoint for the gadget's data
 
 Gadgets extend `GadgetBase`, which supplies the title, subtitle, icon, instance id, property pages, and configuration-mode state.
 
 ### 2. Define the gadget's model
 
-Add an entry to the library array in [library.json](https://github.com/jayhamilton/armature-ui/blob/main/src/assets/api/library.json). This entry drives both the library panel card and the generated configuration form.
+Add an entry to the library array in [library.json](https://github.com/jayhamilton/armature/blob/main/src/assets/api/library.json). This entry drives both the library panel card and the generated configuration form.
 
 Production builds read `library-prod.json`, so add the entry to both files.
 
 ### 3. Register it with the gadget registry
 
-Add a `componentType -> dynamic import()` entry to [gadget-registry.ts](https://github.com/jayhamilton/armature-ui/blob/main/src/app/gadgets/gadget-registry.ts):
+Add a `componentType -> dynamic import()` entry to [gadget-registry.ts](https://github.com/jayhamilton/armature/blob/main/src/app/gadgets/gadget-registry.ts):
 
 ```ts
 MyNewGadgetComponent: () =>
@@ -194,7 +196,7 @@ MyNewGadgetComponent: () =>
 
 Set `icon` to a [Material Icons](https://fonts.google.com/icons?icon.set=Material+Icons) ligature name (e.g. `"bar_chart"`) — no image file needed. It renders as a `<mat-icon>` in both the gadget header and the library panel, so it themes correctly in light and dark mode.
 
-Boards use the same convention. The icon picker's list lives in [icon-options.ts](https://github.com/jayhamilton/armature-ui/blob/main/src/app/shared/icon-picker/icon-options.ts) — add entries there to extend it. `IconPickerComponent` is a standard `ControlValueAccessor`, so it can be used in any reactive form.
+Boards use the same convention. The icon picker's list lives in [icon-options.ts](https://github.com/jayhamilton/armature/blob/main/src/app/shared/icon-picker/icon-options.ts) — add entries there to extend it. `IconPickerComponent` is a standard `ControlValueAccessor`, so it can be used in any reactive form.
 
 ### 5. Help content
 
