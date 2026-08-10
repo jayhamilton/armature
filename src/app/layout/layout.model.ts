@@ -6,7 +6,8 @@ export enum LayoutType {
   TWO_COL_EQUAL = "two_col_equal",
   TWO_COL_NARROW_WIDE = "two_col_narrow_wide",
   TWO_COL_WIDE_NARROW = "two_col_wide_narrow",
-  THREE_COL_EQUAL = "three_col_equal"
+  THREE_COL_EQUAL = "three_col_equal",
+  MASONRY = "masonry"
 }
 
 
@@ -34,6 +35,10 @@ export const layouts = [
   {
     id: 5,
     structure: LayoutType.ONE_COL_FULL,
+  },
+  {
+    id: 6,
+    structure: LayoutType.MASONRY,
   },
 ];
 

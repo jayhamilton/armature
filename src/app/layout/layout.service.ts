@@ -22,6 +22,8 @@ export class LayoutService {
         return 2;
       case LayoutType.THREE_COL_EQUAL:
         return 3;
+      case LayoutType.MASONRY:
+        return 4;
       default:
         return 2;
     }
