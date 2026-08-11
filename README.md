@@ -107,6 +107,10 @@ Gadgets are added from a side panel driven entirely by the library JSON. Each ca
 
 ![Gadget library](https://github.com/jayhamilton/armature/blob/main/documentation/gadget-library.jpg)
 
+The panel can also collapse to an icon-only rail — each icon still carries its gadget's color and a tooltip, and adds that gadget to the board on click. The collapsed state is persisted, so it stays out of the way once you've dismissed it.
+
+![Gadget library, collapsed to an icon rail](https://github.com/jayhamilton/armature/blob/main/documentation/gadget-library-minimal.jpg)
+
 | Gadget | Purpose |
 |---|---|
 | Bar Chart | Vertical bar chart for categorical data |
