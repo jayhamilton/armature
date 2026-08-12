@@ -21,8 +21,3 @@ mat-toolbar {
   letter-spacing: 0.3px;
 }
 
-// Matches gadget-header's configure button: Material's "tune" glyph is drawn
-// as horizontal slider rows, rotated 90deg for a vertical-sliders look.
-.config-toggle-icon mat-icon {
-  transform: rotate(90deg);
-}

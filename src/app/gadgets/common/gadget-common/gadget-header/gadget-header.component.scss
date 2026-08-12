@@ -37,13 +37,6 @@
     right: 58px;
 }
 
-// Material's "tune" glyph is drawn as three horizontal slider rows - rotating
-// it 90deg turns those into vertical rows instead, without needing a custom
-// SVG icon for what's otherwise just an orientation change.
-.configure-button mat-icon {
-    transform: rotate(90deg);
-}
-
 .help-button {
     position: absolute;
     top: 5px;
