@@ -120,6 +120,12 @@
             <app-illustration-picker [formControlName]="property.key"></app-illustration-picker>
           </div>
         }
+        @case ('endpoint-picker') {
+          <div class="endpoint-picker-field">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <app-endpoint-picker [formControlName]="property.key" [gadgetTags]="gadgetTags"></app-endpoint-picker>
+          </div>
+        }
       }
     </div>
   </div>

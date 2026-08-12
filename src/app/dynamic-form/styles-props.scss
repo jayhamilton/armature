@@ -129,7 +129,8 @@ mat-tab-group {
 // its own — pair it with an explicit label stacked above, matching how the
 // surrounding fields read.
 .icon-picker-field,
-.illustration-picker-field {
+.illustration-picker-field,
+.endpoint-picker-field {
   display: flex;
   flex-direction: column;
   gap: 4px;

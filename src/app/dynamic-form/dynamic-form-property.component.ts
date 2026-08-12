@@ -24,6 +24,7 @@ import { MarkdownEditorComponent } from './markdown-editor/markdown-editor.compo
 import { MatCheckbox } from '@angular/material/checkbox';
 import { IconPickerComponent } from '../shared/icon-picker/icon-picker.component';
 import { IllustrationPickerComponent } from '../shared/illustrations/illustration-picker/illustration-picker.component';
+import { EndpointPickerComponent } from '../shared/endpoint-picker/endpoint-picker.component';
 
 @Component({
     selector: 'app-df-property',
@@ -43,13 +44,13 @@ import { IllustrationPickerComponent } from '../shared/illustrations/illustratio
         ]),
     ],
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatSelect, MatOption, MatIcon, FileUploadComponent, MatDatepickerInput, MatHint, MatDatepickerToggle, MatSuffix, MatDatepicker, AceEditorComponent, JsonFormsEditorComponent, MarkdownEditorComponent, MatCheckbox, IconPickerComponent, IllustrationPickerComponent]
+    imports: [FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatSelect, MatOption, MatIcon, FileUploadComponent, MatDatepickerInput, MatHint, MatDatepickerToggle, MatSuffix, MatDatepicker, AceEditorComponent, JsonFormsEditorComponent, MarkdownEditorComponent, MatCheckbox, IconPickerComponent, IllustrationPickerComponent, EndpointPickerComponent]
 })
 export class DynamicFormPropertyComponent implements AfterContentInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Input() property: PropertyBase<any>;
   @Input() form: UntypedFormGroup;
-  @Input() gadgetTags: ITag[]; //todo - use to control what endpoints are displayed
+  @Input() gadgetTags: ITag[];
   endPoints: string[] = [];
 
   colors:string[] = ['red', 'blue', 'orange', 'black', 'green'];

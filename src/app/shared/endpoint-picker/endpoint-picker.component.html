@@ -1,0 +1,33 @@
+<button
+  type="button"
+  #menuTrigger="matMenuTrigger"
+  class="endpoint-picker-trigger"
+  [matMenuTriggerFor]="endpointMenu"
+  [disabled]="disabled"
+  matTooltip="Choose a data source">
+  <mat-icon class="endpoint-picker-trigger-icon">{{ value === manualValue ? 'edit_note' : 'cloud' }}</mat-icon>
+  <span class="endpoint-picker-trigger-label">{{ selectedLabel }}</span>
+</button>
+
+<!-- Empty spacer matching mat-form-field's subscript wrapper (hint/error
+     row), so this control's total height and top-aligned position lines
+     up with the outline form fields next to it in the same form row. -->
+<div class="endpoint-picker-subscript-spacer"></div>
+
+<mat-menu #endpointMenu="matMenu" (closed)="menuClosed()">
+  <button mat-menu-item [class.selected]="value === manualValue" (click)="select(manualValue); menuTrigger.closeMenu()">
+    <mat-icon>edit_note</mat-icon>
+    Manual
+  </button>
+
+  @if (eligibleEndpoints.length > 0) {
+    @for (endpoint of eligibleEndpoints; track endpoint.id) {
+      <button mat-menu-item [class.selected]="value === endpoint.id" (click)="select(endpoint.id); menuTrigger.closeMenu()">
+        <mat-icon>cloud</mat-icon>
+        {{ endpoint.name }}
+      </button>
+    }
+  } @else {
+    <div class="endpoint-picker-empty">No endpoints match this gadget's tags yet.</div>
+  }
+</mat-menu>

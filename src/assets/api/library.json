@@ -45,6 +45,17 @@
             }
           },
           {
+            "controlType": "endpoint-picker",
+            "key": "dataSource",
+            "label": "Data Source",
+            "value": "manual",
+            "required": false,
+            "order": 3,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "controlType": "section",
             "key": "section-chart-props",
             "label": "Chart Properties",

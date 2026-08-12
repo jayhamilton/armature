@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, ElementRef, ViewChild } from '@angu
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatFormField, MatLabel, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect, MatOption } from '@angular/material/select';
@@ -58,6 +59,15 @@ export class TabEndpointsComponent {
   // endpoint's tags can never fail to match any gadget through a typo.
   tagOptions: GadgetTagOption[] = [];
 
+  // A plain property, recomputed explicitly by updateFilteredTagOptions()
+  // rather than a template-bound getter. A getter re-invoked on every change
+  // detection pass returns a new array *instance* each time even when its
+  // contents are identical, which made MatAutocomplete's own internal
+  // active-option tracking see the options list as constantly "changing" -
+  // this was the source of an NG0100 ExpressionChangedAfterItHasBeenChecked
+  // error, not a real functional bug, but a real one to fix.
+  filteredTagOptions: GadgetTagOption[] = [];
+
   displayedColumns: string[] = ['name', 'address', 'tags', 'tools'];
   dataSource = new EndpointDataSource([]);
   endpoints: IEndpoint[] = [];
@@ -69,6 +79,7 @@ export class TabEndpointsComponent {
     private endpointService: EndpointService,
     private tagOptionsService: GadgetTagOptionsService,
     private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     fb: UntypedFormBuilder
   ) {
     this.form = fb.group({
@@ -84,12 +95,14 @@ export class TabEndpointsComponent {
     this.loadData();
     this.tagOptionsService.getTagOptions().subscribe((options) => {
       this.tagOptions = options;
+      this.updateFilteredTagOptions();
     });
+    this.tagSearch.valueChanges.subscribe(() => this.updateFilteredTagOptions());
   }
 
-  get filteredTagOptions(): GadgetTagOption[] {
+  private updateFilteredTagOptions(): void {
     const term = (this.tagSearch.value || '').trim().toLowerCase();
-    return this.tagOptions.filter(
+    this.filteredTagOptions = this.tagOptions.filter(
       (option) =>
         !this.tags.some((t) => t.name.toLowerCase() === option.name) &&
         (!term || option.name.includes(term))
@@ -134,6 +147,9 @@ export class TabEndpointsComponent {
       this.tags.push({ facet: '', name });
       this.form.markAsDirty();
     }
+    // Clearing tagSearch's value triggers the valueChanges subscription
+    // above, which recomputes filteredTagOptions - no separate call needed
+    // here.
     this.tagSearch.setValue('');
     // Belt-and-suspenders alongside the FormControl reset above - see the
     // resetForm() comment on tagInputRef for why a direct DOM clear is here
@@ -146,6 +162,7 @@ export class TabEndpointsComponent {
   removeTag(tag: ITag): void {
     this.tags = this.tags.filter((t) => t !== tag);
     this.form.markAsDirty();
+    this.updateFilteredTagOptions();
   }
 
   create() {
@@ -155,9 +172,12 @@ export class TabEndpointsComponent {
     }
 
     const endpoint = this.buildWritePayload();
-    this.endpointService.createEndpoint(endpoint).subscribe(() => {
-      this.resetForm();
-      this.loadData();
+    this.endpointService.createEndpoint(endpoint).subscribe({
+      next: () => {
+        this.resetForm();
+        this.loadData();
+      },
+      error: (err) => this.showSaveError(err),
     });
   }
 
@@ -165,11 +185,28 @@ export class TabEndpointsComponent {
     if (!this.selectedId) return;
 
     const endpoint = this.buildWritePayload();
-    this.endpointService.updateEndpoint(this.selectedId, endpoint).subscribe(() => {
-      this.editMode = false;
-      this.resetForm();
-      this.loadData();
+    this.endpointService.updateEndpoint(this.selectedId, endpoint).subscribe({
+      next: () => {
+        this.editMode = false;
+        this.resetForm();
+        this.loadData();
+      },
+      error: (err) => this.showSaveError(err),
     });
+  }
+
+  // create()/update() previously subscribed with only a `next` handler, so a
+  // failed request (e.g. the backend route not existing yet) threw an
+  // unhandled RxJS error into the console and otherwise did nothing visible
+  // - clicking "Add" appeared to silently do nothing. This at minimum tells
+  // the user something went wrong instead of leaving them guessing.
+  private showSaveError(err: unknown): void {
+    const status = (err as { status?: number })?.status;
+    const message =
+      status === 404
+        ? 'Could not save endpoint - the backend route is not available yet.'
+        : 'Could not save endpoint. Please try again.';
+    this.snackBar.open(message, 'Dismiss', { duration: 5000 });
   }
 
   edit(item: IEndpoint) {
@@ -183,6 +220,7 @@ export class TabEndpointsComponent {
     // value, so leaving this blank on edit means "keep the existing one".
     this.credentialValue.setValue('');
     this.tags = item.tags.map((t) => ({ ...t }));
+    this.updateFilteredTagOptions();
     this.selectedId = item.id;
     this.editMode = true;
     this.form.markAsDirty();
@@ -199,7 +237,11 @@ export class TabEndpointsComponent {
     });
     ref.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.endpointService.deleteEndpoint(item.id).subscribe(() => this.loadData());
+        this.endpointService.deleteEndpoint(item.id).subscribe({
+          next: () => this.loadData(),
+          error: () =>
+            this.snackBar.open('Could not delete endpoint. Please try again.', 'Dismiss', { duration: 5000 }),
+        });
       }
     });
   }

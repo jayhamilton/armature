@@ -1,0 +1,50 @@
+:host {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.endpoint-picker-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--app-input-border);
+    border-radius: 4px;
+    height: 56px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    color: var(--app-text-secondary);
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+}
+
+.endpoint-picker-trigger-icon {
+    color: var(--app-text-secondary);
+}
+
+// Matches .mat-mdc-form-field-subscript-wrapper's reserved height so this
+// control's total height/top position matches the outline mat-form-fields
+// beside it in the same form row.
+.endpoint-picker-subscript-spacer {
+    height: 21px;
+}
+
+.endpoint-picker-trigger-label {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+}
+
+.selected {
+    background-color: var(--app-brand-tint-strong);
+    color: var(--app-brand);
+}
+
+.endpoint-picker-empty {
+    padding: 8px 16px;
+    color: var(--app-text-secondary);
+    font-size: 0.85rem;
+    max-width: 220px;
+}
