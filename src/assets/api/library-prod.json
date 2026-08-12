@@ -6,7 +6,16 @@
     "description": "Add a vertical bar chart to visualize categorical data.",
     "icon": "bar_chart",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "bar"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -235,7 +244,20 @@
     "description": "Add a smooth area chart to visualize trends over time.",
     "icon": "area_chart",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "area"
+      },
+      {
+        "facet": "",
+        "name": "trend"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -510,7 +532,20 @@
     "description": "Add a pie chart to show proportional data.",
     "icon": "pie_chart",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "pie"
+      },
+      {
+        "facet": "",
+        "name": "proportional"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -680,7 +715,16 @@
     "description": "Add a bubble chart to visualize three-dimensional data.",
     "icon": "bubble_chart",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "bubble"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -948,7 +992,16 @@
     "description": "Add number cards to display key performance indicators.",
     "icon": "dashboard",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "kpi"
+      },
+      {
+        "facet": "",
+        "name": "metric"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -1085,7 +1138,20 @@
     "description": "Add a line chart to visualize trends across multiple series.",
     "icon": "show_chart",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "line"
+      },
+      {
+        "facet": "",
+        "name": "trend"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -1349,7 +1415,16 @@
     "description": "Add a table to display rows of tabular data.",
     "icon": "table_chart",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "table"
+      },
+      {
+        "facet": "",
+        "name": "data"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -1475,7 +1550,16 @@
     "description": "Add a single statistic with an icon and color theme.",
     "icon": "speed",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "kpi"
+      },
+      {
+        "facet": "",
+        "name": "metric"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -1647,7 +1731,16 @@
     "description": "Add a block of markdown-formatted text for narrative content.",
     "icon": "notes",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "narrative"
+      },
+      {
+        "facet": "",
+        "name": "text"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -1703,7 +1796,16 @@
     "description": "Embed a YouTube video on the board.",
     "icon": "smart_display",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "media"
+      },
+      {
+        "facet": "",
+        "name": "video"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",
@@ -1770,7 +1872,16 @@
     "description": "Add a decorative unDraw illustration to the board.",
     "icon": "image",
     "instanceId": -1,
-    "tags": [],
+    "tags": [
+      {
+        "facet": "",
+        "name": "decorative"
+      },
+      {
+        "facet": "",
+        "name": "illustration"
+      }
+    ],
     "propertyPages": [
       {
         "displayName": "Configuration",

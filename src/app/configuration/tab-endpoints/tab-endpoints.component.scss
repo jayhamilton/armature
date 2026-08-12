@@ -1,0 +1,137 @@
+.section-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--app-brand);
+  margin: 16px 0 8px;
+}
+
+.endpoints-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.form-field-name {
+  width: 180px;
+}
+
+.form-field-address {
+  width: 260px;
+}
+
+.form-field-desc {
+  width: 220px;
+}
+
+.form-field-tags {
+  width: 220px;
+}
+
+.form-field-auth,
+.form-field-auth-header,
+.form-field-auth-user,
+.form-field-credential {
+  width: 180px;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+}
+
+.tag-option-name {
+  font-weight: 500;
+}
+
+.tag-option-gadgets {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--app-text-secondary);
+  line-height: 1.2;
+}
+
+.endpoints-table-section {
+  margin-top: 8px;
+}
+
+.endpoints-table {
+  width: 100%;
+  border: 1px solid var(--app-border);
+  border-radius: 4px;
+  overflow: hidden;
+
+  th.mat-mdc-header-cell {
+    background-color: var(--app-brand);
+    color: var(--app-brand-contrast);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    padding: 10px 16px;
+  }
+
+  td.mat-mdc-cell {
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    color: var(--app-text-secondary);
+  }
+
+  tr.mat-mdc-row {
+    height: 44px;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--app-brand-tint);
+    }
+  }
+
+  tr.mat-mdc-row:not(:last-child) td.mat-mdc-cell {
+    border-bottom: 1px solid var(--app-border);
+  }
+}
+
+.address-cell {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.8rem;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag-pill {
+  display: inline-block;
+  background-color: var(--app-brand-tint);
+  color: var(--app-brand);
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  margin: 2px 4px 2px 0;
+}
+
+.endpoints-empty {
+  color: var(--app-text-secondary);
+  font-style: italic;
+  padding: 12px 4px;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}

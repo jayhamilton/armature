@@ -28,7 +28,7 @@
         }
       </div>
     } @else {
-      <cdk-virtual-scroll-viewport itemSize="132" class="library-viewport">
+      <cdk-virtual-scroll-viewport itemSize="160" class="library-viewport">
         <mat-card class="library-card"
           *cdkVirtualFor="let gadget of library; let idx = index"
           [ngStyle]="{'border-top-color': colors[idx]}">
@@ -44,6 +44,13 @@
           <mat-card-content>
             {{ gadget.description }}
           </mat-card-content>
+          @if (gadget.tags.length > 0) {
+            <div class="library-card-tags">
+              @for (tag of gadget.tags; track tag.name) {
+                <span class="tag-pill">{{ tag.name }}</span>
+              }
+            </div>
+          }
         </mat-card>
       </cdk-virtual-scroll-viewport>
     }

@@ -119,9 +119,7 @@
   }
 
   mat-card-content {
-    // Bottom padding matches the header's own top padding (12px), so the
-    // card reads as evenly framed rather than tighter on the bottom edge.
-    padding: 4px 12px 12px;
+    padding: 4px 12px 0;
 
     overflow: hidden;
     display: -webkit-box;
@@ -129,6 +127,27 @@
     -webkit-box-orient: vertical;
     font-size: 0.85rem;
   }
+}
+
+// Bottom padding matches the header's own top padding (12px), so the card
+// reads as evenly framed rather than tighter on the bottom edge - carried
+// by this row (when a gadget has tags) instead of mat-card-content, so
+// there isn't a doubled-up gap when both are present.
+.library-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 12px 12px;
+}
+
+.tag-pill {
+  display: inline-block;
+  background-color: var(--app-brand-tint);
+  color: var(--app-brand);
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  line-height: 1.4;
 }
 
 // Matches gadget-header's own action buttons (help/configure/remove) -

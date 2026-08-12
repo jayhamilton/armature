@@ -12,9 +12,9 @@ import { IGadget } from '../gadgets/common/gadget-common/gadget-base/gadget.mode
 import { LibraryService } from './library.service';
 import { AppConfigService } from '../app-config/app-config.service';
 import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from '@angular/cdk/scrolling';
-import { MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent } from '@angular/material/card';
 import { NgStyle } from '@angular/common';
-import { MatMiniFabButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
@@ -24,7 +24,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './library.component.html',
     styleUrls: ['./library.component.scss'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf, MatCard, NgStyle, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions, MatMiniFabButton, MatIcon, MatIconButton, MatTooltip]
+    imports: [CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf, MatCard, NgStyle, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatIcon, MatIconButton, MatTooltip]
 })
 export class LibraryComponent implements OnInit, AfterViewInit, OnDestroy {
   // QueryList rather than a single @ViewChild: the virtual-scroll viewport only
