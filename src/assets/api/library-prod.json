@@ -1695,5 +1695,175 @@
         "name": "add"
       }
     ]
+  },
+  {
+    "componentType": "VideoComponent",
+    "title": "Video",
+    "subtitle": "YouTube video player",
+    "description": "Embed a YouTube video on the board.",
+    "icon": "smart_display",
+    "instanceId": -1,
+    "tags": [],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "",
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "videoUrl",
+            "label": "YouTube URL or Video ID",
+            "value": "",
+            "required": false,
+            "order": 3,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "autoplay",
+            "label": "Autoplay (muted)",
+            "value": false,
+            "required": false,
+            "order": 4,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "IllustrationComponent",
+    "title": "Illustration",
+    "subtitle": "unDraw illustration",
+    "description": "Add a decorative unDraw illustration to the board.",
+    "icon": "image",
+    "instanceId": -1,
+    "tags": [],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "",
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "illustration-picker",
+            "key": "illustration",
+            "label": "Illustration",
+            "value": "",
+            "required": false,
+            "order": 3,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "altText",
+            "label": "Alt Text",
+            "value": "",
+            "required": false,
+            "order": 4,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "caption",
+            "label": "Caption",
+            "value": "",
+            "required": false,
+            "order": 5,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "dropdown",
+            "key": "size",
+            "label": "Size",
+            "value": "medium",
+            "required": false,
+            "order": 6,
+            "options": [
+              {
+                "key": "small",
+                "value": "Small"
+              },
+              {
+                "key": "medium",
+                "value": "Medium"
+              },
+              {
+                "key": "large",
+                "value": "Large"
+              }
+            ],
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
   }
 ]

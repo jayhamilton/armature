@@ -111,6 +111,10 @@ The panel can also collapse to an icon-only rail — each icon still carries its
 
 ![Gadget library, collapsed to an icon rail](https://github.com/jayhamilton/armature/blob/main/documentation/gadget-library-minimal.jpg)
 
+The Illustration gadget places a decorative [unDraw](https://undraw.co) illustration on the board — useful for empty-state framing or breaking up a page of charts and tables.
+
+![Illustration gadget](https://github.com/jayhamilton/armature/blob/main/documentation/illustration-gadget.jpg)
+
 | Gadget | Purpose |
 |---|---|
 | Bar Chart | Vertical bar chart for categorical data |
@@ -118,6 +122,7 @@ The panel can also collapse to an icon-only rail — each icon still carries its
 | Line Chart | Multi-series line chart |
 | Pie Chart | Proportional data |
 | Bubble Chart | Three-dimensional (x / y / size) data |
+| Illustration | A decorative [unDraw](https://undraw.co) illustration, picked from a curated local set, with a Small/Medium/Large size control |
 | Number Card | KPI metric tiles |
 | Table | Rows of tabular data with striping, density, row numbers, and column selection |
 | Statistic | A single metric with an icon, color theme, and trend indicator |
@@ -135,6 +140,10 @@ Supported form controls: `textbox`, `number`, `checkbox`, `dropdown`, `dropdown-
 The `markdown` control (used by the Text gadget's content field) is aimed at people who don't already know markdown syntax: a small toolbar inserts the right syntax at the cursor — bold, italic, headings, lists, quotes, inline code, links — and a live preview sits next to the raw text so the effect of each edit is immediately visible.
 
 ![Markdown editor](https://github.com/jayhamilton/armature/blob/main/documentation/markdown-editor.jpg)
+
+The markdown toolbar's **Insert illustration** button places one of the same unDraw illustrations inline with the text, at a chosen Small/Medium/Large size, instead of typing the image path by hand.
+
+![Insert illustration picker in the markdown editor](https://github.com/jayhamilton/armature/blob/main/documentation/insert-illustration.jpg)
 
 ### Gadget Help
 
