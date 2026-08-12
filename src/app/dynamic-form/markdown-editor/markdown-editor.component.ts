@@ -3,7 +3,15 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { marked } from 'marked';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
+import { IllustrationMenuComponent } from '../../shared/illustrations/illustration-menu/illustration-menu.component';
+import {
+  IllustrationOption,
+  illustrationSrc,
+  IllustrationSize,
+  ILLUSTRATION_SIZE_PX,
+} from '../../shared/illustrations/illustration-options';
 
 interface ToolbarAction {
   tooltip: string;
@@ -31,7 +39,7 @@ interface ToolbarAction {
     },
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [MatIconButton, MatIcon, MatTooltip]
+  imports: [MatIconButton, MatIcon, MatMenu, MatMenuTrigger, MatTooltip, IllustrationMenuComponent]
 })
 export class MarkdownEditorComponent implements ControlValueAccessor {
   @ViewChild('textareaEl') textareaRef!: ElementRef<HTMLTextAreaElement>;
@@ -51,6 +59,16 @@ export class MarkdownEditorComponent implements ControlValueAccessor {
     { icon: 'format_quote', tooltip: 'Quote', action: () => this.linePrefix('> ') },
     { icon: 'code', tooltip: 'Inline code', action: () => this.wrapSelection('`', '`', 'code') },
     { icon: 'insert_link', tooltip: 'Link', action: () => this.insertLink() },
+  ];
+
+  // Size to bake into the next inserted illustration - markdown content is
+  // static text once inserted, so unlike the standalone Illustration gadget
+  // (which can bind width live) this has to be chosen up front.
+  insertSize: IllustrationSize = 'medium';
+  readonly illustrationSizes: { value: IllustrationSize; label: string }[] = [
+    { value: 'small', label: 'S' },
+    { value: 'medium', label: 'M' },
+    { value: 'large', label: 'L' },
   ];
 
   get renderedHtml(): string {
@@ -110,6 +128,23 @@ export class MarkdownEditorComponent implements ControlValueAccessor {
     // Select the URL placeholder so it can be typed over immediately.
     const urlStart = start + label.length + 3; // "[" + label + "]("
     this.focusAndSelect(urlStart, urlStart + url.length);
+  }
+
+  // Raw <img> rather than markdown's `![alt](src)` syntax, so a width can be
+  // baked in - marked passes raw HTML through unsanitized, and Angular's own
+  // [innerHTML] sanitizer (see text.component.ts) keeps the width/height
+  // attributes even though it strips style attributes, so this is the one
+  // reliable way to size an individual inline image from plain text content.
+  insertIllustration(option: IllustrationOption): void {
+    const textarea = this.textareaRef.nativeElement;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const width = ILLUSTRATION_SIZE_PX[this.insertSize];
+    const html = `<img src="${illustrationSrc(option.id)}" alt="${option.label}" width="${width}">`;
+
+    this.replace(start, end, html);
+    const cursor = start + html.length;
+    this.focusAndSelect(cursor, cursor);
   }
 
   private replace(start: number, end: number, text: string): void {

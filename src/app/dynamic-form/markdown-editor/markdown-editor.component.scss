@@ -32,6 +32,36 @@
   }
 }
 
+.illustration-size-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px 0;
+}
+
+.illustration-size-label {
+  font-size: 0.75rem;
+  color: var(--app-text-secondary);
+  margin-right: 4px;
+}
+
+.illustration-size-option {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--app-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--app-text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+
+  &.selected {
+    background-color: var(--app-brand-tint-strong);
+    border-color: var(--app-brand);
+    color: var(--app-brand);
+  }
+}
+
 .toolbar-text-icon {
   font-size: 0.7rem;
   font-weight: 600;

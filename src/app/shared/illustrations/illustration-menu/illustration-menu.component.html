@@ -1,0 +1,35 @@
+<div class="illustration-menu-panel" (click)="$event.stopPropagation()">
+  <mat-form-field appearance="outline" class="illustration-menu-search-field">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>Search illustrations</mat-label>
+    <input
+      matInput
+      [(ngModel)]="filterText"
+      (keydown)="$event.stopPropagation()"
+      placeholder="e.g. team, empty, analytics" />
+  </mat-form-field>
+
+  <div class="illustration-menu-grid">
+    @for (option of filteredIllustrations; track option.id) {
+      <button
+        type="button"
+        class="illustration-menu-option"
+        [class.selected]="option.id === selected"
+        [matTooltip]="option.label"
+        (click)="select(option)">
+        @if (isBroken(option)) {
+          <mat-icon class="illustration-menu-missing-icon">image_not_supported</mat-icon>
+        } @else {
+          <img
+            [src]="src(option)"
+            [alt]="option.label"
+            (error)="onImageError(option)" />
+        }
+        <span class="illustration-menu-option-label">{{ option.label }}</span>
+      </button>
+    }
+    @if (filteredIllustrations.length === 0) {
+      <div class="illustration-menu-empty">No illustrations match "{{ filterText }}"</div>
+    }
+  </div>
+</div>

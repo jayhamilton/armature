@@ -114,6 +114,12 @@
             <app-icon-picker [formControlName]="property.key"></app-icon-picker>
           </div>
         }
+        @case ('illustration-picker') {
+          <div class="illustration-picker-field">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <app-illustration-picker [formControlName]="property.key"></app-illustration-picker>
+          </div>
+        }
       }
     </div>
   </div>

@@ -14,6 +14,34 @@
         }
       </button>
     }
+
+    <button
+      type="button"
+      mat-icon-button
+      #illustrationMenuTrigger="matMenuTrigger"
+      [matMenuTriggerFor]="illustrationMenu"
+      matTooltip="Insert illustration"
+      [disabled]="disabled">
+      <mat-icon>image</mat-icon>
+    </button>
+    <mat-menu #illustrationMenu="matMenu">
+      <div (click)="$event.stopPropagation()">
+        <div class="illustration-size-row">
+          <span class="illustration-size-label">Insert size</span>
+          @for (size of illustrationSizes; track size.value) {
+            <button
+              type="button"
+              class="illustration-size-option"
+              [class.selected]="size.value === insertSize"
+              (click)="insertSize = size.value">
+              {{ size.label }}
+            </button>
+          }
+        </div>
+        <app-illustration-menu (pick)="insertIllustration($event); illustrationMenuTrigger.closeMenu()">
+        </app-illustration-menu>
+      </div>
+    </mat-menu>
   </div>
 
   <div class="markdown-panes">

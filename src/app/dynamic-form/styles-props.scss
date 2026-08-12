@@ -128,7 +128,8 @@ mat-tab-group {
 // The icon picker isn't a mat-form-field, so it has no floating label of
 // its own — pair it with an explicit label stacked above, matching how the
 // surrounding fields read.
-.icon-picker-field {
+.icon-picker-field,
+.illustration-picker-field {
   display: flex;
   flex-direction: column;
   gap: 4px;

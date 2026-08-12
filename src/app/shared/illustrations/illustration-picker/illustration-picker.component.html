@@ -1,0 +1,27 @@
+<button
+  type="button"
+  #menuTrigger="matMenuTrigger"
+  class="illustration-picker-trigger"
+  [matMenuTriggerFor]="illustrationMenu"
+  [disabled]="disabled"
+  matTooltip="Choose an illustration">
+  @if (thumbnailSrc && !thumbnailBroken) {
+    <img class="illustration-picker-trigger-thumb" [src]="thumbnailSrc" [alt]="selectedOption?.label ?? value"
+      (error)="onThumbnailError()" />
+  } @else {
+    <mat-icon class="illustration-picker-trigger-icon">image</mat-icon>
+  }
+  <span class="illustration-picker-trigger-label">{{ selectedOption?.label ?? 'Choose an illustration' }}</span>
+</button>
+
+<!-- Empty spacer matching mat-form-field's subscript wrapper (hint/error
+     row), so this control's total height and top-aligned position lines
+     up with the outline form fields next to it in the same form row. -->
+<div class="illustration-picker-subscript-spacer"></div>
+
+<mat-menu #illustrationMenu="matMenu" class="illustration-picker-menu" (closed)="menuClosed()">
+  <div (click)="$event.stopPropagation()">
+    <app-illustration-menu [selected]="value" (pick)="select($event); menuTrigger.closeMenu()">
+    </app-illustration-menu>
+  </div>
+</mat-menu>
