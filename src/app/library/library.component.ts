@@ -94,7 +94,7 @@ export class LibraryComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getLibrary() {
     this.libraryService.getLibrary().subscribe((libraryData) => {
-      this.library = libraryData;
+      this.library = [...libraryData].sort((a, b) => a.title.localeCompare(b.title));
     });
   }
 
