@@ -17,6 +17,7 @@ export interface AgentGadgetLibraryEntry {
 export interface AgentBoardGadgetEntry {
   instanceId: number;
   title: string;
+  componentType: string;
 }
 
 export interface AgentRequest {
@@ -104,7 +105,11 @@ export class AgentService {
           // no separate fetch needed.
           boardGadgets: (board?.rows ?? []).flatMap((row) =>
             row.columns.flatMap((column) =>
-              column.gadgets.map((gadget) => ({ instanceId: gadget.instanceId, title: gadget.title }))
+              column.gadgets.map((gadget) => ({
+                instanceId: gadget.instanceId,
+                title: gadget.title,
+                componentType: gadget.componentType,
+              }))
             )
           ),
         };
