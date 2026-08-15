@@ -73,9 +73,21 @@ The dashboard includes a conversational assistant exposed from the toolbar. It o
 
 Suggestions render as real, actionable cards rather than raw data: a suggested gadget is added to the board directly, with no confirmation click (that was tried and found to add unwanted friction in practice), and a board list offers a "Switch" button per board. To keep the assistant from acting on things nobody asked for, at most one board-affecting action is taken per message — a request implying more than one gets the model asking to be asked again for the rest. The panel also supports voice, via the browser's built-in Web Speech API — a mic button transcribes spoken requests into the composer, and replies can optionally be read aloud, toggled from the header.
 
-The backend defaults to a local Ollama model, with an Anthropic-backed alternative available behind an environment variable for comparison — see the [microservice README](https://github.com/jayhamilton/armature-ms#model-provider). A2UI-style declarative component rendering is built (`AgentUiPart`'s `a2ui-card` type, a generic Card/Text/Button renderer) but not currently wired to any live flow; iframe-based MCP app previews (`AgentUiPart`'s `iframe` type) remain a landing zone for later work.
+The backend defaults to a local Ollama model, with an Anthropic-backed alternative available behind an environment variable for comparison — see the [microservice README](https://github.com/jayhamilton/armature-ms#model-provider). A2UI-style declarative component rendering is built (`AgentUiPart`'s `a2ui-card` type, a generic Card/Text/Button renderer) but not currently wired to any live flow.
 
 ![Agentic assistant panel](https://github.com/jayhamilton/armature/blob/main/documentation/agentic-panel.jpg)
+
+#### MCP Apps in the panel
+
+Asking the assistant to *change* the board (add/move/remove a gadget, change a layout) gets a plain reply and an actionable card, same as always. Asking it to *show* the board instead ("show board summary", "what's on my board") renders something different: a real [MCP App](https://modelcontextprotocol.io/extensions/apps/overview) (SEP-1865) — an interactive view served by `armature-ms` over MCP and rendered inline in a sandboxed iframe, not a canned UI part. `McpAppService` is a genuine MCP client (`@modelcontextprotocol/sdk`) that discovers the tool's `ui://` resource from its own metadata and fetches it live; `McpAppViewerComponent` renders it with the official `AppBridge` (`@modelcontextprotocol/ext-apps`), the same mechanism a dedicated MCP host like Claude Desktop uses. Both directions live in the same conversation, so the contrast is visible in one thread:
+
+![MCP App rendered in the assistant panel, next to a mutation reply](https://github.com/jayhamilton/armature/blob/main/documentation/mcp-app-panel.jpg)
+
+The rendered app is genuinely interactive, not a static card — clicking a gadget row expands it in place, driven entirely inside the sandboxed iframe:
+
+![Expanded gadget detail inside the MCP App](https://github.com/jayhamilton/armature/blob/main/documentation/mcp-app-detail.jpg)
+
+See the [microservice README](https://github.com/jayhamilton/armature-ms#mcp-apps) for how the tool/resource pair is built on the backend.
 
 ### Boards
 
