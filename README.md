@@ -8,7 +8,7 @@ Gadgets, their configuration forms, and board layouts are all defined as data an
 
 An armature is the internal skeleton a sculptor builds around, shaped to hold a form nobody has committed to yet. That is the idea here. The framework holds the structure and makes no assumptions about what gets attached to it, or when, or by whom. Increasingly that "whom" includes an AI agent composing an interface on request, which works for the same reason a person configuring a board works: every board, gadget, and configuration form is JSON rather than code.
 
-While Armature is implemented with Angular and Angular Material, the strategy it implements is technology stack agnostic. See the following ![blog post](https://jaystevenhamilton.medium.com/one-conversation-instead-of-twelve-portals-fb756573207b?postPublishedType=repub).
+While Armature is implemented with Angular and Angular Material, the strategy it implements is technology stack agnostic. See the following [blog post](https://jaystevenhamilton.medium.com/one-conversation-instead-of-twelve-portals-fb756573207b?postPublishedType=repub).
 
 ![Dashboard overview](https://github.com/jayhamilton/armature/blob/main/documentation/dashboard-overview.jpg)
 
