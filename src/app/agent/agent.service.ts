@@ -38,7 +38,7 @@ export interface ToolCall {
 
 export interface AgentUiPart {
   id: number;
-  type: 'text' | 'component' | 'iframe';
+  type: 'text' | 'component' | 'iframe' | 'mcp-app';
   text?: string;
   componentType?: string;
   payload?: unknown;

@@ -13,6 +13,7 @@ import { IGadget } from '../gadgets/common/gadget-common/gadget-base/gadget.mode
 import { LayoutType } from '../layout/layout.model';
 import { A2uiNode } from './a2ui/a2ui.model';
 import { A2uiRendererComponent } from './a2ui/a2ui-renderer.component';
+import { McpAppViewerComponent } from './mcp-app-viewer.component';
 
 interface ChatPart extends AgentUiPart {
   gadgetPreview?: IGadget;
@@ -50,6 +51,7 @@ interface ChatMessage {
     MatButtonModule,
     MatIconModule,
     A2uiRendererComponent,
+    McpAppViewerComponent,
   ],
   template: `
     <div class="agent-panel">
@@ -224,6 +226,12 @@ interface ChatMessage {
                       <iframe [src]="part.src" title="{{ part.title }}"></iframe>
                     </div>
                   }
+
+                  @if (part.type === 'mcp-app') {
+                    @if (mcpAppToolName(part); as toolName) {
+                      <app-mcp-app-viewer [toolName]="toolName"></app-mcp-app-viewer>
+                    }
+                  }
                 }
               }
 
@@ -249,7 +257,7 @@ interface ChatMessage {
                 <span class="agent-panel__thinking-label">Thinking…</span>
               }
               @for (scale of typingDotScales; track $index) {
-                <span [style.transform]="'scale(' + scale + ')'" [style.opacity]="scale"></span>
+                <span class="agent-panel__typing-dot" [style.transform]="'scale(' + scale + ')'" [style.opacity]="scale"></span>
               }
             </div>
           </div>
@@ -348,7 +356,7 @@ interface ChatMessage {
     // Scale/opacity are randomized in the component on an interval rather than
     // via a repeating @keyframes loop, so the motion doesn't visibly cycle -
     // the transition here just smooths each jump into the next one.
-    `.agent-panel__typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--app-text-secondary); transition: transform 260ms ease, opacity 260ms ease; }`,
+    `.agent-panel__typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--app-text-secondary); transition: transform 260ms ease, opacity 260ms ease; }`,
     `.agent-panel__jump-latest { align-self: center; font-size: 0.85rem; }`,
     `.agent-panel__composer-actions { display: flex; gap: 8px; align-self: flex-end; }`,
     `.agent-panel__send { width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; border-radius: 50%; background: var(--app-brand); color: var(--app-brand-contrast); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); display: inline-flex; align-items: center; justify-content: center; line-height: 1; }`,
@@ -636,6 +644,10 @@ export class AgentPanelComponent implements OnDestroy {
 
   a2uiNode(part: AgentUiPart): A2uiNode | undefined {
     return this.parsedPayload(part)?.['ui'] as A2uiNode | undefined;
+  }
+
+  mcpAppToolName(part: AgentUiPart): string | undefined {
+    return this.parsedPayload(part)?.['toolName'] as string | undefined;
   }
 
   /** Confirm/cancel click handler for an a2ui-card. Cancel is a no-op besides marking the card resolved. */
