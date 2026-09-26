@@ -1,0 +1,34 @@
+@startuml web-layers-target
+' C4 level 2 detail: the plan's web layers ("Multi framework UI"). A target view: today only
+' web/hosts/angular, web/hosts/react, and web/packages/core (the @type registry) exist; elements
+' and the Svelte, Lit, and vanilla hosts are planned. Hosts move onto core and elements in INC-04.
+!pragma layout smetana
+!include <C4/C4_Container>
+
+title Armature: web layers (target)
+
+Person(customer, "Customer")
+
+System_Boundary(web, "web/ (pnpm workspace)") {
+  Container(react, "hosts/react", "React 19", "Reference application: every feature first")
+  Container(angular, "hosts/angular", "Angular", "Full application at parity on conformance scenarios")
+  Container(embed, "hosts/svelte, hosts/lit, hosts/vanilla", "Svelte, Lit, plain HTML (planned)", "Embedding hosts: a board and assistant in a small app")
+  Container(elements, "@armature/elements", "Lit (planned, INC-04)", "armature-board, armature-gadget-host, armature-assistant, armature-help, armature-problem, built in gadgets")
+  Container(core, "@armature/core", "TypeScript, no framework", "Today: TypeRegistry keyed by @type. Planned: HAL client, local first store and sync, XState machines, when clauses, RFC 9457, AG-UI client")
+}
+
+System_Ext(backend, "armature-ms", "REST (HAL), SSE, AG-UI")
+
+Rel(customer, react, "Uses")
+Rel(customer, angular, "Uses")
+Rel(customer, embed, "Uses")
+Rel(react, elements, "Renders custom elements")
+Rel(angular, elements, "Renders custom elements")
+Rel(embed, elements, "Renders custom elements")
+Rel(elements, core, "Uses")
+Rel(react, core, "Public entry point only")
+Rel(angular, core, "Public entry point only")
+Rel(core, backend, "Follows links, syncs, streams", "HTTP, SSE")
+
+SHOW_LEGEND()
+@enduml

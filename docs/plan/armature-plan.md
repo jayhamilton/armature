@@ -397,7 +397,7 @@ The layout grid, TMF 630 query parsing, the AG-UI event protocol, and RFC 9457 i
 
 armature-ms is one deployable made of verified application modules ([Spring Modulith](https://docs.spring.io/spring-modulith/reference/)); modules talk through published APIs or domain events, and both the structure and the runtime traffic can be inspected.
 
-> Diagram (application modules · solid = API calls, dashed = events) is maintained in the planning doc; it is recreated here as C4-PlantUML in INC-00b.
+> Diagram (application modules · solid = API calls, dashed = events) is maintained in the planning doc; it is recreated here as C4-PlantUML in INC-00c.
 
 Protocol modules call orchestration or domain APIs; domain modules never call each other's internals, and reactions such as notifying a customer travel as events into `channel`.
 
@@ -434,7 +434,7 @@ The web packages follow the same rules; see the next section.
 
 React carries the plan as the reference application, and Angular, Lit, vanilla web components, and Svelte stay supported because everything below the host is framework free: a TypeScript core and a set of custom elements.
 
-> Diagram (web layers · 5 hosts over shared elements and core) is maintained in the planning doc; it is recreated here as C4-PlantUML in INC-00b.
+> Diagram (web layers · 5 hosts over shared elements and core) is maintained in the planning doc; it is recreated here as C4-PlantUML in INC-00c.
 
 A host owns routing, layout chrome, and framework idioms; the elements and core own everything Armature means. Adding a sixth framework is a new thin host, not a port.
 

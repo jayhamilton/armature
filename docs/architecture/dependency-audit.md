@@ -5,7 +5,7 @@ capability is: consolidation without a new monolith fails if the platform itself
 abandoned code. This page gives every **direct** dependency a verdict against the dependency
 policy ([ADR-0005](../adr/0005-dependency-policy.md)) and is re-checked in each increment report.
 
-Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata.
+Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata; updated in INC-00c.
 
 ## Method
 
@@ -30,10 +30,12 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata.
 | `spring-boot-starter-web`, `-webflux`, `-restclient`, `-actuator`, `-test` | Boot managed | Keep | Vendor, Boot 4 line. `webflux` supplies the Reactor `Flux` that `AgentService` consumes from Spring AI's streaming chat; the HTTP side is already Spring MVC `SseEmitter` |
 | `spring-ai-bom` and the `mcp-server-webmvc`, `model-ollama`, `model-anthropic` starters | 2.0.0 | Keep | Vendor, Boot 4 compatible |
 | `spring-ai-a2a-server-autoconfigure` (community) | 0.3.0 | Watch | Pre 1.0 community module, as the policy already says; its autoconfiguration is excluded today. Compared with the A2A Java SDK in INC-08 |
+| Spring Modulith BOM: `spring-modulith-starter-core`, `-starter-test` (test), `spring-modulith-docs` (test) | 2.1.1 | Keep | Vendor; listed Keep in the policy table; added in INC-00c (ADR-0008) |
+| jMolecules BOM: `jmolecules-hexagonal-architecture`, `jmolecules-ddd`, `jmolecules-archunit` (test) | 2025.0.2 | Keep | Listed Keep in the policy table; added in INC-00c. Brings ArchUnit 1.4.1 (test) |
 | `jackson-databind` (`com.fasterxml`) | Boot managed | Watch | Jackson 2 declared explicitly while Boot 4 defaults to Jackson 3 (`tools.jackson`); 9 main classes import Jackson 2 annotations. Decide on migration in INC-01 when resources are added |
-| `json-path` | 2.4.0 | Remove | Released 2017 (current is 3.0.0); nothing in `src/` imports it directly, and `spring-boot-starter-test` already brings a managed version. Remove in INC-00c |
+| `json-path` | 2.4.0 | **Removed in INC-00c** | Released 2017 and unused in `src/`; `spring-boot-starter-test` brings a managed version |
 | `springdoc-openapi-starter-webmvc-ui` | 2.8.6 | Watch | Community project, active, but 2.x targets Boot 3; the Boot 4 line is 3.x (3.1.1). Tests pass today; upgrade in INC-01 with the first TMF 630 resources |
-| `spring-restdocs-mockmvc` (test) | Boot managed | Remove | Vendor maintained but unused: nothing in `src/` imports it. Remove in INC-00c |
+| `spring-restdocs-mockmvc` (test) | Boot managed | **Removed in INC-00c** | Unused |
 | `spring-boot-maven-plugin`, `maven-surefire-plugin` | Boot managed | Keep | Vendor, foundation (Apache) |
 | Maven wrapper | 3.3.2, Maven 3.9.9 | Keep | Apache Software Foundation |
 
@@ -55,13 +57,13 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata.
 | `tslib` | ^2.3.0 | 2026-06 | Keep | Vendor (Microsoft) |
 | `zone.js` | ~0.15.0 | 2026-09 | Watch | Vendor (Google), but Angular is moving to zoneless change detection; decide when the host moves onto `@armature/elements` (INC-04) |
 | `typescript` (dev) | ~6.0.3 | 2026-09 | Watch | Vendor (Microsoft); 7.0 is out. Upgrade when Angular supports it |
-| `karma`, `karma-chrome-launcher`, `karma-coverage`, `karma-jasmine`, `karma-jasmine-html-reporter` (dev) | ~6.3, ~3.1, ~2.1, ~4.0, ~1.7 | 2023 to 2024 (most) | Retire | Karma is deprecated by its maintainers and Angular's default runner has moved on; most packages have no release in 12 months. Replace with the runner chosen for the Playwright and unit test stack in INC-00c |
+| `karma`, `karma-chrome-launcher`, `karma-coverage`, `karma-jasmine`, `karma-jasmine-html-reporter` (dev) | ~6.3, ~3.1, ~2.1, ~4.0, ~1.7 | 2023 to 2024 (most) | Retire | Karma is deprecated by its maintainers and Angular's default runner has moved on; most packages have no release in 12 months. Replacing Karma needs a new runner dependency not in the policy table (Angular 22 defaults to Vitest); proposed for INC-04 |
 | `jasmine-core`, `@types/jasmine` (dev) | ~3.10 | 2026 | Watch | Active, but pinned three majors behind (current 7.x); retires with Karma |
 | `istanbul-lib-instrument` (dev) | ^6.0.3 | 2024-06 | Retire | No release in 12 months; only needed by the Karma coverage setup, so it retires with Karma |
-| `@types/node` (dev) | ^12.11.1 | 2026-09 | Watch | Types for Node 12 while CI runs Node 24; align with Node 24 in INC-00c |
+| `@types/node` (dev) | ^24.19.0 | 2026-09 | Keep | Moved from ^12 to ^24 in INC-00c to match CI's Node 24 |
 | `@types/d3` (dev) | ^7.1.0 | 2025-08 | Retire | Only needed for ngx-charts internals; retires with it in INC-04 |
-| `node-forge` (dev) | >=1.0.0 | 2026-03 | Watch | Active; appears to be pinned for a security floor rather than used directly. Confirm and replace with an `overrides` entry in INC-00c |
-| `schematics-scss-migrate` (dev) | 1.3.14 | 2023-03 | Remove | One off migration tool, single maintainer, no release in over three years. Remove in INC-00c |
+| `node-forge` (dev) | >=1.0.0 | n/a | **Removed in INC-00c** | `npm ls` showed nothing depends on it; a leftover security pin |
+| `schematics-scss-migrate` (dev) | 1.3.14 | n/a | **Removed in INC-00c** | One off migration tool, unmaintained |
 
 ## React host (`web/hosts/react/package.json`)
 
@@ -78,7 +80,7 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata.
 | `react-ace` | ^15.0.0 | 2026-07 | Watch | Single maintainer; replaced when the markdown editor becomes a shared element |
 | `date-fns` | ^4.4.0 | 2026-05 | Keep | Active, large community |
 | `dompurify` | ^3.4.14 | 2026-09 | Keep | Vendor (Cure53), security library |
-| `@types/dompurify` (dev) | ^3.0.5 | 2024-11 | Remove | Deprecated stub: `dompurify` ships its own types. Remove in INC-00c |
+| `@types/dompurify` (dev) | ^3.0.5 | n/a | **Removed in INC-00c** | Deprecated stub: `dompurify` ships its own types |
 | `gsap` | ^3.15.0 | 2026-04 | Keep | Vendor (Webflow) |
 | `marked` | ^18.0.11 | 2026-09 | Keep | Listed Keep in the policy table |
 | `recharts` | ^3.10.1 | 2026-09 | Retire | Retires with ngx-charts in INC-04 (policy table) |
@@ -89,6 +91,15 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata.
 | `@types/react`, `@types/react-dom`, `@types/node` (dev) | ^19, ^24 | 2026-09 | Keep | DefinitelyTyped (Microsoft backed) |
 | `oxlint` (dev) | ^1.79.0 | 2026-09 | Keep | Vendor (VoidZero) |
 | `playwright` (dev) | ^1.62.1 | 2026-09 | Keep | Vendor (Microsoft); listed Keep in the policy table |
+
+## Web core (`web/packages/core/package.json`)
+
+| Dependency | Declared | Verdict | Reason |
+| --- | --- | --- | --- |
+| `typescript` (dev) | ~6.0.3 | Watch | As for the hosts; same version line |
+| `@types/node` (dev) | ^24.13.3 | Keep | DefinitelyTyped; needed for `node:test` and `node:assert` in tests |
+
+Tests use Node's built in `node:test` runner, so core adds no test framework.
 
 ## Build and CI tools
 
@@ -103,8 +114,8 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata.
 
 | Increment | Action |
 | --- | --- |
-| INC-00c | Remove `json-path`, `spring-restdocs-mockmvc`, `schematics-scss-migrate`, `@types/dompurify`; confirm `node-forge`; align `@types/node`; choose the unit test runner that replaces Karma |
+| INC-00c | Done: removed `json-path`, `spring-restdocs-mockmvc`, `schematics-scss-migrate`, `node-forge`, `@types/dompurify`; aligned `@types/node`. Karma replacement moved to INC-04 |
 | INC-01 | Upgrade springdoc to the Boot 4 line; decide Jackson 2 or 3 |
-| INC-04 | Retire ngx-charts, `@types/d3`, and Recharts; decide on MUI majors, `@dnd-kit`, `react-ace`, and zone.js as hosts move onto `@armature/elements`; restore the Angular `initial` budget to 2 MB |
+| INC-04 | Replace Karma (needs a runner added to the policy table); retire ngx-charts, `@types/d3`, and Recharts; decide on MUI majors, `@dnd-kit`, `react-ace`, and zone.js as hosts move onto `@armature/elements`; restore the Angular `initial` budget to 2 MB |
 | INC-07 | Evaluate `@modelcontextprotocol/ext-apps` 2.x |
 | INC-08 | Compare `spring-ai-a2a` with the A2A Java SDK |
