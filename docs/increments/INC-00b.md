@@ -74,7 +74,7 @@ The numbering keeps the two numbers the plan already cites (0003, 0005).
 ## Evidence
 
 No application tests were added (behavior is unchanged). Every workflow's commands were run
-locally on macOS with JDK 25.0.2 and Node 24.18.1.
+locally on macOS with JDK 25.0.2 and Node 24.18.1, then in GitHub Actions.
 
 | Check | Command | Result |
 | --- | --- | --- |
@@ -87,12 +87,10 @@ locally on macOS with JDK 25.0.2 and Node 24.18.1.
 | Stale detection | Edited a relation label in `context.puml` without re-rendering, ran the check | **Fails as intended**: `STALE docs/architecture/c4/context.svg`, exit 1 (then restored) |
 | Orphan detection | Copied an SVG to a path with no `.puml`, ran the check | **Fails as intended**: `ORPHAN docs/architecture/orphan.svg`, exit 1 (then removed) |
 | Workflow syntax | Parsed all four workflow files as YAML | **Pass** |
+| GitHub Actions | PR #2: Backend, Angular host, React host, and Docs workflows on `ubuntu-latest`, for both the push and pull request events | **Pass**: all 8 jobs green |
 
 ## Not done and why
 
-- **CI has not run on GitHub.** The branch is not pushed (CLAUDE.md: never push unless asked).
-  Each workflow's commands pass locally, but "CI green" is only confirmed once the branch is
-  pushed and the four workflows run on Ubuntu. The first run will also download PlantUML there.
 - **Application modules and web layers diagrams** are not drawn, although the plan says they are
   "recreated in INC-00b". As agreed at spec approval, they move to INC-00c, where the modules and
   `web/packages/core` they depict are built; drawing them now would break the plan's rule that
@@ -116,8 +114,8 @@ locally on macOS with JDK 25.0.2 and Node 24.18.1.
 
 ## Next increment's entry criteria
 
-INC-00c (Modules and reference patterns) can start once this report is reviewed, the branch is
-merged, and the four workflows have run green on GitHub. INC-00c should also pick up:
+INC-00c (Modules and reference patterns) can start once this report is reviewed, and the branch is
+merged (the four workflows already run green on PR #2). INC-00c should also pick up:
 
 - The application modules and web layers C4-PlantUML diagrams deferred from this increment.
 - The ADR for the custom element gadget contract (already in INC-00c's plan entry).
