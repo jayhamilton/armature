@@ -1,17 +1,53 @@
 # Armature
 
-Armature is a runtime for interfaces that are described rather than built: a customer's answers
-are assembled, kept, and delivered anywhere, and every capability arrives as a declared,
-discoverable extension rather than hand wired code. Boards and gadgets are data, not code; adding
-a service is a manifest, the way a VS Code extension contributes to the editor, not a new portal.
-See [`docs/README.md`](docs/README.md) for the documentation index,
-[`docs/plan/armature-plan.md`](docs/plan/armature-plan.md) for the full architecture, and
-[`ROADMAP.md`](ROADMAP.md) for the increment plan.
+**Ask a question. Get back a live interface that answers it.**
+
+Companies ship a separate user experience for every capability they sell. A photographer moves
+between Lightroom and Photoshop; a telecom customer checks billing in one portal, configures
+services in another, and monitors them in a third. Each product makes sense to the team that
+built it, but the customer carries the cost: more logins, more layouts, and the work of joining
+the answers themselves. Cognitive load grows with every portal.
+
+Armature turns that around. **Services describe what they offer; the interface is composed on
+demand, for the task in front of you.** A person or an agent asks a question, and Armature
+assembles a board from the services that can answer it. That board can be refined, pinned, and
+reopened later, still live.
+
+Portals are built. Armature boards are composed.
+
+## AI native, not AI added
+
+Agents are first class users of the same system people use, not an assistant bolted onto screens
+designed for clicking.
+
+- **Boards are data.** Gadgets are described by schemas, so an agent can build any board a person
+  can.
+- **The API says what is possible now.** State gated hypermedia links drive both the buttons a
+  person sees and the actions an agent takes, so agents follow links instead of needing a tool per
+  action.
+- **Every client reaches the same boards.** The UI, MCP clients, A2A peers, and channels such as
+  Teams share the same resources and permissions; an agent acts as its user, never with more
+  access.
+- **One manifest extends the UI and the agent.** A service joins with a manifest, modeled on VS
+  Code extensions, that contributes gadgets, data sources, commands, and agent tools together.
+- **Answers become interfaces.** The assistant answers with a gadget that can be pinned and stays
+  bound to its query.
+
+## Where it stands
+
+**Working today:** a board runtime with 11 gadgets (Angular reference UI, React port in progress),
+an assistant that edits boards through tool calls on Ollama or Anthropic, and an MCP server with 7
+board tools, one rendered as an MCP App. **Next:** shared boards, state gated links, live data from
+capability services, pinned answers, then manifests, A2A, and channels
+(see [`ROADMAP.md`](ROADMAP.md)).
+
+See [`docs/README.md`](docs/README.md) for the documentation index and
+[`docs/plan/armature-plan.md`](docs/plan/armature-plan.md) for the full architecture.
 
 ## Repository layout
 
 ```text
-armature-platform/
+armature/
   backend/          armature-ms (Maven, Spring Boot)
   web/
     packages/       core, elements (framework free; arrive in INC-00c / INC-04)
