@@ -4,7 +4,8 @@ Armature is a runtime for interfaces that are described rather than built: a cus
 are assembled, kept, and delivered anywhere, and every capability arrives as a declared,
 discoverable extension rather than hand wired code. Boards and gadgets are data, not code; adding
 a service is a manifest, the way a VS Code extension contributes to the editor, not a new portal.
-See [`docs/plan/armature-plan.md`](docs/plan/armature-plan.md) for the full architecture and
+See [`docs/README.md`](docs/README.md) for the documentation index,
+[`docs/plan/armature-plan.md`](docs/plan/armature-plan.md) for the full architecture, and
 [`ROADMAP.md`](ROADMAP.md) for the increment plan.
 
 ## Repository layout
@@ -17,7 +18,7 @@ armature-platform/
     hosts/          angular (reference UI today), react (in progress)
   contracts/        lifecycles, schemas, link relations (arrive from INC-01 onward)
   capabilities/     mock capability services (arrive from INC-04 onward)
-  docs/             plan, ADRs, increment reports, architecture, help
+  docs/             plan, principles, ADRs, increment reports, architecture (C4), help
   .work/specs/      per-increment specs
 ```
 
@@ -62,6 +63,15 @@ An in-progress port of the Angular host to React; see
 [`web/hosts/react/PORTING_STATUS.md`](web/hosts/react/PORTING_STATUS.md) for what's done.
 
 Build: `npm run build`
+
+### Diagrams (`docs/architecture/`)
+
+```bash
+docs/architecture/render.sh      # render every docs/**/*.puml to SVG (needs Java 17+)
+docs/architecture/check-svg.sh   # fail if a committed SVG is stale (what CI runs)
+```
+
+CI runs one workflow per stack (`.github/workflows/`), each only when that stack's files change.
 
 ## History
 
