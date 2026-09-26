@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
+  "extends": [],
+  "tagDefinitions": [
+    { "tagName": "@pattern", "syntaxKind": "block", "allowMultiple": false },
+    { "tagName": "@role", "syntaxKind": "block", "allowMultiple": false },
+    { "tagName": "@principle", "syntaxKind": "block", "allowMultiple": true }
+  ],
+  "supportForTags": {
+    "@pattern": true,
+    "@role": true,
+    "@principle": true
+  }
+}

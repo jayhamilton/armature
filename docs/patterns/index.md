@@ -35,4 +35,7 @@ CI fails when either section is out of date (`PatternCatalogTest` in the Backend
 ## TypeScript
 
 <!-- ts-catalog:start -->
+| Pattern | Role | Symbol | Principle |
+| --- | --- | --- | --- |
+| Strategy with registry | Registry | [`TypeRegistry`](../../web/packages/core/src/type-registry.ts) | Open/Closed: a new `@type` is a new registration; callers never branch on type. |
 <!-- ts-catalog:end -->
