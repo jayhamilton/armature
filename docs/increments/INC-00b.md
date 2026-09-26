@@ -107,9 +107,9 @@ locally on macOS with JDK 25.0.2 and Node 24.18.1.
   the Karma test stack, springdoc on its Boot 3 line); each is scheduled in the audit's follow up
   table rather than changed here.
 - **Angular budget** is raised, not solved: the real fix is retiring ngx-charts in INC-04.
-- **Size:** about 1,560 changed lines excluding SVG and `package-lock.json`, slightly over the
+- **Size:** about 1,570 changed lines excluding SVG and `package-lock.json`, slightly over the
   plan's 1,500 line guideline. Almost all of it is documentation (twelve ADRs, the audit, skills);
-  code and configuration changes are under 200 lines.
+  scripts, workflows, and Angular changes are about 220 lines.
 - **Skills not yet exercised by the harness:** both skills were written in this session, so this
   report followed `armature-document-increment`'s steps by hand. Their first automatic use is
   INC-00c.
