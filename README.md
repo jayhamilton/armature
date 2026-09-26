@@ -1,17 +1,62 @@
 # Armature
 
-Armature is a runtime for interfaces that are described rather than built: a customer's answers
-are assembled, kept, and delivered anywhere, and every capability arrives as a declared,
-discoverable extension rather than hand wired code. Boards and gadgets are data, not code; adding
-a service is a manifest, the way a VS Code extension contributes to the editor, not a new portal.
-See [`docs/README.md`](docs/README.md) for the documentation index,
-[`docs/plan/armature-plan.md`](docs/plan/armature-plan.md) for the full architecture, and
-[`ROADMAP.md`](ROADMAP.md) for the increment plan.
+**Ask a question. Get back a live board that answers it.**
+
+A business customer wants to know: *"Why was my bill higher this month, and is it related to last
+week's fiber outage?"* Today that means four portals (fiber, 5G, device management, billing),
+four logins, four layouts, and the customer doing the joining in their head. Every service built
+its own interface, and nobody built the one the question needed.
+
+Armature turns that around. **Services describe what they know; the interface is composed on
+demand, for the question in front of you.** An agent reads the question, finds the services that
+can answer it, and assembles a board: the outage window from Fiber, the routers failing over from
+Device Management, the data spike on the 5G backup line, the overage charge from Billing. You can
+refine it, pin it, and come back next week to find it still live, because a pinned answer is a
+gadget bound to its query, not a screenshot.
+
+Portals are built. Armature boards are composed.
+
+## AI native, not AI added
+
+Most applications bolt an assistant onto a UI designed for clicking. In Armature, agents are
+first class users of the same system people use:
+
+- **Boards are data, not code.** A board is a set of gadget resources described by schemas, so an
+  agent can compose, change, and explain one as readily as a person can drag one together. There
+  is no screen an agent cannot build.
+- **The API tells every client what is possible right now.** Resources carry state gated
+  hypermedia links: a draft board offers *publish*, a locked board offers no edit links at all.
+  People see buttons because a link is present; agents act because a link is present. Instead of
+  hundreds of hard coded tools, an agent navigates a few entry points and follows links, the
+  approach from *HATEOAS as the Cure for MCP Tool Bloat*.
+- **Every door leads to the same boards.** The Armature UI, any MCP client (Claude, VS Code,
+  Goose), peer agents over A2A, and channels such as Teams and email all reach the same resources
+  under the same permissions. An agent acts as the user it serves, never with more access.
+- **Capabilities extend the agent and the UI in one move.** A service joins Armature with a
+  manifest, modeled on VS Code extensions, that contributes gadgets, data sources, commands,
+  *and* agent tools. Add a service and the assistant learns what it knows; remove it and both the
+  menus and the tools disappear.
+- **Answers become interfaces.** When the assistant answers, it returns a gadget, not just prose.
+  That gadget can be pinned to a board, refreshed from its source, and shared.
+
+## Where it stands
+
+Armature is being rebuilt in small, documented increments (see [`ROADMAP.md`](ROADMAP.md)).
+**Working today:** a board runtime with 11 configurable gadgets in the Angular reference UI (with a
+React port in progress); an assistant that edits boards through tool calls and schema constrained
+output, streamed over AG-UI, on a local Ollama model or Anthropic; and an MCP server exposing 7
+board tools, including one rendered as an MCP App inside the client. **Coming next:** shared,
+persisted boards (INC-01), state gated links (INC-02), an agent working on real board state
+(INC-03), live data from capability services (INC-04), pinned answers (INC-05), and capability
+manifests, MCP capabilities, A2A, and channels after that.
+
+See [`docs/README.md`](docs/README.md) for the documentation index and
+[`docs/plan/armature-plan.md`](docs/plan/armature-plan.md) for the full architecture.
 
 ## Repository layout
 
 ```text
-armature-platform/
+armature/
   backend/          armature-ms (Maven, Spring Boot)
   web/
     packages/       core, elements (framework free; arrive in INC-00c / INC-04)
