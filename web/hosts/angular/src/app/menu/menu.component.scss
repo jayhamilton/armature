@@ -1,0 +1,23 @@
+// M3's mat-toolbar ignores the `color="primary"` HTML attribute entirely
+// (unlike the old M2 prebuilt theme, where it painted the toolbar in the
+// primary palette) — left alone it just inherits the neutral
+// surface/background tone, which is why brand color and contrast have to
+// be set explicitly here. M3's icon-button also reads its own color from
+// these tokens instead of inheriting the toolbar's `color`.
+mat-toolbar {
+  background-color: var(--app-brand);
+  color: var(--app-brand-contrast);
+  --mdc-icon-button-icon-color: var(--app-brand-contrast);
+  --mat-icon-button-icon-color: var(--app-brand-contrast);
+}
+
+.menu-text {
+  font-size: 0.6em;
+}
+
+.app-title {
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+

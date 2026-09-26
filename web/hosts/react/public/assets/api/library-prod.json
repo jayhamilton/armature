@@ -1,0 +1,1991 @@
+[
+  {
+    "componentType": "BarChartComponent",
+    "title": "Bar Chart",
+    "subtitle": "Vertical bar chart",
+    "description": "Add a vertical bar chart to visualize categorical data.",
+    "icon": "bar_chart",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "bar"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "Bar Chart",
+            "required": true,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "endpoint-picker",
+            "key": "dataSource",
+            "label": "Data Source",
+            "value": "manual",
+            "required": false,
+            "order": 3,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "section",
+            "key": "section-chart-props",
+            "label": "Chart Properties",
+            "value": "",
+            "required": false,
+            "order": 10
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowXAxis",
+            "label": "Show X Axis",
+            "value": true,
+            "required": false,
+            "order": 13,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowXAxisLabel",
+            "label": "Show X Axis Label",
+            "value": true,
+            "required": false,
+            "order": 14,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartXAxisLabel",
+            "label": "X Axis Label",
+            "value": "Category",
+            "required": false,
+            "order": 15,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartLegend",
+            "label": "Show Legend",
+            "value": true,
+            "required": false,
+            "order": 11,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartLegendTitle",
+            "label": "Legend Title",
+            "value": "Legend",
+            "required": false,
+            "order": 12,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowYAxis",
+            "label": "Show Y Axis",
+            "value": true,
+            "required": false,
+            "order": 16,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowYAxisLabel",
+            "label": "Show Y Axis Label",
+            "value": true,
+            "required": false,
+            "order": 17,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartYAxisLabel",
+            "label": "Y Axis Label",
+            "value": "Value",
+            "required": false,
+            "order": 18,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartGradient",
+            "label": "Gradient Fill",
+            "value": false,
+            "required": false,
+            "order": 19,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartRoundEdges",
+            "label": "Round Edges",
+            "value": false,
+            "required": false,
+            "order": 20,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowDataLabel",
+            "label": "Show Data Labels",
+            "value": false,
+            "required": false,
+            "order": 21,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ]
+      },
+      {
+        "displayName": "Data",
+        "groupId": "data",
+        "position": 20,
+        "properties": [
+          {
+            "controlType": "ace-editor",
+            "key": "chartData",
+            "label": "Chart Data (JSON)",
+            "value": [
+              {
+                "name": "Alpha",
+                "value": 850
+              },
+              {
+                "name": "Beta",
+                "value": 750
+              },
+              {
+                "name": "Gamma",
+                "value": 550
+              },
+              {
+                "name": "Delta",
+                "value": 350
+              },
+              {
+                "name": "Epsilon",
+                "value": 150
+              }
+            ],
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "AreaChartComponent",
+    "title": "Area Chart",
+    "subtitle": "Multi-series area chart",
+    "description": "Add a smooth area chart to visualize trends over time.",
+    "icon": "area_chart",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "area"
+      },
+      {
+        "facet": "",
+        "name": "trend"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "Area Chart",
+            "required": true,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "section",
+            "key": "section-chart-props",
+            "label": "Chart Properties",
+            "value": "",
+            "required": false,
+            "order": 10
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowXAxis",
+            "label": "Show X Axis",
+            "value": true,
+            "required": false,
+            "order": 13,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowXAxisLabel",
+            "label": "Show X Axis Label",
+            "value": true,
+            "required": false,
+            "order": 14,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartXAxisLabel",
+            "label": "X Axis Label",
+            "value": "Time",
+            "required": false,
+            "order": 15,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartLegend",
+            "label": "Show Legend",
+            "value": true,
+            "required": false,
+            "order": 11,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartLegendTitle",
+            "label": "Legend Title",
+            "value": "Legend",
+            "required": false,
+            "order": 12,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowYAxis",
+            "label": "Show Y Axis",
+            "value": true,
+            "required": false,
+            "order": 16,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowYAxisLabel",
+            "label": "Show Y Axis Label",
+            "value": true,
+            "required": false,
+            "order": 17,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartYAxisLabel",
+            "label": "Y Axis Label",
+            "value": "Value",
+            "required": false,
+            "order": 18,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartGradient",
+            "label": "Gradient Fill",
+            "value": false,
+            "required": false,
+            "order": 19,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartTimeline",
+            "label": "Show Timeline",
+            "value": true,
+            "required": false,
+            "order": 20,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartAnimations",
+            "label": "Animations",
+            "value": true,
+            "required": false,
+            "order": 21,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ]
+      },
+      {
+        "displayName": "Data",
+        "groupId": "data",
+        "position": 20,
+        "properties": [
+          {
+            "controlType": "ace-editor",
+            "key": "chartData",
+            "label": "Chart Data (JSON)",
+            "value": [
+              {
+                "name": "Series 1",
+                "series": [
+                  {
+                    "name": "Mon",
+                    "value": 320
+                  },
+                  {
+                    "name": "Tue",
+                    "value": 730
+                  },
+                  {
+                    "name": "Wed",
+                    "value": 294
+                  },
+                  {
+                    "name": "Thu",
+                    "value": 510
+                  },
+                  {
+                    "name": "Fri",
+                    "value": 420
+                  }
+                ]
+              },
+              {
+                "name": "Series 2",
+                "series": [
+                  {
+                    "name": "Mon",
+                    "value": 480
+                  },
+                  {
+                    "name": "Tue",
+                    "value": 300
+                  },
+                  {
+                    "name": "Wed",
+                    "value": 180
+                  },
+                  {
+                    "name": "Thu",
+                    "value": 390
+                  },
+                  {
+                    "name": "Fri",
+                    "value": 620
+                  }
+                ]
+              }
+            ],
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "series": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "series"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "PieChartComponent",
+    "title": "Pie Chart",
+    "subtitle": "Proportional data chart",
+    "description": "Add a pie chart to show proportional data.",
+    "icon": "pie_chart",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "pie"
+      },
+      {
+        "facet": "",
+        "name": "proportional"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "Pie Chart",
+            "required": true,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "section",
+            "key": "section-chart-props",
+            "label": "Chart Properties",
+            "value": "",
+            "required": false,
+            "order": 10
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowLabels",
+            "label": "Show Labels",
+            "value": true,
+            "required": false,
+            "order": 13,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartGradient",
+            "label": "Gradient Fill",
+            "value": false,
+            "required": false,
+            "order": 14,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartDoughnut",
+            "label": "Doughnut Style",
+            "value": false,
+            "required": false,
+            "order": 15,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartExplodeSlices",
+            "label": "Explode Slices",
+            "value": false,
+            "required": false,
+            "order": 16,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartLegend",
+            "label": "Show Legend",
+            "value": true,
+            "required": false,
+            "order": 11,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartLegendTitle",
+            "label": "Legend Title",
+            "value": "Legend",
+            "required": false,
+            "order": 12,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      {
+        "displayName": "Data",
+        "groupId": "data",
+        "position": 20,
+        "properties": [
+          {
+            "controlType": "ace-editor",
+            "key": "chartData",
+            "label": "Chart Data (JSON)",
+            "value": [
+              {
+                "name": "Q1",
+                "value": 8940
+              },
+              {
+                "name": "Q2",
+                "value": 5000
+              },
+              {
+                "name": "Q3",
+                "value": 7200
+              },
+              {
+                "name": "Q4",
+                "value": 6100
+              }
+            ],
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "BubbleChartComponent",
+    "title": "Bubble Chart",
+    "subtitle": "X/Y/size scatter chart",
+    "description": "Add a bubble chart to visualize three-dimensional data.",
+    "icon": "bubble_chart",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "bubble"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "Bubble Chart",
+            "required": true,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "section",
+            "key": "section-chart-props",
+            "label": "Chart Properties",
+            "value": "",
+            "required": false,
+            "order": 10
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowXAxis",
+            "label": "Show X Axis",
+            "value": true,
+            "required": false,
+            "order": 13,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowXAxisLabel",
+            "label": "Show X Axis Label",
+            "value": true,
+            "required": false,
+            "order": 14,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartXAxisLabel",
+            "label": "X Axis Label",
+            "value": "X",
+            "required": false,
+            "order": 15,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartLegend",
+            "label": "Show Legend",
+            "value": true,
+            "required": false,
+            "order": 11,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartLegendTitle",
+            "label": "Legend Title",
+            "value": "Legend",
+            "required": false,
+            "order": 12,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowYAxis",
+            "label": "Show Y Axis",
+            "value": true,
+            "required": false,
+            "order": 16,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowYAxisLabel",
+            "label": "Show Y Axis Label",
+            "value": true,
+            "required": false,
+            "order": 17,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartYAxisLabel",
+            "label": "Y Axis Label",
+            "value": "Y",
+            "required": false,
+            "order": 18,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "number",
+            "key": "chartMinRadius",
+            "label": "Min Bubble Radius",
+            "value": 3,
+            "required": false,
+            "order": 19,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "controlType": "number",
+            "key": "chartMaxRadius",
+            "label": "Max Bubble Radius",
+            "value": 20,
+            "required": false,
+            "order": 20,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ]
+      },
+      {
+        "displayName": "Data",
+        "groupId": "data",
+        "position": 20,
+        "properties": [
+          {
+            "controlType": "ace-editor",
+            "key": "chartData",
+            "label": "Chart Data (JSON)",
+            "value": [
+              {
+                "name": "Group A",
+                "series": [
+                  {
+                    "name": "Jan",
+                    "x": 10,
+                    "y": 20,
+                    "r": 8
+                  },
+                  {
+                    "name": "Feb",
+                    "x": 30,
+                    "y": 40,
+                    "r": 15
+                  },
+                  {
+                    "name": "Mar",
+                    "x": 50,
+                    "y": 25,
+                    "r": 10
+                  }
+                ]
+              },
+              {
+                "name": "Group B",
+                "series": [
+                  {
+                    "name": "Jan",
+                    "x": 20,
+                    "y": 50,
+                    "r": 12
+                  },
+                  {
+                    "name": "Feb",
+                    "x": 45,
+                    "y": 15,
+                    "r": 6
+                  },
+                  {
+                    "name": "Mar",
+                    "x": 60,
+                    "y": 35,
+                    "r": 18
+                  }
+                ]
+              }
+            ],
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "series": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "r": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "x",
+                        "y",
+                        "r"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "series"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "NumberCardComponent",
+    "title": "Number Card",
+    "subtitle": "KPI metric cards",
+    "description": "Add number cards to display key performance indicators.",
+    "icon": "dashboard",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "kpi"
+      },
+      {
+        "facet": "",
+        "name": "metric"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "KPI Metrics",
+            "required": true,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "section",
+            "key": "section-chart-props",
+            "label": "Card Properties",
+            "value": "",
+            "required": false,
+            "order": 10
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartCardColor",
+            "label": "Card Color (hex)",
+            "value": "",
+            "required": false,
+            "order": 11,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartBandColor",
+            "label": "Band Color (hex)",
+            "value": "",
+            "required": false,
+            "order": 12,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartTextColor",
+            "label": "Text Color (hex)",
+            "value": "",
+            "required": false,
+            "order": 13,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      {
+        "displayName": "Data",
+        "groupId": "data",
+        "position": 20,
+        "properties": [
+          {
+            "controlType": "ace-editor",
+            "key": "chartData",
+            "label": "Chart Data (JSON)",
+            "value": [
+              {
+                "name": "Revenue",
+                "value": 312000
+              },
+              {
+                "name": "Units",
+                "value": 1540
+              },
+              {
+                "name": "Customers",
+                "value": 248
+              },
+              {
+                "name": "Returns",
+                "value": 12
+              }
+            ],
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "LineChartComponent",
+    "title": "Line Chart",
+    "subtitle": "Multi-series line chart",
+    "description": "Add a line chart to visualize trends across multiple series.",
+    "icon": "show_chart",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "chart"
+      },
+      {
+        "facet": "",
+        "name": "line"
+      },
+      {
+        "facet": "",
+        "name": "trend"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "Line Chart",
+            "required": true,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "section",
+            "key": "section-chart-props",
+            "label": "Chart Properties",
+            "value": "",
+            "required": false,
+            "order": 10
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowXAxis",
+            "label": "Show X Axis",
+            "value": true,
+            "required": false,
+            "order": 13,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowXAxisLabel",
+            "label": "Show X Axis Label",
+            "value": true,
+            "required": false,
+            "order": 14,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartXAxisLabel",
+            "label": "X Axis Label",
+            "value": "Time",
+            "required": false,
+            "order": 15,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartLegend",
+            "label": "Show Legend",
+            "value": true,
+            "required": false,
+            "order": 11,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartLegendTitle",
+            "label": "Legend Title",
+            "value": "Legend",
+            "required": false,
+            "order": 12,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowYAxis",
+            "label": "Show Y Axis",
+            "value": true,
+            "required": false,
+            "order": 16,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartShowYAxisLabel",
+            "label": "Show Y Axis Label",
+            "value": true,
+            "required": false,
+            "order": 17,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "chartYAxisLabel",
+            "label": "Y Axis Label",
+            "value": "Value",
+            "required": false,
+            "order": 18,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartTimeline",
+            "label": "Show Timeline",
+            "value": true,
+            "required": false,
+            "order": 20,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "chartAnimations",
+            "label": "Animations",
+            "value": true,
+            "required": false,
+            "order": 21,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ]
+      },
+      {
+        "displayName": "Data",
+        "groupId": "data",
+        "position": 20,
+        "properties": [
+          {
+            "controlType": "ace-editor",
+            "key": "chartData",
+            "label": "Chart Data (JSON)",
+            "value": [
+              {
+                "name": "Series 1",
+                "series": [
+                  {
+                    "name": "Mon",
+                    "value": 320
+                  },
+                  {
+                    "name": "Tue",
+                    "value": 730
+                  },
+                  {
+                    "name": "Wed",
+                    "value": 294
+                  },
+                  {
+                    "name": "Thu",
+                    "value": 510
+                  },
+                  {
+                    "name": "Fri",
+                    "value": 420
+                  }
+                ]
+              },
+              {
+                "name": "Series 2",
+                "series": [
+                  {
+                    "name": "Mon",
+                    "value": 480
+                  },
+                  {
+                    "name": "Tue",
+                    "value": 300
+                  },
+                  {
+                    "name": "Wed",
+                    "value": 180
+                  },
+                  {
+                    "name": "Thu",
+                    "value": 390
+                  },
+                  {
+                    "name": "Fri",
+                    "value": 620
+                  }
+                ]
+              }
+            ],
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "series": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "series"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "TableComponent",
+    "title": "Table",
+    "subtitle": "Tabular data",
+    "description": "Add a table to display rows of tabular data.",
+    "icon": "table_chart",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "table"
+      },
+      {
+        "facet": "",
+        "name": "data"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "Table",
+            "required": true,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "Tabular data",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "section",
+            "key": "section-table-props",
+            "label": "Table Properties",
+            "value": "",
+            "required": false,
+            "order": 10
+          },
+          {
+            "controlType": "textbox",
+            "key": "tableColumns",
+            "label": "Columns (comma separated, blank = all)",
+            "value": "",
+            "required": false,
+            "order": 11,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "number",
+            "key": "maxRows",
+            "label": "Max Rows (0 = all)",
+            "value": 0,
+            "required": false,
+            "order": 12,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "showStriped",
+            "label": "Striped Rows",
+            "value": true,
+            "required": false,
+            "order": 13,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "showDense",
+            "label": "Dense Rows",
+            "value": false,
+            "required": false,
+            "order": 14,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "showRowNumbers",
+            "label": "Show Row Numbers",
+            "value": false,
+            "required": false,
+            "order": 15,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ]
+      },
+      {
+        "displayName": "Data",
+        "groupId": "data",
+        "position": 20,
+        "properties": [
+          {
+            "controlType": "ace-editor",
+            "key": "tableData",
+            "label": "Table Data (JSON array of row objects)",
+            "value": "[\n  {\n    \"Line\": \"Line A\",\n    \"Output\": 1240,\n    \"Defects\": 12,\n    \"Status\": \"Running\"\n  },\n  {\n    \"Line\": \"Line B\",\n    \"Output\": 980,\n    \"Defects\": 31,\n    \"Status\": \"Running\"\n  },\n  {\n    \"Line\": \"Line C\",\n    \"Output\": 0,\n    \"Defects\": 0,\n    \"Status\": \"Stopped\"\n  },\n  {\n    \"Line\": \"Line D\",\n    \"Output\": 1515,\n    \"Defects\": 4,\n    \"Status\": \"Running\"\n  }\n]",
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "StatisticComponent",
+    "title": "Statistic",
+    "subtitle": "Single metric",
+    "description": "Add a single statistic with an icon and color theme.",
+    "icon": "speed",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "kpi"
+      },
+      {
+        "facet": "",
+        "name": "metric"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "Statistic",
+            "required": true,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "Single metric",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "section",
+            "key": "section-stat-value",
+            "label": "Statistic",
+            "value": "",
+            "required": false,
+            "order": 10
+          },
+          {
+            "controlType": "textbox",
+            "key": "statValue",
+            "label": "Value",
+            "value": "94.2%",
+            "required": false,
+            "order": 11,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "statLabel",
+            "label": "Label",
+            "value": "Overall Equipment Effectiveness",
+            "required": false,
+            "order": 12,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "statChange",
+            "label": "Change (e.g. +2.4%, -3)",
+            "value": "+2.4%",
+            "required": false,
+            "order": 13,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "statCaption",
+            "label": "Caption",
+            "value": "vs. last week",
+            "required": false,
+            "order": 14,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "section",
+            "key": "section-stat-appearance",
+            "label": "Appearance",
+            "value": "",
+            "required": false,
+            "order": 20
+          },
+          {
+            "controlType": "icon-picker",
+            "key": "statIcon",
+            "label": "Icon",
+            "value": "speed",
+            "required": false,
+            "order": 21,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "dropdown",
+            "key": "statTheme",
+            "label": "Theme",
+            "value": "brand",
+            "required": false,
+            "order": 22,
+            "options": [
+              {
+                "key": "brand",
+                "value": "Brand"
+              },
+              {
+                "key": "success",
+                "value": "Success (green)"
+              },
+              {
+                "key": "warning",
+                "value": "Warning (orange)"
+              },
+              {
+                "key": "danger",
+                "value": "Danger (red)"
+              },
+              {
+                "key": "info",
+                "value": "Info (blue)"
+              },
+              {
+                "key": "purple",
+                "value": "Purple"
+              },
+              {
+                "key": "teal",
+                "value": "Teal"
+              },
+              {
+                "key": "neutral",
+                "value": "Neutral (gray)"
+              }
+            ],
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "showIcon",
+            "label": "Show Icon",
+            "value": true,
+            "required": false,
+            "order": 23,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "TextComponent",
+    "title": "Text",
+    "subtitle": "Markdown text block",
+    "description": "Add a block of markdown-formatted text for narrative content.",
+    "icon": "notes",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "narrative"
+      },
+      {
+        "facet": "",
+        "name": "text"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "",
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "markdown",
+            "key": "content",
+            "label": "Content (Markdown)",
+            "value": "## Heading\n\nEnter your **markdown** text here.",
+            "required": false,
+            "order": 3,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "VideoComponent",
+    "title": "Video",
+    "subtitle": "YouTube video player",
+    "description": "Embed a YouTube video on the board.",
+    "icon": "smart_display",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "media"
+      },
+      {
+        "facet": "",
+        "name": "video"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "",
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "videoUrl",
+            "label": "YouTube URL or Video ID",
+            "value": "",
+            "required": false,
+            "order": 3,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "checkbox",
+            "key": "autoplay",
+            "label": "Autoplay (muted)",
+            "value": false,
+            "required": false,
+            "order": 4,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  },
+  {
+    "componentType": "IllustrationComponent",
+    "title": "Illustration",
+    "subtitle": "unDraw illustration",
+    "description": "Add a decorative unDraw illustration to the board.",
+    "icon": "image",
+    "instanceId": -1,
+    "tags": [
+      {
+        "facet": "",
+        "name": "decorative"
+      },
+      {
+        "facet": "",
+        "name": "illustration"
+      }
+    ],
+    "propertyPages": [
+      {
+        "displayName": "Configuration",
+        "groupId": "config",
+        "position": 10,
+        "properties": [
+          {
+            "controlType": "textbox",
+            "key": "title",
+            "label": "Title",
+            "value": "",
+            "required": false,
+            "order": 1,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "subtitle",
+            "label": "Subtitle",
+            "value": "",
+            "required": false,
+            "order": 2,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "illustration-picker",
+            "key": "illustration",
+            "label": "Illustration",
+            "value": "",
+            "required": false,
+            "order": 3,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "altText",
+            "label": "Alt Text",
+            "value": "",
+            "required": false,
+            "order": 4,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "textbox",
+            "key": "caption",
+            "label": "Caption",
+            "value": "",
+            "required": false,
+            "order": 5,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "controlType": "dropdown",
+            "key": "size",
+            "label": "Size",
+            "value": "medium",
+            "required": false,
+            "order": 6,
+            "options": [
+              {
+                "key": "small",
+                "value": "Small"
+              },
+              {
+                "key": "medium",
+                "value": "Medium"
+              },
+              {
+                "key": "large",
+                "value": "Large"
+              }
+            ],
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "add"
+      }
+    ]
+  }
+]

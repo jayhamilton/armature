@@ -1,0 +1,58 @@
+<div class="library-panel">
+  <div class="library-panel-header" [class.collapsed]="collapsed">
+    @if (!collapsed) {
+      <span class="library-panel-title">Add Tool ({{ library?.length }})</span>
+    }
+    <div class="library-panel-header-actions">
+      <button mat-icon-button class="library-panel-header-btn" (click)="toggleCollapsed()"
+        [matTooltip]="collapsed ? 'Expand' : 'Collapse'" matTooltipPosition="left"
+        [attr.aria-label]="collapsed ? 'Expand gadget library panel' : 'Collapse gadget library panel'">
+        <mat-icon>{{ collapsed ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+      </button>
+      <button mat-icon-button class="library-panel-header-btn library-panel-close" (click)="close()" aria-label="Close gadget library panel">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="library-panel-body">
+    @if (collapsed) {
+      <div class="library-icon-rail">
+        @for (gadget of library; track gadget.componentType) {
+          <button mat-icon-button class="library-icon-button"
+            [matTooltip]="gadget.title" matTooltipPosition="left"
+            [attr.aria-label]="'Add ' + gadget.title"
+            (click)="addGadget(gadget)">
+            <mat-icon [ngStyle]="{color: colors[$index]}">{{ gadget.icon }}</mat-icon>
+          </button>
+        }
+      </div>
+    } @else {
+      <cdk-virtual-scroll-viewport itemSize="160" class="library-viewport">
+        <mat-card class="library-card"
+          *cdkVirtualFor="let gadget of library; let idx = index"
+          [ngStyle]="{'border-top-color': colors[idx]}">
+          <button mat-icon-button class="library-card-add-btn" (click)="addGadget(gadget)"
+            [matTooltip]="'Add ' + gadget.title" [attr.aria-label]="'Add ' + gadget.title">
+            <mat-icon>{{ gadget.actions[0].name }}</mat-icon>
+          </button>
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="library-icon">{{ gadget.icon }}</mat-icon>
+            <mat-card-title>{{ gadget.title }}</mat-card-title>
+            <mat-card-subtitle>{{ gadget.subtitle }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            {{ gadget.description }}
+          </mat-card-content>
+          @if (gadget.tags.length > 0) {
+            <div class="library-card-tags">
+              @for (tag of gadget.tags; track tag.name) {
+                <span class="tag-pill">{{ tag.name }}</span>
+              }
+            </div>
+          }
+        </mat-card>
+      </cdk-virtual-scroll-viewport>
+    }
+  </div>
+</div>

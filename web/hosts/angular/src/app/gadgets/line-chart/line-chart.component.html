@@ -1,0 +1,34 @@
+<mat-card cdkDrag>
+  <app-gadget-header
+    [title]="title"
+    [subtitle]="subtitle"
+    [iconpath]="icon"
+    (removeEvent)="remove()"
+    [inConfig]="inConfig"
+    [gadgetInstanceId]="instanceId"
+    [gadgetPropertyPages]="propertyPages"
+    [gadgetTags]="tags"
+    [propertyChangeCallback]="propertyChangeEvent.bind(this)"
+    [helpTopic]="'line-chart'"
+    (toggleConfigModeEvent)="toggleConfigMode()">
+  </app-gadget-header>
+
+  <mat-card-content class="chart-content">
+    <ngx-charts-line-chart
+      [scheme]="colorScheme"
+      [curve]="curveShape"
+      [results]="chartData"
+      [legend]="chartLegend"
+      [legendTitle]="chartLegendTitle"
+      [xAxis]="chartShowXAxis"
+      [yAxis]="chartShowYAxis"
+      [showXAxisLabel]="chartShowXAxisLabel"
+      [showYAxisLabel]="chartShowYAxisLabel"
+      [xAxisLabel]="chartXAxisLabel"
+      [yAxisLabel]="chartYAxisLabel"
+      [gradient]="chartGradient"
+      [timeline]="chartTimeline"
+      [animations]="chartAnimations">
+    </ngx-charts-line-chart>
+  </mat-card-content>
+</mat-card>

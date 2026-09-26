@@ -1,0 +1,27 @@
+<mat-card cdkDrag>
+  <app-gadget-header
+    [title]="title"
+    [subtitle]="subtitle"
+    [iconpath]="icon"
+    (removeEvent)="remove()"
+    [inConfig]="inConfig"
+    [gadgetInstanceId]="instanceId"
+    [gadgetPropertyPages]="propertyPages"
+    [gadgetTags]="tags"
+    [propertyChangeCallback]="propertyChangeEvent.bind(this)"
+    [helpTopic]="'illustration'"
+    (toggleConfigModeEvent)="toggleConfigMode()">
+  </app-gadget-header>
+
+  <mat-card-content class="illustration-content">
+    @if (imageSrc) {
+      <img class="illustration-image" [src]="imageSrc" [alt]="altText || title || 'Illustration'"
+        [style.max-width.px]="sizePx" />
+      @if (caption) {
+        <p class="illustration-caption">{{ caption }}</p>
+      }
+    } @else {
+      <p class="illustration-placeholder">Configure this gadget to choose an illustration.</p>
+    }
+  </mat-card-content>
+</mat-card>

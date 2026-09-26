@@ -1,0 +1,82 @@
+
+<div class="boards-form-section">
+  <h3 class="section-label">Define a new board</h3>
+  <form [formGroup]="form" class="boards-form">
+    <app-icon-picker [formControl]="boardIcon"></app-icon-picker>
+
+    <mat-form-field appearance="outline" class="form-field-title">
+      <mat-label>Title</mat-label>
+      <input [formControl]="boardTitle" matInput placeholder="Enter a title" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field-desc">
+      <mat-label>Description</mat-label>
+      <input [formControl]="boardDescription" matInput placeholder="Enter description" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field-tab">
+      <mat-label>Show board as tab</mat-label>
+      <mat-select [formControl]="boardTabvalue">
+        <mat-option>-- None --</mat-option>
+        @for (option of this.dropDownListSelection; track option) {
+          <mat-option value="{{ option.id }}">{{ option.title }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" (click)="create()" [disabled]="!form.valid || !form.dirty">
+        @if (!editMode) { <mat-icon>add</mat-icon> Add }
+        @if (editMode) { <mat-icon>check</mat-icon> Update }
+      </button>
+      @if (editMode) {
+        <button mat-stroked-button color="primary" (click)="resetEditMode()">Cancel</button>
+      }
+    </div>
+  </form>
+</div>
+
+<div class="boards-table-section">
+  <h3 class="section-label">Boards</h3>
+  <table mat-table [dataSource]="dataSource" class="boards-table">
+
+    <ng-container matColumnDef="icon">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon class="board-row-icon">{{ element.icon || 'dashboard' }}</mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Title</th>
+      <td mat-cell *matCellDef="let element">
+        @if (element.relationship == 1) {
+          <mat-icon class="child-icon">subdirectory_arrow_right</mat-icon>
+        }
+        <span class="board-title-text">{{ element.title }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="tools">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="action-buttons">
+          <button mat-icon-button color="primary" (click)="edit(element)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="delete(element)" matTooltip="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

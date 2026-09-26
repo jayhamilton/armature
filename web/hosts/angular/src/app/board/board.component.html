@@ -1,0 +1,95 @@
+@if (boardExists) {
+  <mat-tab-group
+    [selectedIndex]="selected.value"
+    (selectedIndexChange)="selected.setValue($event); setSelected(selected.value)"
+    [class.single-tab]="boardData.tabs?.length === 1"
+    >
+    @for (tab of boardData.tabs; track tab; let index = $index) {
+      <mat-tab [label]="tab.title">
+        <!-- One drop list group spanning every row, so gadgets can be dragged
+             between rows and not just between columns of the same row. The
+             board-width-* class scales each row structure's side padding
+             (see board.component.scss) via the whole-board Width setting. -->
+        <div cdkDropListGroup [ngClass]="boardWidthClass()">
+          @for (row of boardData.rows; track row; let r = $index) {
+            <div class="board-row" [ngClass]="structureForRow(r)">
+              @for (col of row.columns; track col; let c = $index) {
+                <div
+                  cdkDropList
+                  [id]="getColumnDropListId(r, c)"
+                  [cdkDropListData]="col.gadgets"
+                  [cdkDropListDisabled]="locked"
+                  (cdkDropListDropped)="drop($event)"
+                  [ngClass]="col.gadgets.length == 0 ? 'empty-column-placeholder' : ''"
+                  >
+                  @for (gadget of col.gadgets; track gadget) {
+                    <gadget-grid-cell-host
+                      [gadgetData]="gadget"
+                    ></gadget-grid-cell-host>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+    }
+  </mat-tab-group>
+}
+
+@if (!boardExists) {
+  <div class="empty-state">
+    <mat-icon class="empty-state-icon">space_dashboard</mat-icon>
+    <h2>Let's build your first dashboard</h2>
+    <p>Here's a quick walkthrough of the two steps to get started.</p>
+
+    <div class="tour">
+      <div class="tour-frame">
+        <div class="tour-stage">
+          <div class="tour-toolbar-window">
+            <img
+              [src]="(themeService.isDark$ | async) ? 'assets/images/onboarding/toolbar-nav-dark.png' : 'assets/images/onboarding/toolbar-nav.png'"
+              alt=""
+              />
+            <div class="tour-ring tour-ring-settings"></div>
+          </div>
+        </div>
+        <div class="tour-stage">
+          <img
+            class="panel-image"
+            [src]="(themeService.isDark$ | async) ? 'assets/images/onboarding/configuration-panel-dark.png' : 'assets/images/onboarding/configuration-panel.png'"
+            alt="The board configuration panel, where a new board is defined"
+            />
+        </div>
+        <div class="tour-stage">
+          <div class="tour-toolbar-window">
+            <img
+              [src]="(themeService.isDark$ | async) ? 'assets/images/onboarding/toolbar-nav-dark.png' : 'assets/images/onboarding/toolbar-nav.png'"
+              alt=""
+              />
+            <div class="tour-ring tour-ring-library"></div>
+          </div>
+        </div>
+        <div class="tour-stage">
+          <img
+            class="panel-image"
+            [src]="(themeService.isDark$ | async) ? 'assets/images/onboarding/library-panel-dark.png' : 'assets/images/onboarding/library-panel.png'"
+            alt="The gadget library panel, listing gadgets that can be added to a board"
+            />
+        </div>
+      </div>
+
+      <div class="tour-dots" aria-hidden="true">
+        <span class="tour-dot"></span>
+        <span class="tour-dot"></span>
+        <span class="tour-dot"></span>
+        <span class="tour-dot"></span>
+      </div>
+
+      <div class="tour-caption">
+        <p class="tour-caption-text"><strong>Step 1</strong> — use the settings menu to create your first board instance.</p>
+        <p class="tour-caption-text"><strong>Step 2</strong> — open the gadget library and populate the board with one or more gadgets.</p>
+      </div>
+    </div>
+  </div>
+}

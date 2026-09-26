@@ -1,0 +1,10 @@
+# Repo-wide concerns not already covered by a per-stack .gitignore
+# (backend/.gitignore, web/hosts/*/.gitignore each own their own toolchain's patterns)
+
+.DS_Store
+.idea/
+*.swp
+
+# Claude Code local state
+.claude/settings.local.json
+.claude/worktrees/

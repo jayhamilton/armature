@@ -1,0 +1,155 @@
+.upload-grid {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.img-grid {
+  object-fit: cover;
+  width: 100%;
+  max-height: 100%;
+}
+
+.main-text {
+  font-size: 24px;
+  color: gray;
+  text-align: center;
+  line-height: 35px;
+}
+
+.upload-icon {
+  text-align: center;
+}
+
+.sub-text {
+  font-size: 18px;
+  color: green;
+  text-align: center;
+}
+
+.mat-icon {
+  font-size: 150px;
+  height: 150px;
+  width: 150px;
+  color: green;
+}
+.form-actions {
+  padding: 8px 8px 16px;
+}
+
+.form-row-message {
+  display: grid;
+  width: 100%;
+  background-color: rgb(203, 240, 227);
+  align-content: center;
+  justify-content: center;
+  border-radius: 5%;
+  line-height: 40px;
+  font: 20px;
+  color: rgb(68, 66, 66);
+}
+
+// A two-column CSS grid ties row height to the tallest cell in that row
+// across BOTH columns, so a text field next to a checkbox forces the
+// checkbox's row tall too, leaving visible empty space under it. Property
+// order isn't semantically paired left/right anyway (it's just whatever
+// order the gadget's property list happens to define), so there's no
+// pairing to preserve — CSS multi-column lets each column size to its own
+// content instead, with column-span: all as its native mechanism for the
+// full-width rows (section headers, JSON/text editors) that need to break
+// across both columns.
+.gridContainer {
+  padding: 16px 8px;
+  width: 100%;
+  columns: 2;
+  column-gap: 24px;
+  column-fill: balance;
+}
+
+.form-row {
+  break-inside: avoid;
+  margin-bottom: 8px;
+}
+
+.full_width {
+  width: 100%;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-tab-group {
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.full-width-row {
+  column-span: all;
+}
+
+.ace-editor-container {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.ace-editor-container mat-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--app-text-secondary);
+}
+
+.json-forms-container {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.json-forms-container mat-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--app-text-secondary);
+}
+
+.markdown-editor-container {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.markdown-editor-container mat-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--app-text-secondary);
+}
+
+// The icon picker isn't a mat-form-field, so it has no floating label of
+// its own — pair it with an explicit label stacked above, matching how the
+// surrounding fields read.
+.icon-picker-field,
+.illustration-picker-field,
+.endpoint-picker-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+
+  mat-label {
+    font-size: 0.75rem;
+    color: var(--app-text-secondary);
+  }
+}
+
+.section-header {
+  column-span: all;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--app-brand);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 0 4px;
+  border-bottom: 1px solid var(--app-border);
+  margin-bottom: 4px;
+}

@@ -1,0 +1,162 @@
+.configuration-title {
+  font-size: 1.4rem !important;
+  font-weight: 500 !important;
+  color: var(--app-brand);
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.configuration-content {
+  padding-top: 16px !important;
+  min-height: 300px;
+}
+
+.configuration-tab-body {
+  padding-top: 8px;
+}
+
+.configuration-actions {
+  padding: 8px 24px 12px !important;
+  border-top: 1px solid var(--app-border);
+}
+
+.section-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--app-brand);
+  margin: 16px 0 8px;
+}
+
+.boards-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.form-field-icon {
+  width: 140px;
+}
+
+.form-field-title {
+  width: 200px;
+}
+
+.form-field-desc {
+  width: 240px;
+}
+
+.form-field-tab {
+  width: 200px;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 4px;
+}
+
+.boards-table-section {
+  margin-top: 8px;
+}
+
+.boards-table {
+  width: 100%;
+  border: 1px solid var(--app-border);
+  border-radius: 4px;
+}
+
+.boards-table .MuiTableCell-head {
+  background-color: var(--app-brand);
+  color: var(--app-brand-contrast);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.boards-table .MuiTableCell-body {
+  font-size: 0.9rem;
+  color: var(--app-text-secondary);
+}
+
+.boards-table .MuiTableRow-root:hover {
+  background-color: var(--app-brand-tint);
+}
+
+.board-row-icon {
+  color: var(--app-text-secondary);
+  vertical-align: middle;
+}
+
+.child-icon {
+  font-size: 18px !important;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  color: var(--app-text-secondary);
+  margin-right: 2px;
+}
+
+.board-title-text {
+  vertical-align: middle;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.application-form-section {
+  padding-bottom: 8px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.setting-info {
+  max-width: 340px;
+}
+
+.setting-title {
+  font-weight: 500;
+}
+
+.setting-description {
+  font-size: 0.85rem;
+  color: var(--app-text-secondary);
+  margin-top: 2px;
+}
+
+.setting-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-field-app-title {
+  width: 280px;
+}
+
+.saved-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #2e7d32;
+  font-size: 0.85rem;
+}
+
+.endpoints-section {
+  padding-bottom: 8px;
+}

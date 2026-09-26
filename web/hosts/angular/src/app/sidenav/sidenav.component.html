@@ -1,0 +1,89 @@
+<mat-drawer-container class="example-container" autosize>
+  @if (boardData.length > 0) {
+    @if (navState === 'hidden') {
+    <button
+      type="button"
+      mat-icon-button
+      class="nav-edge-toggle nav-reveal"
+      (click)="expandNav()"
+      matTooltip="Show menu"
+      matTooltipPosition="right"
+      aria-label="Show board menu">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+    } @else {
+      <button
+        type="button"
+        mat-icon-button
+        class="nav-edge-toggle nav-collapse"
+        [style.left.px]="navRailWidthPx"
+        (click)="collapseNav()"
+        matTooltip="Collapse menu"
+        matTooltipPosition="right"
+        aria-label="Collapse board menu">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+    }
+  }
+
+  @if (boardData.length > 0) {
+    <mat-drawer
+    #drawer
+    class="example-sidenav"
+    [class.collapsed]="navState === 'icon'"
+    [class.hidden]="navState === 'hidden'"
+    mode="side"
+    [opened]="true"
+    (transitionend)="onNavRailTransitionEnd($event)">
+    <mat-nav-list>
+      @for (board of boardData; track board.id) {
+        <mat-list-item
+          [class.active]="board.id === selectedBoardId"
+          [matTooltip]="board.title"
+          [matTooltipDisabled]="navExpanded"
+          matTooltipPosition="right"
+          (click)="selectBoard(board.id)">
+          <mat-icon matListItemIcon>{{ board.icon || 'dashboard' }}</mat-icon>
+          @if (navExpanded) {
+            {{ board.title }}
+          }
+        </mat-list-item>
+      }
+    </mat-nav-list>
+    </mat-drawer>
+  }
+
+  <mat-drawer-container class="layout-panel-container" [hasBackdrop]="true">
+    <mat-drawer #layout class="layout-drawer" mode="side" position="end" (openedChange)="onPushDrawerAnimationDone()">
+      <app-sidelayout></app-sidelayout>
+    </mat-drawer>
+
+    <mat-drawer-container class="config-panel-container" [hasBackdrop]="true">
+      <mat-drawer #configPanel mode="side" position="end" (closed)="onConfigPanelClosed()" (openedChange)="onPushDrawerAnimationDone()">
+        <app-config-panel></app-config-panel>
+      </mat-drawer>
+
+      <mat-drawer-container class="library-panel-container" [hasBackdrop]="true" [class.library-collapsed]="libraryCollapsed">
+        <mat-drawer #library mode="side" position="end" (openedChange)="onPushDrawerAnimationDone()">
+          <app-library></app-library>
+        </mat-drawer>
+
+        <mat-drawer-container class="help-panel-container" [hasBackdrop]="true">
+          <mat-drawer #helpPanel mode="side" position="end" (openedChange)="onPushDrawerAnimationDone()">
+            <app-help-panel></app-help-panel>
+          </mat-drawer>
+
+          <mat-drawer-container class="agent-panel-container" [hasBackdrop]="true">
+            <mat-drawer #agentPanel mode="side" position="end" (openedChange)="onPushDrawerAnimationDone()">
+              <app-agent-panel></app-agent-panel>
+            </mat-drawer>
+
+            <div class="example-sidenav-content">
+              <app-board></app-board>
+            </div>
+          </mat-drawer-container>
+        </mat-drawer-container>
+      </mat-drawer-container>
+    </mat-drawer-container>
+  </mat-drawer-container>
+</mat-drawer-container>

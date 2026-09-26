@@ -1,0 +1,28 @@
+<mat-card cdkDrag>
+  <app-gadget-header
+    [title]="title"
+    [subtitle]="subtitle"
+    [iconpath]="icon"
+    (removeEvent)="remove()"
+    [inConfig]="inConfig"
+    [gadgetInstanceId]="instanceId"
+    [gadgetPropertyPages]="propertyPages"
+    [gadgetTags]="tags"
+    [propertyChangeCallback]="propertyChangeEvent.bind(this)"
+    [helpTopic]="'pie-chart'"
+    (toggleConfigModeEvent)="toggleConfigMode()">
+  </app-gadget-header>
+
+  <mat-card-content class="chart-content">
+    <ngx-charts-pie-chart
+      [scheme]="colorScheme"
+      [results]="chartData"
+      [legend]="chartLegend"
+      [legendTitle]="chartLegendTitle"
+      [gradient]="chartGradient"
+      [labels]="chartShowLabels"
+      [doughnut]="chartDoughnut"
+      [explodeSlices]="chartExplodeSlices">
+    </ngx-charts-pie-chart>
+  </mat-card-content>
+</mat-card>

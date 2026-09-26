@@ -1,0 +1,32 @@
+<mat-card cdkDrag>
+  <app-gadget-header
+    [title]="title"
+    [subtitle]="subtitle"
+    [iconpath]="icon"
+    (removeEvent)="remove()"
+    [inConfig]="inConfig"
+    [gadgetInstanceId]="instanceId"
+    [gadgetPropertyPages]="propertyPages"
+    [gadgetTags]="tags"
+    [propertyChangeCallback]="propertyChangeEvent.bind(this)"
+    [helpTopic]="'bubble-chart'"
+    (toggleConfigModeEvent)="toggleConfigMode()">
+  </app-gadget-header>
+
+  <mat-card-content class="chart-content">
+    <ngx-charts-bubble-chart
+      [scheme]="colorScheme"
+      [results]="chartData"
+      [xAxis]="chartShowXAxis"
+      [yAxis]="chartShowYAxis"
+      [showXAxisLabel]="chartShowXAxisLabel"
+      [showYAxisLabel]="chartShowYAxisLabel"
+      [xAxisLabel]="chartXAxisLabel"
+      [yAxisLabel]="chartYAxisLabel"
+      [legend]="chartLegend"
+      [legendTitle]="chartLegendTitle"
+      [minRadius]="chartMinRadius"
+      [maxRadius]="chartMaxRadius">
+    </ngx-charts-bubble-chart>
+  </mat-card-content>
+</mat-card>

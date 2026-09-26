@@ -1,0 +1,229 @@
+@use '@angular/material' as mat;
+
+.layout-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 480px;
+    background: var(--app-surface);
+    // Toolbar and header colors are close enough to blend together — elevation
+    // makes it read as a separate floating layer regardless of color match.
+    @include mat.elevation(4);
+}
+
+.layout-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background-color: var(--app-panel-header);
+    color: var(--app-brand-contrast);
+    flex-shrink: 0;
+}
+
+.layout-panel-title {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.layout-panel-close {
+    color: var(--app-brand-contrast);
+    flex-shrink: 0;
+}
+
+.layout-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.section-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--app-brand);
+    margin: 8px 0;
+}
+
+.section-label-target {
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    color: var(--app-text-secondary);
+}
+
+.row-section {
+    padding: 8px 16px 16px;
+    border-bottom: 1px solid var(--app-border);
+}
+
+.row-list {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+    -webkit-padding-start: 0;
+}
+
+.row-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    color: var(--app-text-secondary);
+    border-left: 3px solid transparent;
+
+    &:hover {
+        background-color: var(--app-brand-tint);
+    }
+
+    &.selected {
+        background-color: var(--app-brand-tint-strong);
+        border-left-color: var(--app-brand);
+        color: var(--app-brand);
+    }
+}
+
+.row-item-handle {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    cursor: grab;
+    opacity: 0.6;
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+.row-item-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+// While a row is being dragged the list still needs to look like a list:
+// the preview floats with the panel's surface color, and the gap left
+// behind stays visible so the drop position is obvious.
+.cdk-drag-preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    box-sizing: border-box;
+    list-style: none;
+    background-color: var(--app-surface);
+    color: var(--app-brand);
+    border-left: 3px solid var(--app-brand);
+    border-radius: 2px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+        0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+    opacity: 0.35;
+}
+
+.cdk-drag-animating,
+.row-list.cdk-drop-list-dragging .row-item:not(.cdk-drag-placeholder) {
+    transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.row-item-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.row-item-meta {
+    // Pushes the delete button to the far edge while staying beside the label.
+    flex: 1;
+    font-size: 0.78rem;
+    opacity: 0.75;
+}
+
+.row-item-remove {
+    flex-shrink: 0;
+}
+
+.layout-section {
+    padding: 8px 16px 16px;
+}
+
+.grid-layout {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 15px;
+}
+
+.layout-selected {
+    border-top: medium lawngreen solid;
+    padding-top: 5px;
+}
+
+ul {
+    text-align: center;
+}
+
+ul,
+menu,
+dir {
+    -webkit-padding-start: 5px;
+}
+
+.width-section {
+    padding: 8px 16px 16px;
+}
+
+.width-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    -webkit-padding-start: 0;
+}
+
+// Same visual language and row height as .row-item (left accent bar +
+// brand tint on select/hover, single line) so the Width tab reads as
+// part of the same panel rather than a bolted-on control. Each option's
+// longer explanation lives in a matTooltip instead of always-on subtext
+// — with three options whose descriptions run to very different lengths,
+// variable-height rows made the icons/labels drift out of alignment with
+// each other down the list.
+.width-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    color: var(--app-text-secondary);
+    border-left: 3px solid transparent;
+
+    &:hover {
+        background-color: var(--app-brand-tint);
+    }
+
+    &.selected {
+        background-color: var(--app-brand-tint-strong);
+        border-left-color: var(--app-brand);
+        color: var(--app-brand);
+    }
+}
+
+.width-item-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.width-item-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+}

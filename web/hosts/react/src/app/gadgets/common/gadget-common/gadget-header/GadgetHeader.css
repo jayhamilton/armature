@@ -1,0 +1,72 @@
+.gadget-icon {
+  color: var(--app-brand);
+  font-size: 28px;
+  height: 40px;
+  width: 40px;
+}
+
+.help-button,
+.configure-button,
+.remove-button {
+  position: absolute;
+  top: 5px;
+  background-color: var(--app-surface);
+  box-shadow: inset 0 0 0 1px var(--app-border);
+  border-radius: 50%;
+}
+
+.remove-button {
+  right: 10px;
+  color: var(--app-error);
+}
+
+.configure-button {
+  /* 48px pitch so the circular badges have a clear gap between them. */
+  right: 58px;
+}
+
+.help-button {
+  right: 106px;
+}
+
+.config-mode-indicator {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background-color: var(--app-brand-tint-strong);
+  color: var(--app-brand);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 5px 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.gadget-header .MuiCardHeader-title {
+  color: var(--app-brand);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gadget-header .MuiCardHeader-subheader {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gadget-header.move-cursor {
+  cursor: move;
+  /* help-button's left edge is at 106px, width 40px -> 146px reserved. */
+  padding-right: 156px;
+  box-sizing: border-box;
+}
+
+.gadget-header .MuiCardHeader-content {
+  min-width: 0;
+  overflow: hidden;
+}

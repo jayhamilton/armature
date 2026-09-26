@@ -1,0 +1,33 @@
+<mat-card cdkDrag>
+  <app-gadget-header
+    [title]="title"
+    [subtitle]="subtitle"
+    [iconpath]="icon"
+    (removeEvent)="remove()"
+    [inConfig]="inConfig"
+    [gadgetInstanceId]="instanceId"
+    [gadgetPropertyPages]="propertyPages"
+    [gadgetTags]="tags"
+    [propertyChangeCallback]="propertyChangeEvent.bind(this)"
+    [helpTopic]="'bar-chart'"
+    (toggleConfigModeEvent)="toggleConfigMode()">
+  </app-gadget-header>
+
+  <mat-card-content class="chart-content">
+    <ngx-charts-bar-vertical
+      [roundEdges]="chartRoundEdges"
+      [scheme]="colorScheme"
+      [results]="footballstats"
+      [xAxisLabel]="chartXAxisLabel"
+      [legendTitle]="chartLegendTitle"
+      [yAxisLabel]="chartYAxisLabel"
+      [legend]="chartLegend"
+      [showXAxisLabel]="chartShowXAxisLabel"
+      [showYAxisLabel]="chartShowYAxisLabel"
+      [xAxis]="chartShowXAxis"
+      [yAxis]="chartShowYAxis"
+      [gradient]="chartGradient"
+      [showDataLabel]="chartShowDataLabel">
+    </ngx-charts-bar-vertical>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,429 @@
+/* Gadget cards read as flat if left bare — soft layered shadow with no
+   border so they visually lift off the board background. */
+.gadget-column .MuiCard-root {
+  background: var(--app-surface);
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--app-card-shadow);
+}
+
+/* "Transparent card backgrounds" app setting (AppConfigService), toggled on
+   <body> the same way ThemeService toggles .dark-theme. */
+body.transparent-cards .gadget-column .MuiCard-root {
+  background: transparent;
+  box-shadow: none;
+}
+
+.board-tabs {
+  background-color: var(--app-background);
+  border-bottom: 2px solid var(--app-border);
+  padding: 0 32px;
+}
+
+.board-tabs .MuiTab-root {
+  color: var(--app-text-secondary);
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.board-tabs .Mui-selected {
+  color: var(--app-brand) !important;
+}
+
+.board-tabs .MuiTabs-indicator {
+  background-color: var(--app-brand);
+  height: 3px;
+}
+
+/* Every row structure's side padding is expressed as
+   calc(base * --board-width-scale + --board-width-extra) rather than a flat
+   px value, driven by whichever .board-width-* class wraps a board's rows
+   (Board.tsx's boardWidthClass()). */
+.one_col {
+  display: grid;
+  grid-template-columns: 75%;
+  row-gap: 25px;
+  column-gap: 25px;
+  justify-content: center;
+  margin: 40px;
+  padding-left: calc(100px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+  padding-right: calc(100px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+}
+
+.one_col_full {
+  display: grid;
+  grid-template-columns: 100%;
+  row-gap: 25px;
+  column-gap: 25px;
+  justify-content: center;
+  margin: 10px 0;
+  padding-left: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+  padding-right: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+}
+
+.two_col_equal {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  row-gap: 25px;
+  column-gap: 25px;
+  justify-content: center;
+  margin: 10px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  padding-left: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+  padding-right: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+}
+
+.two_col_wide_narrow {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  row-gap: 25px;
+  column-gap: 25px;
+  justify-content: center;
+  margin: 10px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  padding-left: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+  padding-right: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+}
+
+.two_col_narrow_wide {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  row-gap: 25px;
+  column-gap: 25px;
+  justify-content: center;
+  margin: 10px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  padding-left: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+  padding-right: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+}
+
+.three_col_equal {
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  row-gap: 25px;
+  column-gap: 25px;
+  justify-content: center;
+  margin: 10px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  padding-left: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+  padding-right: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+}
+
+.masonry {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  row-gap: 25px;
+  column-gap: 20px;
+  justify-content: center;
+  margin: 10px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  padding-left: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+  padding-right: calc(32px * var(--board-width-scale, 1) + var(--board-width-extra, 0px));
+}
+
+.board-width-full {
+  --board-width-scale: 0;
+  --board-width-extra: 0px;
+}
+
+.board-width-normal {
+  --board-width-scale: 1;
+  --board-width-extra: 6%;
+}
+
+.board-width-narrow {
+  --board-width-scale: 1;
+  --board-width-extra: 20%;
+}
+
+.board-row + .board-row .empty-column-placeholder {
+  min-height: 20vh;
+}
+
+/* Each dashboard column is a dnd-kit droppable of stacked gadgets. */
+.gadget-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty-column-placeholder {
+  border-color: var(--app-brand);
+  border-width: 2px;
+  border-style: dashed;
+  background-color: var(--app-border);
+  min-height: 50vh;
+}
+
+.gadget-column.column-drop-over {
+  border-color: var(--app-brand);
+  border-width: 2px;
+  border-style: dashed;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 56px 24px 0;
+}
+
+.empty-state h2 {
+  margin: 16px 0 4px;
+  color: var(--app-brand);
+  font-weight: 500;
+}
+
+.empty-state > p {
+  margin: 0;
+  color: var(--app-text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 48px !important;
+  width: 48px;
+  height: 48px;
+  color: var(--app-brand);
+}
+
+.tour {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 32px 0 56px;
+}
+
+.tour-frame {
+  position: relative;
+  width: clamp(420px, 44vw, 680px);
+  aspect-ratio: 340 / 190;
+  border-radius: 12px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.tour-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: tour-cycle 16s infinite;
+  animation-fill-mode: both;
+}
+
+.tour-stage:nth-child(1) {
+  animation-delay: 0s;
+}
+.tour-stage:nth-child(2) {
+  animation-delay: 4s;
+}
+.tour-stage:nth-child(3) {
+  animation-delay: 8s;
+}
+.tour-stage:nth-child(4) {
+  animation-delay: 12s;
+}
+
+@keyframes tour-cycle {
+  0% {
+    opacity: 0;
+  }
+  6.25% {
+    opacity: 1;
+  }
+  18.75% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.tour-stage .panel-image {
+  max-width: 88%;
+  max-height: 84%;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+}
+
+.tour-toolbar-window {
+  position: relative;
+  width: clamp(136px, 14vw, 220px);
+  aspect-ratio: 225 / 90;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+}
+
+.tour-toolbar-window img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tour-ring {
+  position: absolute;
+  top: 50%;
+  height: 55%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid var(--app-brand-contrast);
+  opacity: 0.9;
+  animation: tour-ring-pulse 1.5s ease-out infinite;
+}
+
+.tour-ring-settings {
+  left: 13.2%;
+}
+
+.tour-ring-library {
+  left: 37.4%;
+}
+
+@keyframes tour-ring-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.9;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1.7);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.7);
+    opacity: 0;
+  }
+}
+
+.tour-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.tour-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--app-border);
+  animation: tour-dot-cycle 16s infinite;
+  animation-fill-mode: both;
+}
+
+.tour-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.tour-dot:nth-child(2) {
+  animation-delay: 4s;
+}
+.tour-dot:nth-child(3) {
+  animation-delay: 8s;
+}
+.tour-dot:nth-child(4) {
+  animation-delay: 12s;
+}
+
+@keyframes tour-dot-cycle {
+  0% {
+    background: var(--app-border);
+    transform: scale(1);
+  }
+  6.25% {
+    background: var(--app-brand);
+    transform: scale(1.3);
+  }
+  18.75% {
+    background: var(--app-brand);
+    transform: scale(1.3);
+  }
+  25% {
+    background: var(--app-border);
+    transform: scale(1);
+  }
+  100% {
+    background: var(--app-border);
+    transform: scale(1);
+  }
+}
+
+.tour-caption {
+  position: relative;
+  width: clamp(420px, 44vw, 680px);
+  min-height: 36px;
+  margin-top: 10px;
+  font-size: 0.95rem;
+}
+
+.tour-caption-text {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  color: var(--app-text-secondary);
+  opacity: 0;
+  animation: tour-caption-cycle 16s infinite;
+  animation-fill-mode: both;
+}
+
+.tour-caption-text strong {
+  color: var(--app-brand);
+}
+
+.tour-caption-text:nth-child(1) {
+  animation-delay: 0s;
+}
+.tour-caption-text:nth-child(2) {
+  animation-delay: 8s;
+}
+
+@keyframes tour-caption-cycle {
+  0% {
+    opacity: 0;
+  }
+  6.25% {
+    opacity: 1;
+  }
+  43.75% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-stage,
+  .tour-caption-text,
+  .tour-dot,
+  .tour-ring {
+    animation: none;
+  }
+
+  .tour-stage:nth-child(2),
+  .tour-caption-text:nth-child(1) {
+    opacity: 1;
+  }
+
+  .tour-dot:nth-child(2) {
+    background: var(--app-brand);
+    transform: scale(1.3);
+  }
+}

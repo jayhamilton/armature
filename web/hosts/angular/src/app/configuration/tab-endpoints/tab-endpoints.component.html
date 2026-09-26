@@ -1,0 +1,138 @@
+<div class="endpoints-form-section">
+  <h3 class="section-label">Define a new endpoint</h3>
+  <form [formGroup]="form" class="endpoints-form">
+    <mat-form-field appearance="outline" class="form-field-name">
+      <mat-label>Name</mat-label>
+      <input [formControl]="name" matInput placeholder="Enter a name" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field-address">
+      <mat-label>Address</mat-label>
+      <input [formControl]="address" matInput placeholder="https://api.example.com/data" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field-desc">
+      <mat-label>Description</mat-label>
+      <input [formControl]="description" matInput placeholder="Enter description" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field-tags">
+      <mat-label>Tags</mat-label>
+      <mat-chip-grid #tagGrid aria-label="Endpoint tags">
+        @for (tag of tags; track tag) {
+          <mat-chip-row (removed)="removeTag(tag)">
+            {{ tag.name }}
+            <button matChipRemove aria-label="Remove tag">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        }
+        <input
+          #tagInputRef
+          placeholder="Pick a tag…"
+          [formControl]="tagSearch"
+          [matChipInputFor]="tagGrid"
+          [matAutocomplete]="tagAuto" />
+      </mat-chip-grid>
+      <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="selectTag($event)">
+        @for (option of filteredTagOptions; track option.name) {
+          <mat-option [value]="option.name">
+            <span class="tag-option-name">{{ option.name }}</span>
+            <span class="tag-option-gadgets">{{ option.gadgetTitles.join(', ') }}</span>
+          </mat-option>
+        }
+        @if (filteredTagOptions.length === 0) {
+          <mat-option disabled>No matching tags</mat-option>
+        }
+      </mat-autocomplete>
+      <mat-hint>Pick from tags already used by gadgets in the library.</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field-auth">
+      <mat-label>Authentication</mat-label>
+      <mat-select [formControl]="authType">
+        @for (option of authTypes; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (isHeaderAuth) {
+      <mat-form-field appearance="outline" class="form-field-auth-header">
+        <mat-label>Header name</mat-label>
+        <input [formControl]="authHeaderName" matInput placeholder="X-API-Key" />
+      </mat-form-field>
+    }
+
+    @if (isBasicAuth) {
+      <mat-form-field appearance="outline" class="form-field-auth-user">
+        <mat-label>Username</mat-label>
+        <input [formControl]="credentialUser" matInput />
+      </mat-form-field>
+    }
+
+    @if (requiresCredential) {
+      <mat-form-field appearance="outline" class="form-field-credential">
+        <mat-label>{{ isBasicAuth ? 'Password' : 'API key' }}</mat-label>
+        <input [formControl]="credentialValue" matInput type="password"
+          [placeholder]="editMode ? 'Leave blank to keep existing' : ''" />
+      </mat-form-field>
+    }
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" (click)="create()" [disabled]="!form.valid || !form.dirty">
+        @if (!editMode) { <mat-icon>add</mat-icon> Add }
+        @if (editMode) { <mat-icon>check</mat-icon> Update }
+      </button>
+      @if (editMode) {
+        <button mat-stroked-button color="primary" (click)="resetEditMode()">Cancel</button>
+      }
+    </div>
+  </form>
+</div>
+
+<div class="endpoints-table-section">
+  <h3 class="section-label">Endpoints</h3>
+  <table mat-table [dataSource]="dataSource" class="endpoints-table">
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="address">
+      <th mat-header-cell *matHeaderCellDef>Address</th>
+      <td mat-cell *matCellDef="let element" class="address-cell">{{ element.address }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="tags">
+      <th mat-header-cell *matHeaderCellDef>Tags</th>
+      <td mat-cell *matCellDef="let element">
+        @for (tag of element.tags; track tag.name) {
+          <span class="tag-pill">{{ tag.name }}</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tools">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="action-buttons">
+          <button mat-icon-button color="primary" (click)="edit(element)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="delete(element)" matTooltip="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  @if (endpoints.length === 0) {
+    <p class="endpoints-empty">No endpoints defined yet.</p>
+  }
+</div>

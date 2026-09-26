@@ -1,0 +1,15 @@
+@use '../../shared/markdown-prose' as prose;
+
+.text-content {
+  padding-top: 8px;
+}
+
+.text-placeholder {
+  color: var(--app-text-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
+.text-body {
+  @include prose.markdown-prose;
+}

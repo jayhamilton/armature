@@ -1,0 +1,132 @@
+<div [formGroup]="form">
+  <div class="field">
+    <div>
+      @switch (property.controlType) {
+        @case ('textbox') {
+          <mat-form-field appearance="fill">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <input [formControlName]="property.key" [type]="property.controlType" matInput value="{{ property.value }}"
+              required="{{ property.required }}" />
+          </mat-form-field>
+        }
+        @case ('hidden') {
+          <mat-form-field appearance="fill">
+            <input [formControlName]="property.key" matInput type=hidden />
+          </mat-form-field>
+        }
+        @case ('number') {
+          <mat-form-field appearance="fill">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <input [formControlName]="property.key" [type]="property.controlType" matInput value="{{ property.value }}"
+              required="{{ property.required }}" />
+          </mat-form-field>
+        }
+        @case ('dropdown') {
+          <mat-form-field appearance="fill">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <select [id]="property.key" [formControlName]="property.key" matNativeControl>
+              @for (opt of property.options; track opt) {
+                <option [value]="opt.key">{{opt.value}}</option>
+              }
+            </select>
+          </mat-form-field>
+        }
+        @case ('dropdown-ms') {
+          <mat-form-field appearance="fill">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <mat-select [id]="property.key" [formControlName]="property.key" matNativeControl multiple>
+              @for (opt of property.options; track opt) {
+                <mat-option [value]="opt.key">{{opt.value}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+        @case ('upload') {
+          <div appearance="fill">
+            <div class="upload-icon">
+              <mat-icon> cloud_upload </mat-icon>
+            </div>
+            <div class="main-text">
+              Drag Photos Here or
+              <app-file-upload (fileUploadEvent)="updateFileList($event)"></app-file-upload>
+              <input [formControlName]="property.key" [type]="property.controlType" matInput value="{{ property.value }}"
+                required="{{ property.required }}" style="font-size: 10px" />
+            </div>
+          </div>
+        }
+        @case ('date') {
+          <div apperance="fill">
+            <mat-form-field appearance="fill">
+              <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+              <input [formControlName]="property.key" required="{{ property.required }}" matInput
+                value="{{property.value}}"  [matDatepicker]="picker" />
+              <mat-hint>MMMM DD, YYYY</mat-hint>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        }
+        @case ('textarea') {
+          <div apperance="fill">
+            <mat-form-field class="full_width" appearance="fill">
+              <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+              <textarea rows="10"  [formControlName]="property.key" required="{{ property.required }}" matInput
+              value="{{property.value}}"></textarea>
+            </mat-form-field>
+          </div>
+        }
+        @case ('markdown') {
+          <div class="markdown-editor-container">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <app-markdown-editor
+              [formControlName]="property.key">
+            </app-markdown-editor>
+          </div>
+        }
+        @case ('ace-editor') {
+          <div class="ace-editor-container">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <custom-ace-editor
+              [formControlName]="property.key"
+              [mode]="'json'"
+              [theme]="'github'">
+            </custom-ace-editor>
+          </div>
+        }
+        @case ('json-forms') {
+          <div class="json-forms-container">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <json-forms-editor
+              [formControlName]="property.key"
+              style="border: 1px solid #ccc; border-radius: 4px; padding: 16px; display: block;">
+            </json-forms-editor>
+          </div>
+        }
+        @case ('section') {
+          <div class="section-header">{{ property.label }}</div>
+        }
+        @case ('checkbox') {
+          <mat-checkbox [formControlName]="property.key">{{ property.label }}</mat-checkbox>
+        }
+        @case ('icon-picker') {
+          <div class="icon-picker-field">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <app-icon-picker [formControlName]="property.key"></app-icon-picker>
+          </div>
+        }
+        @case ('illustration-picker') {
+          <div class="illustration-picker-field">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <app-illustration-picker [formControlName]="property.key"></app-illustration-picker>
+          </div>
+        }
+        @case ('endpoint-picker') {
+          <div class="endpoint-picker-field">
+            <mat-label [attr.for]="property.key">{{ property.label }}</mat-label>
+            <app-endpoint-picker [formControlName]="property.key" [gadgetTags]="gadgetTags"></app-endpoint-picker>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

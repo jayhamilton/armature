@@ -1,0 +1,78 @@
+.upload-field {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.upload-field .main-text {
+  font-size: 1rem;
+  color: gray;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.upload-field .upload-icon {
+  text-align: center;
+}
+
+.form-actions {
+  padding: 8px 8px 16px;
+}
+
+.form-row-message {
+  display: grid;
+  width: 100%;
+  background-color: rgb(203, 240, 227);
+  align-content: center;
+  justify-content: center;
+  border-radius: 5%;
+  line-height: 40px;
+  font-size: 20px;
+  color: rgb(68, 66, 66);
+}
+
+.gridContainer {
+  padding: 16px 8px;
+  width: 100%;
+  columns: 2;
+  column-gap: 24px;
+  column-fill: balance;
+}
+
+.form-row {
+  break-inside: avoid;
+  margin-bottom: 8px;
+}
+
+.full-width-row {
+  column-span: all;
+}
+
+.ace-editor-container,
+.json-forms-container,
+.markdown-editor-container {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.ace-editor-container label,
+.json-forms-container label,
+.markdown-editor-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--app-text-secondary);
+}
+
+.section-header {
+  column-span: all;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--app-brand);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 0 4px;
+  border-bottom: 1px solid var(--app-border);
+  margin-bottom: 4px;
+}

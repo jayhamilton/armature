@@ -1,0 +1,241 @@
+.example-container {
+    width: 100%;
+    height: 100%;
+}
+
+.example-sidenav-content {
+    height: 100%;
+    width: 100%;
+    background-color: var(--app-background);
+}
+
+// #layout gets its own container, sibling to .config-panel-container's nested
+// tree rather than a bare direct child of .example-container, so it can have
+// its own [hasBackdrop] independent of #drawer (the nav rail, which shares
+// .example-container and is permanently [opened]="true" - a backdrop set at
+// that level would forcibly apply to #drawer too and never go away).
+.layout-panel-container {
+    width: 100%;
+    height: 100%;
+
+    // Material's structural .mat-drawer CSS is `width: var(--mat-sidenav-container-width, 360px)`.
+    // autosize (on the ancestor .example-container) doesn't reliably measure/set
+    // an inline width here, so it falls back to the 360px default regardless of
+    // the drawer's actual 480px content, clipping it.
+    //
+    // `> mat-drawer`, not a bare `mat-drawer` descendant selector: this container
+    // wraps the entire config/library/help/agent nesting below it, so an
+    // unscoped `mat-drawer { }` here would ALSO directly match every drawer
+    // nested inside them - and a rule that directly targets an element always
+    // wins over that element's own closer ancestor setting the same custom
+    // property through inheritance. That's exactly what broke the library
+    // panel's collapsed-width override: this rule's 480px was reaching all the
+    // way down to #library's drawer and beating its own container's 72px.
+    > mat-drawer {
+        --mat-sidenav-container-width: 480px;
+
+        // Same flush-under-the-toolbar corner issue as .config-panel-container
+        // below: M3's default shape rounds the leading corner, which cuts an
+        // odd notch where this drawer sits flush under the toolbar.
+        --mat-sidenav-container-shape: 0;
+    }
+}
+
+.config-panel-container {
+    width: 100%;
+    height: 100%;
+
+    // Same 360px-fallback issue as .layout-panel-container above.
+    --mat-sidenav-container-width: 480px;
+
+    // M3's default shape for an "over" drawer rounds its leading (left) corners
+    // via border-{top,bottom}-left-radius: var(--mat-sidenav-container-shape, ...),
+    // set by Material's own .mat-drawer.mat-drawer-end rule — 2 class selectors,
+    // which beats a plain `mat-drawer { border-radius: 0 }` override here on
+    // specificity. Overriding the same custom property both rules read from
+    // sidesteps the specificity fight entirely. That reads fine for a drawer
+    // that floats with a gap around it, but this one sits flush under the
+    // toolbar, so the rounded top-left corner cuts an odd notch right where
+    // the two meet.
+    //
+    // `> mat-drawer`: same reasoning as .layout-panel-container above - this
+    // must not reach the #library/#helpPanel/#agentPanel drawers nested
+    // further down, or their own width overrides get silently outranked.
+    > mat-drawer {
+        --mat-sidenav-container-shape: 0;
+    }
+}
+
+// Nested one level deeper than .config-panel-container for the same reason
+// #configPanel needed its own container: a mat-drawer-container can't
+// declare two drawers at the same position, so #library needs its own too.
+// Explicit width/shape overrides here rather than relying on inheriting
+// them from the .config-panel-container ancestor, so this doesn't silently
+// break if the nesting is ever restructured.
+.library-panel-container {
+    width: 100%;
+    height: 100%;
+    --mat-sidenav-container-width: 480px;
+
+    // Slightly wider than the nav rail's 64px collapsed width: that rail holds
+    // full-width list-items (just an icon, left-aligned), while this holds
+    // circular icon buttons that need centered breathing room on both sides.
+    &.library-collapsed {
+        --mat-sidenav-container-width: 72px;
+    }
+
+    // `> mat-drawer`: same reasoning as .layout-panel-container above.
+    > mat-drawer {
+        --mat-sidenav-container-shape: 0;
+        transition: width 200ms ease;
+        overflow-x: hidden;
+    }
+}
+
+// Nested one level deeper than .library-panel-container for the same reason
+// #library needed its own container: a mat-drawer-container can't declare
+// two drawers at the same position, so #helpPanel and #agentPanel each need
+// their own nested container.
+.help-panel-container,
+.agent-panel-container {
+    width: 100%;
+    height: 100%;
+    --mat-sidenav-container-width: 480px;
+
+    // `> mat-drawer`: same reasoning as .layout-panel-container above -
+    // .help-panel-container in particular wraps #agentPanel's own container,
+    // so an unscoped selector here would reach it too.
+    > mat-drawer {
+        --mat-sidenav-container-shape: 0;
+    }
+}
+
+.example-sidenav {
+    display: flex;
+    flex-direction: column;
+
+    // Same flush-under-the-toolbar corner issue as .config-panel-container above:
+    // M3's default shape rounds this start-position drawer's trailing (right)
+    // corners, which cuts a notch exposing the toolbar's blue behind it and
+    // leaves the right edge looking clipped instead of a clean vertical line.
+    --mat-sidenav-container-shape: 0;
+
+    // Same 360px structural-default fallback issue as .config-panel-container
+    // above: without an explicit width, this always stays visible (opened is
+    // permanently true) and toggles between a full rail and an icon-only
+    // rail via this custom property, so it needs an explicit value in both
+    // states rather than relying on `autosize`.
+    --mat-sidenav-container-width: 220px;
+    transition: width 200ms ease;
+    overflow-x: hidden;
+
+    &.collapsed {
+        --mat-sidenav-container-width: 64px;
+    }
+
+    // Fully collapsed: distinct from .collapsed's icon-only rail, this
+    // takes the rail out of the layout entirely. The .nav-reveal tab
+    // (rendered as a sibling, not inside the drawer — overflow-x:hidden
+    // above would clip anything trying to poke out of a 0-width element)
+    // is what brings it back.
+    &.hidden {
+        --mat-sidenav-container-width: 0px;
+    }
+}
+
+// Shared shape for the two rail-edge controls below: a slim tab, always
+// vertically centered. position: fixed rather than absolute: mat-drawer-
+// container auto-wraps any non-drawer child (these buttons included) in
+// its own synthetic .mat-drawer-content, which is itself position:
+// relative and margin-pushed by the drawer's width — an absolutely
+// positioned child of THAT box would land at the pushed content's edge,
+// not the true edge these need to track. Fixed positioning is viewport-
+// relative and sidesteps that wrapper entirely.
+.nav-edge-toggle {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 56px;
+    padding: 0;
+    min-width: 0;
+    border-radius: 0 8px 8px 0;
+    background-color: var(--app-surface);
+    color: var(--app-text-secondary);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+
+    &:hover {
+        background-color: var(--app-brand-tint);
+        color: var(--app-brand);
+    }
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+// Only rendered while the rail is .hidden (0px) — pinned to the true
+// viewport left edge, so the menu is never more than one click away even
+// with the rail completely out of the way.
+.nav-reveal {
+    left: 0;
+}
+
+// Rendered whenever the rail is visible ('expanded' or 'icon') — docked
+// to its current right edge via navRailWidthPx() (bound as inline `left`,
+// since that value depends on component state, not just a CSS class) and
+// animated alongside the rail's own width transition so it visibly
+// slides with the edge it's attached to.
+.nav-collapse {
+    transition: left 200ms ease;
+}
+
+mat-nav-list {
+    padding-top: 8px;
+
+    // Material's own `.mat-mdc-nav-list .mat-mdc-list-item` rule sets
+    // border-radius: var(--mat-list-active-indicator-shape, var(--mat-sys-corner-full))
+    // — a 2-class selector that beats the plain `mat-list-item { border-radius: 0 }`
+    // below on specificity, so the active item's highlight fell back to
+    // --mat-sys-corner-full (9999px, a full pill) without this override.
+    // Square corners, no rounding at all, for the selected/hover highlight.
+    --mat-list-active-indicator-shape: 0;
+}
+
+mat-list-item {
+    cursor: pointer;
+    border-radius: 0;
+    margin: 2px 8px;
+    color: var(--app-text-secondary);
+    font-size: 0.9rem;
+
+    &:hover {
+        background-color: var(--app-brand-tint);
+    }
+
+    &.active {
+        background-color: var(--app-brand-tint-strong);
+        color: var(--app-brand);
+        font-weight: 500;
+        border-left: 3px solid var(--app-brand);
+    }
+}
+
+.example-sidenav.collapsed mat-list-item {
+    margin: 2px 4px;
+
+    ::ng-deep .mdc-list-item__content {
+        display: none;
+    }
+
+    ::ng-deep .mat-mdc-list-item-icon {
+        margin-right: 0;
+    }
+}

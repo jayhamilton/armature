@@ -1,0 +1,14 @@
+.app-toolbar {
+  background-color: var(--app-brand) !important;
+  color: var(--app-brand-contrast) !important;
+}
+
+.app-toolbar .MuiIconButton-root {
+  color: var(--app-brand-contrast);
+}
+
+.app-title {
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}

@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Configuration</h2>
+<mat-dialog-content>
+  <mat-tab-group mat-align-tabs="start" mat-stretch-tabs="false">
+    <mat-tab label="Application">
+      <ng-template matTabContent>
+        <app-tab-application></app-tab-application>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Boards">
+      <ng-template matTabContent>
+        <app-tab-boards (boardAddEvent)="closeDialog()"></app-tab-boards>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Endpoints">
+      <ng-template matTabContent>
+        <app-tab-endpoints></app-tab-endpoints>
+      </ng-template>
+    </mat-tab>
+
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button color="primary" mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

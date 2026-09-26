@@ -1,0 +1,76 @@
+/* App-level design tokens. Ported from armature-ui's src/styles.scss —
+   the same small set of CSS custom properties used throughout components
+   instead of literal hex colors, so light/dark theming stays centralized
+   here rather than duplicated per component. */
+:root {
+  --app-brand: #3f51b5;
+  --app-brand-contrast: #fff;
+  --app-brand-tint: rgba(63, 81, 181, 0.08);
+  --app-brand-tint-strong: rgba(63, 81, 181, 0.15);
+  /* The toolbar (AppBar, color primary) is a fixed #3f51b5 regardless of
+     theme. --app-brand matches that exactly in light mode, so a panel
+     header using --app-brand sits flush under the toolbar in the same
+     color and reads as one continuous shape. Deeper and distinct on purpose. */
+  --app-panel-header: #303f9f;
+  --app-surface: #fff;
+  --app-background: whitesmoke;
+  --app-text-secondary: #666;
+  --app-border: #e0e0e0;
+  --app-input-border: #757684;
+  --app-error: #ba1a1a;
+  --app-error-bg: #ffdad6;
+  /* Soft layered shadow used by gadget/library cards instead of a hard 1px
+     border, so they read as lifted off the page rather than flat outlined
+     boxes. -hover is the deeper version used on interactive card hover. */
+  --app-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.08);
+  --app-card-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.dark-theme {
+  --app-brand: #5d6fd4;
+  --app-brand-contrast: #fff;
+  --app-brand-tint: rgba(151, 165, 255, 0.16);
+  --app-brand-tint-strong: rgba(151, 165, 255, 0.28);
+  --app-panel-header: #4355b9;
+  --app-surface: #1a1b22;
+  --app-background: #121319;
+  --app-text-secondary: #abaab3;
+  --app-border: #46464d;
+  --app-input-border: #8f909e;
+  --app-error: #ffb4ab;
+  --app-error-bg: #93000a;
+  --app-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.4);
+  --app-card-shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.35), 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--app-background) !important;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.MuiDialog-container .MuiBackdrop-root {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dark-theme .MuiDialog-container .MuiBackdrop-root {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+/* recharts renders raw SVG <text> for axis ticks/labels/data labels with no
+   fill of its own, so it falls back to the SVG default of black — fine
+   against a light card, unreadable against a dark one. Scoped to gadget
+   card content so it can't affect anything else that might use SVG. */
+.MuiCardContent-root svg text {
+  fill: var(--app-text-secondary);
+}
