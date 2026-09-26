@@ -1,0 +1,25 @@
+@startuml context
+' C4 level 1: Armature as it runs today (baseline after INC-00a).
+' Every element maps to something real; see docs/architecture/c4/README.md.
+!pragma layout smetana
+!include <C4/C4_Context>
+
+title Armature: system context (current)
+
+Person(customer, "Customer", "Builds and reads boards of gadgets; asks the assistant for changes")
+System_Ext(mcpClient, "MCP client", "An MCP Apps capable host such as Claude Desktop or VS Code")
+
+System(armature, "Armature", "Boards of configurable gadgets in the browser, plus an agentic assistant that edits them")
+
+System_Ext(ollama, "Ollama", "Local model runtime (qwen3.5:4b); the default model provider")
+System_Ext(anthropic, "Anthropic API", "Alternative model provider, selected by a manual toggle")
+System_Ext(a2aPeer, "A2A peer agent", "Not active today: the A2A server autoconfiguration is excluded")
+
+Rel(customer, armature, "Uses", "HTTPS, browser")
+Rel(mcpClient, armature, "Lists and calls board tools, renders the board summary MCP App", "MCP over SSE")
+Rel(armature, ollama, "Chat completions with tools", "HTTP")
+Rel(armature, anthropic, "Chat completions with tools", "HTTPS")
+Rel_U(a2aPeer, armature, "Would delegate tasks (inactive)", "A2A")
+
+SHOW_LEGEND()
+@enduml

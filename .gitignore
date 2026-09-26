@@ -8,3 +8,6 @@
 # Claude Code local state
 .claude/settings.local.json
 .claude/worktrees/
+
+# Build tool caches (PlantUML jar used by docs/architecture/render.sh)
+.cache/

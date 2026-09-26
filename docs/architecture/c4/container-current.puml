@@ -1,0 +1,31 @@
+@startuml container-current
+' C4 level 2: the deployable pieces that exist today (baseline after INC-00a).
+' Each container maps to a directory: backend/, web/hosts/angular/, web/hosts/react/.
+!pragma layout smetana
+!include <C4/C4_Container>
+
+title Armature: containers (current)
+
+Person(customer, "Customer", "Builds and reads boards; talks to the assistant")
+System_Ext(mcpClient, "MCP client", "MCP Apps capable host")
+System_Ext(ollama, "Ollama", "Default model provider")
+System_Ext(anthropic, "Anthropic API", "Alternative model provider")
+
+System_Boundary(armature, "Armature") {
+  Container(angular, "Angular host", "Angular 22, web/hosts/angular", "Reference UI: boards, gadgets, config forms, assistant panel, help panel")
+  Container(react, "React host", "React 19, Vite, web/hosts/react", "Port of the Angular host, in progress")
+  ContainerDb(localStore, "Browser localStorage", "Web Storage", "Boards and settings; the only board persistence today")
+  Container(backend, "armature-ms", "Spring Boot 4.1, Spring AI, Java 25, backend/", "Agent chat streamed as AG-UI events over SSE; MCP server with 7 tools; in memory board snapshots from chat")
+}
+
+Rel(customer, angular, "Uses", "HTTPS")
+Rel(customer, react, "Uses", "HTTPS")
+Rel(angular, localStore, "Reads and writes boards")
+Rel(react, localStore, "Reads and writes boards")
+Rel(angular, backend, "POST /api/agent/chat with a board snapshot", "HTTP, AG-UI over SSE")
+Rel(mcpClient, backend, "Board tools and present_board_summary", "MCP over SSE (/sse, /mcp/message)")
+Rel(backend, ollama, "Chat with tools", "HTTP")
+Rel(backend, anthropic, "Chat with tools", "HTTPS")
+
+SHOW_LEGEND()
+@enduml

@@ -1,0 +1,34 @@
+@startuml container-target
+' C4 level 2: the target container view from the plan ("Target architecture").
+' One domain layer, four facades, and a capability registry every service plugs into.
+' Elements marked (planned) do not exist yet; the increment that builds each one updates
+' container-current.puml to match.
+!pragma layout smetana
+!include <C4/C4_Container>
+
+title Armature: containers (target)
+
+Person(customer, "Customer", "Uses Armature in a browser")
+System_Ext(aiClient, "AI client", "Any MCP client")
+System_Ext(peerAgent, "Peer agent", "A2A")
+System_Ext(teams, "Channels", "Teams, email")
+System_Ext(capService, "Capability services", "Fiber, 5G, Device Management, Billing: manifest plus MCP server or A2A agent")
+System_Ext(models, "Model providers", "Ollama, Anthropic, OpenAI compatible gateway")
+
+System_Boundary(armature, "Armature") {
+  Container(web, "Web hosts", "React (reference), Angular, Svelte, Lit, vanilla over @armature/core and @armature/elements", "Local first UI: IndexedDB store, background sync, affordances rendered from HAL links")
+  Container(backend, "armature-ms", "Spring Boot, Spring Modulith", "Facades: REST (TMF 630, HAL), MCP, A2A, channels. Domain: BoardService, LifecycleEngine, CapabilityRegistry, AgentRuntime, identity")
+  ContainerDb(db, "PostgreSQL", "Spring Data JDBC, Flyway", "Boards as aggregates with JSONB gadget data; roles and permissions; event publication registry")
+}
+
+Rel(customer, web, "Uses", "HTTPS")
+Rel(web, backend, "REST with PATCH, If-Match, ETag; one SSE stream per client", "HAL+JSON, problem+json")
+Rel(aiClient, backend, "navigate_boards, navigate_capabilities, compose_board", "MCP")
+Rel(peerAgent, backend, "Board as an artifact", "A2A")
+Rel(backend, teams, "Digests and notifications", "Channel adapters")
+Rel(backend, db, "Reads and writes", "JDBC")
+Rel(backend, capService, "Loads manifests; calls tools and skills", "HTTP, MCP, A2A")
+Rel(backend, models, "Chat with tools", "HTTP")
+
+SHOW_LEGEND()
+@enduml
