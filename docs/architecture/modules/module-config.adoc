@@ -1,0 +1,8 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`com.addf.backend.armature.config`
+|Spring components
+|* `c.a.b.a.c.CorsConfig`
+* `c.a.b.a.c.OpenApiConfig`
+|===

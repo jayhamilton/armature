@@ -32,9 +32,11 @@ fetch_plantuml() {
   fi
 }
 
-# run_plantuml <args...>: headless, SVG output, fail on syntax errors.
+# run_plantuml <args...>: headless, SVG output, fail on syntax errors. Smetana is PlantUML's
+# built in layout engine, so no Graphviz install is needed, including for generated diagrams
+# (the Spring Modulith Documenter output) that cannot carry a layout pragma of their own.
 run_plantuml() {
-  "$JAVA" -Djava.awt.headless=true -jar "$PLANTUML_JAR" -tsvg -failfast2 "$@"
+  "$JAVA" -Djava.awt.headless=true -jar "$PLANTUML_JAR" -tsvg -failfast2 -Playout=smetana "$@"
 }
 
 # All diagram sources under docs/, relative to the repository root.

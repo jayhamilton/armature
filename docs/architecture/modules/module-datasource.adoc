@@ -1,0 +1,13 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`com.addf.backend.armature.datasource`
+|Spring components
+|_Primary adapters_
+
+* `c.a.b.a.d.EndpointController`
+
+_Others_
+
+* `c.a.b.a.d.EndpointStore`
+|===

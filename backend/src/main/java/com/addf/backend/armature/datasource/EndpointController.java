@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 // deliberately scoped to CRUD only; the actual data-fetch proxy
 // (POST /api/datasource/fetch, §3) and its required SSRF mitigations (§4)
 // are a separate follow-up, not added here.
+@PrimaryAdapter
 @RestController
 @CrossOrigin
 @Tag(name = "Endpoints", description = "REST data-source endpoint definitions")

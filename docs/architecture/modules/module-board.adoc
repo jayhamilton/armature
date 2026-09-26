@@ -1,0 +1,9 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`com.addf.backend.armature.board`
+|Spring components
+|_Services_
+
+* `c.a.b.a.b.BoardLifecycle`
+|===

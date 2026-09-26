@@ -1,0 +1,12 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`com.addf.backend.armature.mcpapp`
+|Spring components
+|_Primary adapters_
+
+* `c.a.b.a.m.BoardSummaryApp`
+* `c.a.b.a.m.ChartsApp`
+|Bean references
+|* `c.a.b.a.a.BoardSnapshotStore` (in Agent)
+|===
