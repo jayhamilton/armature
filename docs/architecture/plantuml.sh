@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Shared by render.sh and check-svg.sh: fetches the pinned PlantUML jar (checksum verified)
+# into .cache/plantuml/ and defines run_plantuml. Source it; do not run it directly.
+# The version is pinned so every machine and CI draw with the same PlantUML (ADR-0013).
+
+PLANTUML_VERSION="1.2026.8"
+PLANTUML_SHA256="0f77e5f769836b3dee340e207fe497c3e4c43e973d559e3c306915da9c32e34c"
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+PLANTUML_JAR="$REPO_ROOT/.cache/plantuml/plantuml-$PLANTUML_VERSION.jar"
+
+if [[ -n "${JAVA_HOME:-}" ]]; then
+  JAVA="$JAVA_HOME/bin/java"
+else
+  JAVA="java"
+fi
+
+fetch_plantuml() {
+  if [[ ! -f "$PLANTUML_JAR" ]]; then
+    mkdir -p "$(dirname "$PLANTUML_JAR")"
+    echo "Downloading PlantUML $PLANTUML_VERSION" >&2
+    curl -sfL -o "$PLANTUML_JAR.part" \
+      "https://repo1.maven.org/maven2/net/sourceforge/plantuml/plantuml/$PLANTUML_VERSION/plantuml-$PLANTUML_VERSION.jar"
+    mv "$PLANTUML_JAR.part" "$PLANTUML_JAR"
+  fi
+  local actual
+  actual="$(shasum -a 256 "$PLANTUML_JAR" | cut -d' ' -f1)"
+  if [[ "$actual" != "$PLANTUML_SHA256" ]]; then
+    echo "PlantUML jar checksum mismatch: expected $PLANTUML_SHA256, got $actual" >&2
+    rm -f "$PLANTUML_JAR"
+    exit 1
+  fi
+}
+
+# run_plantuml <args...>: headless, SVG output, fail on syntax errors.
+run_plantuml() {
+  "$JAVA" -Djava.awt.headless=true -jar "$PLANTUML_JAR" -tsvg -failfast2 "$@"
+}
+
+# All diagram sources under docs/, relative to the repository root.
+list_puml_sources() {
+  (cd "$REPO_ROOT" && find docs -name '*.puml' -not -path '*/node_modules/*' | sort)
+}
