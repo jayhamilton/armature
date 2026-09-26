@@ -1,0 +1,31 @@
+name: Docs
+
+on:
+  push:
+    paths:
+      - "docs/**"
+      - ".github/workflows/docs.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - ".github/workflows/docs.yml"
+
+jobs:
+  diagrams:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - uses: actions/cache@v4
+        with:
+          path: .cache/plantuml
+          key: plantuml-${{ hashFiles('docs/architecture/plantuml.sh') }}
+
+      # Fails when a .puml was edited without re-rendering its .svg (ADR-0013).
+      - name: Check diagrams are up to date
+        run: docs/architecture/check-svg.sh
