@@ -1,0 +1,26 @@
+{
+  "name": "@armature/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Framework free core shared by every Armature UI host.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test \"dist/**/*.test.js\"",
+    "catalog": "node scripts/pattern-catalog.mjs --write",
+    "catalog:check": "node scripts/pattern-catalog.mjs --check"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "~6.0.3"
+  }
+}

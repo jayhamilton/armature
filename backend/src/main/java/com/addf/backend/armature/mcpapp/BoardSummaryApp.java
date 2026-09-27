@@ -11,6 +11,7 @@ import com.addf.backend.armature.agent.BoardGadgetEntry;
 import com.addf.backend.armature.agent.BoardSnapshot;
 import com.addf.backend.armature.agent.BoardSnapshotStore;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
+import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
 import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpTool.McpAnnotations;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 // bean instead, an older/separate registration path that composes with, but is not
 // unified with, this one. The two mechanisms are demonstrated side by side
 // deliberately - see MODEL_INTEGRATION.md's MCP Apps section.
+@PrimaryAdapter
 @Component
 public class BoardSummaryApp {
 

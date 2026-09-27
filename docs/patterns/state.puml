@@ -1,0 +1,57 @@
+@startuml state
+' Class diagram for docs/patterns/state.md: the board lifecycle as the State pattern.
+' Participant names match the classes in backend/src/main/java/com/addf/backend/armature.
+hide empty members
+skinparam classAttributeIconSize 0
+
+interface "LifecycleEngine<S, E>" as LifecycleEngine <<Port>> {
+  + initialState() : S
+  + allowedEvents(S) : Set<E>
+  + fire(S, E) : S
+}
+
+class BoardLifecycle <<Context>> {
+  + fire(state, event) : BoardState
+}
+
+enum BoardEvent {
+  PUBLISH
+  DISCARD
+  LOCK
+  UNLOCK
+  ARCHIVE
+  ~ applyTo(BoardState) : BoardState
+}
+
+interface BoardState <<sealed>> {
+  + name() : String
+  + allowedEvents() : Set<BoardEvent>
+  + publish() : BoardState
+  + discard() : BoardState
+  + lock() : BoardState
+  + unlock() : BoardState
+  + archive() : BoardState
+}
+note right of BoardState : every operation refuses by default\n(TransitionNotAllowedException)
+
+class Draft <<record>> {
+  + publish() : Published
+  + discard() : Archived
+}
+class Published <<record>> {
+  + lock() : Locked
+  + archive() : Archived
+}
+class Locked <<record>> {
+  + unlock() : Published
+}
+class Archived <<record>>
+
+LifecycleEngine <|.. BoardLifecycle
+BoardLifecycle ..> BoardEvent : fire delegates to
+BoardEvent ..> BoardState : calls one operation on
+BoardState <|.. Draft
+BoardState <|.. Published
+BoardState <|.. Locked
+BoardState <|.. Archived
+@enduml

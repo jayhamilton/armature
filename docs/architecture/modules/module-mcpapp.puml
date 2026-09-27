@@ -1,0 +1,30 @@
+@startuml
+title <size:24>MCP Apps</size>
+
+set separator none
+top to bottom direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Component>
+
+System_Boundary("ArmatureApplication_boundary", "ArmatureApplication", $tags="") {
+  Container_Boundary("ArmatureApplication.ArmatureApplication_boundary", "ArmatureApplication", $tags="") {
+    Component(ArmatureApplication.ArmatureApplication.Agent, "Agent", $techn="Module", $descr="", $tags="", $link="")
+    Component(ArmatureApplication.ArmatureApplication.MCPApps, "MCP Apps", $techn="Module", $descr="", $tags="", $link="")
+  }
+
+}
+
+Rel(ArmatureApplication.ArmatureApplication.MCPApps, ArmatureApplication.ArmatureApplication.Agent, "uses", $techn="", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

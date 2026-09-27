@@ -1,0 +1,29 @@
+@startuml strategy-registry
+' Class diagram for docs/patterns/strategy-registry.md.
+hide empty members
+skinparam classAttributeIconSize 0
+
+class "TypeRegistry<T>" as TypeRegistry <<Registry>> {
+  - strategies : Map<string, T>
+  + register(type, strategy) : this
+  + resolve(type) : Resolution<T>
+  + has(type) : boolean
+  + types() : string[]
+}
+
+interface Strategy <<T>> {
+}
+note right of Strategy : any behavior keyed by @type:\na gadget loader, a data source,\na channel renderer
+
+class "Client" as Client {
+}
+note left of Client : for example a gadget host
+
+class NumberCardStrategy
+class TableStrategy
+
+Client --> TypeRegistry : resolve("@type")
+TypeRegistry o--> "*" Strategy
+Strategy <|.. NumberCardStrategy
+Strategy <|.. TableStrategy
+@enduml

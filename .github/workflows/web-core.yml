@@ -1,0 +1,42 @@
+name: Web core
+
+on:
+  push:
+    paths:
+      - "web/packages/core/**"
+      - "docs/patterns/**"
+      - ".github/workflows/web-core.yml"
+  pull_request:
+    paths:
+      - "web/packages/core/**"
+      - "docs/patterns/**"
+      - ".github/workflows/web-core.yml"
+
+defaults:
+  run:
+    working-directory: web/packages/core
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+          cache-dependency-path: web/packages/core/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      # Fails when the TypeScript half of docs/patterns/index.md is stale.
+      - name: Check pattern catalog
+        run: npm run catalog:check

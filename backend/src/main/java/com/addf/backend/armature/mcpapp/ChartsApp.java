@@ -10,6 +10,7 @@ import java.util.Set;
 import com.addf.backend.armature.mcpapp.ChartPresentationChoice.Presentation;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
+import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
 import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpTool.McpAnnotations;
@@ -40,6 +41,7 @@ import org.springframework.stereotype.Component;
 // ui/request-display-mode hint sent to the host (pip instead of inline) -
 // an honest reflection of what a display-mode request actually is, not a
 // promise this can't keep.
+@PrimaryAdapter
 @Component
 public class ChartsApp {
 

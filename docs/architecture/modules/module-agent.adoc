@@ -1,0 +1,19 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`com.addf.backend.armature.agent`
+|Spring components
+|_Primary adapters_
+
+* `c.a.b.a.a.AgentController`
+
+_Services_
+
+* `c.a.b.a.a.AgentService`
+
+_Others_
+
+* `c.a.b.a.a.AgentToolConfig`
+* `c.a.b.a.a.AgentToolRegistry`
+* `c.a.b.a.a.BoardSnapshotStore`
+|===

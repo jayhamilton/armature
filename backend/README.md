@@ -25,6 +25,16 @@ From the project root, run:
 
 The packaged application will be created in `target/`.
 
+`AgentServiceTest` calls a live local Ollama model, whose answers vary between runs, so it is
+tagged `live-model` and left out of the default build. Run it on purpose with Ollama running:
+
+```bash
+./mvnw test -Dgroups=live-model -DexcludedGroups=
+```
+
+The default build also verifies module boundaries (`ModularityTest`), regenerates the module
+diagrams (`ModuleDocumentationTest`), and checks the pattern catalog (`PatternCatalogTest`).
+
 ## Run the service
 
 Start the service locally with:
