@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -29,6 +30,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * instance. Skips (rather than fails) when Ollama isn't reachable, since this
  * needs an actual model call, not a mock.
  *
+ * Tagged {@code live-model} and excluded from the default build, because a real model's
+ * answers vary between runs. Run on purpose with
+ * {@code ./mvnw test -Dgroups=live-model -DexcludedGroups=}.
+ *
  * The endpoint now streams a hand-rolled AG-UI event sequence rather than returning
  * one JSON blob, but since this test uses a real HTTP client against a real embedded
  * server (not MockMvc), a blocking exchange().expectBody(String.class) still waits for
@@ -36,6 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * of a single JSON object. {@link #parseSseResponse(String)} reconstructs the same
  * (message, toolCalls, parts) shape the old AgentResponse used to hand back directly.
  */
+@Tag("live-model")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AgentServiceTest {
 
