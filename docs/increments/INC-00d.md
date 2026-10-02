@@ -25,7 +25,8 @@ suite, which is how every later host (Lit, Svelte, vanilla) will prove parity.
 | Endpoint service and tag options service | `tab-endpoints/endpoint.service.ts`, `src/app/shared/gadget-tags/` | Nothing |
 | Endpoint picker (Manual plus endpoints sharing the gadget's tags) | `src/app/shared/endpoint-picker/` | Plain text input for `endpoint-picker` |
 | `apiFetch` (token header, `Accept` rule of Angular's `TokenInterceptor`) | `src/lib/apiFetch.ts` | Nothing; host local, replaced by the `@armature/core` HAL client in INC-01 |
-| `tabpanel` role on gadget property pages | `src/app/dynamic-form/DynamicForm.tsx` | Unlabelled content under the tabs |
+| `tabpanel` role on gadget property pages and on the Board settings dialog | `src/app/dynamic-form/DynamicForm.tsx`, `src/app/configuration/Configuration.tsx` | Unlabelled content under the tabs |
+| Picker labels above the control, as in Angular (found in the real backend walk) | `src/app/dynamic-form/DynamicForm.css` | Label beside the button |
 
 Every control type that `library.json` uses now has the same control in both hosts.
 `PORTING_STATUS.md` lists what remains and which increment owns it.
@@ -84,26 +85,46 @@ for the conformance suite's absence from the C4 views.
 | Angular tests | `npx ng test --watch=false --browsers=ChromeHeadless` | 22 of 22 passed. Was 26: the 4 removed specs belonged to the deleted datastores |
 | Conformance, React | `ARMATURE_HOST_URL=http://localhost:4173 npm test` (against `vite preview`) | 5 of 5 passed |
 | Conformance, Angular | `ARMATURE_HOST_URL=http://localhost:4300 npm test` (against `ng serve --port 4300`) | 5 of 5 passed |
-| Flakiness | `npx playwright test --repeat-each=4` on each host | 20 of 20 on React, 20 of 20 on Angular |
+| Flakiness | `npx playwright test --repeat-each=8` on each host | 40 of 40 on React; 80 of 80 on Angular over two runs |
+| Real backend walk | Temporary Playwright script, no stubs, backend on 8080 with JDK 25 (see below) | Passed on both hosts; no backend call returned an error |
 | Suite types | `cd web/conformance && npm run typecheck` | Pass |
 | Diagrams | `docs/architecture/check-svg.sh` | All 14 up to date |
-| Backend, core | not run | No files under `backend/` or `web/packages/core` changed |
+| Backend, core | not run | No files under `backend/` or `web/packages/core` changed. The backend was started (`JAVA_HOME=~/.jdks/jdk-25.0.2/jdk-25.0.2+10/Contents/Home ./mvnw spring-boot:run`) for the walk only |
 
 Demo script (either host): log in, open Board settings, Boards, choose the `factory` icon, add a
 board; open the gadget library, add Text, Configure, type a line and press H1, watch the preview,
 Save; open Board settings, Endpoints, add an endpoint tagged `bar`; add a Bar Chart, Configure,
 pick that endpoint under Data Source.
 
-The suite's first Angular run had one failure on scenario 3 (the Add button was still disabled
-after filling the title). It did not recur in 45 later Angular runs; the likely cause is the dev
-server compiling on first load.
+Angular occasionally lost the board title typed right after switching to the Boards tab, which
+left Add disabled (about 1 run in 20). This was a test timing issue, not a user facing bug: the
+helper typed while the tab switch was still animating. `openSettings` in
+[`support/host.ts`](../../web/conformance/support/host.ts) now waits for the tab to be selected
+and its panel visible; React's settings dialog gained the `tabpanel` role that wait needs.
+
+### Real backend walk
+
+The monorepo backend ran on port 8080 under JDK 25. A temporary Playwright script (not committed)
+drove each host with no stubs: create a board with the `factory` icon, add a Text gadget and
+format a heading, remove it (confirming the dialog), create an endpoint tagged `bar` against the
+real `/api/endpoints`, pick it as a Bar Chart's data source, save, then delete the endpoint. Both
+hosts passed, and the script failed on any backend response of 400 or above (there were none).
+
+| Step | React | Angular |
+| --- | --- | --- |
+| Board with chosen icon | ![](INC-00d/react-1-board-icon.png) | ![](INC-00d/angular-1-board-icon.png) |
+| Markdown editor and preview | ![](INC-00d/react-2-markdown-editor.png) | ![](INC-00d/angular-2-markdown-editor.png) |
+| Endpoints tab with a saved endpoint | ![](INC-00d/react-3-endpoints-tab.png) | ![](INC-00d/angular-3-endpoints-tab.png) |
+| Endpoint picker offering the endpoint | ![](INC-00d/react-4-endpoint-picker.png) | ![](INC-00d/angular-4-endpoint-picker.png) |
+
+What the walk found beyond the suite: React placed picker labels beside the control instead of
+above it (fixed), and the shared `addGadget` step assumed Angular's virtualized library starts
+scrolled to the top, which is false after a first add (the step now scrolls both ways). Remaining
+differences are styling (MUI against Angular Material) and charts (Recharts against ngx-charts,
+unified in INC-04).
 
 ## 6. Not done and why
 
-- **Manual parity walk against the real backend, with screenshots** (spec "Tests and checks"):
-  not done. This machine has only JDK 18 and the backend needs Java 25. The conformance suite
-  covers the same paths against a stubbed `/api/endpoints`; the walk should be done once Java 25
-  is available, before merge.
 - **Conformance in CI for Angular:** local only, by decision 4.
 - **CI workflow not yet run on GitHub:** nothing was pushed.
 - **Conformance suite in the C4 views:** `web/conformance` is test tooling, not a runtime
@@ -118,13 +139,16 @@ server compiling on first load.
   than left as a `todo`. The Endpoints tab was larger than the draft described (tags,
   authentication fields), which added `GadgetTagOptionsService`.
 - **ADR-0016** remains Proposed; it belongs to INC-00c's review.
+- **A saved Text gadget loses its title** in both hosts: its configuration form opens with a blank
+  Title field, so Save overwrites "Text" with "" and the remove confirmation then reads
+  `Remove "" from the dashboard?`. Existing behavior in both hosts, so not a parity gap; left as
+  is.
 
 ## 7. Next increment's entry criteria
 
 INC-00e (the assistant) can start when:
 
 - This report is reviewed and the branch is merged (after INC-00c, which it is built on).
-- The manual walk above is done against the real backend, or the owner waives it.
 - `web-conformance.yml` runs green on GitHub.
 - INC-00e adds its assistant scenarios to `web/conformance` and must keep these five passing on
   both hosts.

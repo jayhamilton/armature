@@ -65,6 +65,22 @@
   color: var(--app-text-secondary);
 }
 
+.icon-picker-field,
+.illustration-picker-field,
+.endpoint-picker-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.icon-picker-field label,
+.illustration-picker-field label,
+.endpoint-picker-field label {
+  font-size: 0.75rem;
+  color: var(--app-text-secondary);
+}
+
 .section-header {
   column-span: all;
   font-size: 0.8rem;

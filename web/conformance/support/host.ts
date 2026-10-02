@@ -18,6 +18,10 @@ export async function openSettings(page: Page, tab: 'Application' | 'Boards' | '
   await page.getByRole('button', { name: 'Board settings' }).click();
   const dialog = page.getByRole('dialog', { name: 'Configuration' });
   await dialog.getByRole('tab', { name: tab }).click();
+  // Wait for the tab to finish switching: Angular animates the change, and
+  // text typed into the incoming panel mid animation can be lost.
+  await expect(dialog.getByRole('tab', { name: tab })).toHaveAttribute('aria-selected', 'true');
+  await expect(dialog.getByRole('tabpanel', { name: tab })).toBeVisible();
   return dialog;
 }
 
@@ -35,15 +39,20 @@ export async function createBoard(page: Page, title: string, icon?: string): Pro
 }
 
 /**
- * Adds a gadget from the library panel. The Angular library is virtualized,
- * so the wanted entry may not be rendered until the list scrolls.
+ * Adds a gadget from the library panel. The Angular library is virtualized
+ * and keeps its scroll position between openings, so the wanted entry may
+ * not be rendered until the list scrolls, in either direction.
  */
 export async function addGadget(page: Page, name: string): Promise<void> {
   await page.getByRole('button', { name: 'Gadget library', exact: true }).click();
   const entry = page.getByRole('button', { name: `Add ${name}`, exact: true });
-  await page.getByRole('button', { name: 'Add Area Chart', exact: true }).hover();
-  for (let i = 0; i < 20 && (await entry.count()) === 0; i++) {
-    await page.mouse.wheel(0, 200);
+  // Any rendered library entry, to put the pointer over the list ("Add Row"
+  // belongs to the layout panel, not the library).
+  await page.getByRole('button', { name: /^Add (?!Row$)/ }).first().hover();
+  for (const deltaY of [200, -200]) {
+    for (let i = 0; i < 20 && (await entry.count()) === 0; i++) {
+      await page.mouse.wheel(0, deltaY);
+    }
   }
   await entry.click();
   await page.getByRole('button', { name: 'Close gadget library panel' }).click();
