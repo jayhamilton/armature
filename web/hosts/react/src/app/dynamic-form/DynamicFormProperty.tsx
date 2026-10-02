@@ -6,6 +6,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import { MatIcon } from '../shared/mat-icon/MatIcon';
+import { IconPicker } from '../shared/icon-picker/IconPicker';
+import { IllustrationPicker } from '../shared/illustrations/IllustrationPicker';
+import { EndpointPicker } from '../shared/endpoint-picker/EndpointPicker';
+import { MarkdownEditor } from './markdown-editor/MarkdownEditor';
 import type { IProperty, ITag } from '../gadgets/common/gadget-common/gadget-base/gadget.model';
 import type { IPropertyOption } from './property.model';
 
@@ -16,17 +20,15 @@ import type { IPropertyOption } from './property.model';
  * a plain controlled value + onChange, owned by DynamicForm's `values`
  * state (see DynamicForm.tsx).
  *
- * dropdown-ms/upload/date/markdown/icon-picker/illustration-picker/
- * endpoint-picker render a functional but simplified control for now
- * (plain multi-select / file input / date input / textarea / text input)
- * rather than the original's dedicated picker components — those are
- * flagged for a follow-up pass rather than blocking the rest of the form.
+ * dropdown-ms/upload/date render a functional but simplified control
+ * (plain multi-select / file input / date input); no library.json entry
+ * uses those control types today.
  */
 export function DynamicFormProperty({
   property,
   value,
   onChange,
-  gadgetTags: _gadgetTags,
+  gadgetTags,
 }: {
   property: IProperty;
   value: any;
@@ -153,14 +155,7 @@ export function DynamicFormProperty({
       return (
         <div className="markdown-editor-container">
           <label>{property.label}</label>
-          <TextField
-            fullWidth
-            multiline
-            minRows={8}
-            value={value ?? ''}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Markdown"
-          />
+          <MarkdownEditor value={value} onChange={onChange} />
         </div>
       );
 
@@ -212,16 +207,27 @@ export function DynamicFormProperty({
       );
 
     case 'icon-picker':
+      return (
+        <div className="icon-picker-field">
+          <label>{property.label}</label>
+          <IconPicker value={value} onChange={onChange} />
+        </div>
+      );
+
     case 'illustration-picker':
+      return (
+        <div className="illustration-picker-field">
+          <label>{property.label}</label>
+          <IllustrationPicker value={value} onChange={onChange} />
+        </div>
+      );
+
     case 'endpoint-picker':
       return (
-        <TextField
-          fullWidth
-          size="small"
-          label={property.label}
-          value={value ?? ''}
-          onChange={(e) => onChange(e.target.value)}
-        />
+        <div className="endpoint-picker-field">
+          <label>{property.label}</label>
+          <EndpointPicker value={value} onChange={onChange} gadgetTags={gadgetTags} />
+        </div>
       );
 
     default:

@@ -14,6 +14,7 @@ import { eventService } from '../../eventservice/event.service';
 import { useEventEffect } from 'src/lib/useEventEffect';
 import { ConfirmDialog } from '../../shared/confirm-dialog/ConfirmDialog';
 import { MatIcon } from '../../shared/mat-icon/MatIcon';
+import { IconPicker } from '../../shared/icon-picker/IconPicker';
 import { Hiearchy, type IBoard, type IBoardCollection } from '../../board/board.model';
 import '../Configuration.css';
 
@@ -130,16 +131,12 @@ export function TabBoards({ onBoardAdd }: { onBoardAdd: () => void }) {
       <div className="boards-form-section">
         <h3 className="section-label">Define a new board</h3>
         <div className="boards-form">
-          <TextField
-            size="small"
-            label="Icon"
+          <IconPicker
             value={icon}
-            onChange={(e) => {
-              setIcon(e.target.value);
+            onChange={(next) => {
+              setIcon(next);
               setDirty(true);
             }}
-            className="form-field-icon"
-            helperText="Material icon ligature name"
           />
 
           <TextField
