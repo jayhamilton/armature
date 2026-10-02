@@ -33,8 +33,6 @@ class EventServiceImpl {
   private gadgetPropertyChangeSubject = new Subject<IEvent>();
   private gadgetDeleteSubject = new Subject<IEvent>();
   private gadgetMoveRequestSubject = new Subject<IEvent>();
-  private userDataChangedSubject = new Subject<IEvent>();
-  private scheduleEventDataChangedSubject = new Subject<IEvent>();
   private chartDataChangedSubject = new Subject<IEvent>();
   private openConfigPanelSubject = new Subject<IEvent>();
   private closeConfigPanelSubject = new Subject<IEvent>();
@@ -188,19 +186,6 @@ class EventServiceImpl {
     return this.boardRowsChangedSubject.asObservable();
   }
 
-  emitUserDataChanged() {
-    this.userDataChangedSubject.next(this.emptyEvent);
-  }
-  listenForUserDataChangedEvent(): Observable<IEvent> {
-    return this.userDataChangedSubject.asObservable();
-  }
-
-  emitScheduleEventDataChanged() {
-    this.scheduleEventDataChangedSubject.next(this.emptyEvent);
-  }
-  listenForScheduleEventDataChangedEvent(): Observable<IEvent> {
-    return this.scheduleEventDataChangedSubject.asObservable();
-  }
 
   emitChartDataChanged(event: IEvent) {
     this.chartDataChangedSubject.next(event);

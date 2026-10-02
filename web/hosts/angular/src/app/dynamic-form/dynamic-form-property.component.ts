@@ -1,17 +1,12 @@
 /**
  * Created by jayhamilton on 2/5/17.
  */
-import { AfterContentInit, Component, Input, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { AfterContentInit, Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PropertyBase } from './property-base';
 
 import { style, trigger, animate, transition } from '@angular/animations';
 import { ITag } from '../gadgets/common/gadget-common/gadget-base/gadget.model';
-import { UserDataStoreService } from '../configuration/tab-user/user.datastore.service';
-import { ScheduleDataStoreService } from '../configuration/tab-schedule/schedule.datastore.service';
-import { EventService } from '../eventservice/event.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { MatFormField, MatLabel, MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect, MatOption } from '@angular/material/select';
@@ -46,8 +41,7 @@ import { EndpointPickerComponent } from '../shared/endpoint-picker/endpoint-pick
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatSelect, MatOption, MatIcon, FileUploadComponent, MatDatepickerInput, MatHint, MatDatepickerToggle, MatSuffix, MatDatepicker, AceEditorComponent, JsonFormsEditorComponent, MarkdownEditorComponent, MatCheckbox, IconPickerComponent, IllustrationPickerComponent, EndpointPickerComponent]
 })
-export class DynamicFormPropertyComponent implements AfterContentInit, OnDestroy {
-  private destroy$ = new Subject<void>();
+export class DynamicFormPropertyComponent implements AfterContentInit {
   @Input() property: PropertyBase<any>;
   @Input() form: UntypedFormGroup;
   @Input() gadgetTags: ITag[];
@@ -60,12 +54,7 @@ export class DynamicFormPropertyComponent implements AfterContentInit, OnDestroy
     return this.form.controls[this.property.key]?.valid ?? true;
   }
 
-  constructor(formBuilder: UntypedFormBuilder,
-    private userDataStoreService: UserDataStoreService,
-    private scheduleDataStoreService: ScheduleDataStoreService,
-    private eventService: EventService
-
-  ) {
+  constructor(formBuilder: UntypedFormBuilder) {
     this.property = {
       key: '',
       label: '',
@@ -76,47 +65,9 @@ export class DynamicFormPropertyComponent implements AfterContentInit, OnDestroy
     };
     this.gadgetTags = [];
     this.form = formBuilder.group({});
-
-    this.setupEventListeners();
   }
 
 
-
-  /**
-   * Remember - This class is present on all gadgets that have property pages. Therefore, any operation here needs to 
-   * determine, via the properties, what context or speciic property we are dealing with. The this.property.key is used 
-   * to help with the context. 
-   */
-
-  setupEventListeners() {
-
-    this.eventService.listenForUserDataChangedEvent().pipe(takeUntil(this.destroy$)).subscribe(event => {
-
-      /**TODO
-       * set the role or property key in the event to avoid updating all user related dropdowns. 
-       */
-      switch(this.property.key){
-        case "driver":
-        case "qc":
-        case "lead":
-          this.setDropDownOptions(this.property.key);
-          break;
-          default:{}
-      }
-      
-    });
-
-    this.eventService.listenForScheduleEventDataChangedEvent().pipe(takeUntil(this.destroy$)).subscribe(event => {
-
-      switch(this.property.key){
-        case "lunch":
-          this.setDropDownOptions(this.property.key);
-          break;
-          default:{}
-      }
-
-    });
-  }
 
   ngAfterContentInit() {
 
@@ -144,14 +95,6 @@ export class DynamicFormPropertyComponent implements AfterContentInit, OnDestroy
 
     switch (dropDownType) {
 
-      case "driver":
-      case "qc":
-      case "lead":
-        this.userDataStoreService.getUsersByRole(dropDownType).forEach(user => { _options.push({ key: user.username, value: user.username, }) });
-        break;
-      case "lunch":
-        this.scheduleDataStoreService.getEvents().forEach(event => { _options.push({ key: event.description + " " + event.datetime, value: event.description + " " + event.datetime }) });
-        break;
       case "color1":
       case "color2":
       case "color3":
@@ -183,10 +126,5 @@ export class DynamicFormPropertyComponent implements AfterContentInit, OnDestroy
     }
     this.form.controls['file-list'].setValue(fileNames);
     this.form.controls['file-list'].markAsDirty();
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }
