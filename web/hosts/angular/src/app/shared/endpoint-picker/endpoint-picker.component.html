@@ -2,6 +2,7 @@
   type="button"
   #menuTrigger="matMenuTrigger"
   class="endpoint-picker-trigger"
+  [attr.aria-label]="'Data source: ' + selectedLabel"
   [matMenuTriggerFor]="endpointMenu"
   [disabled]="disabled"
   matTooltip="Choose a data source">

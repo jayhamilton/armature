@@ -11,6 +11,8 @@ import { TabBoards } from './tab-boards/TabBoards';
 import { TabEndpoints } from './tab-endpoints/TabEndpoints';
 import './Configuration.css';
 
+const TABS = ['Application', 'Boards', 'Endpoints'];
+
 /** Ported from armature-ui's ConfigurationComponent (the "Board settings" dialog). */
 export function Configuration({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [tabIndex, setTabIndex] = useState(0);
@@ -20,12 +22,17 @@ export function Configuration({ open, onClose }: { open: boolean; onClose: () =>
       <DialogTitle className="configuration-title">Configuration</DialogTitle>
       <DialogContent className="configuration-content">
         <Tabs value={tabIndex} onChange={(_e, v) => setTabIndex(v)}>
-          <Tab label="Application" />
-          <Tab label="Boards" />
-          <Tab label="Endpoints" />
+          {TABS.map((label, index) => (
+            <Tab key={label} label={label} id={`configuration-tab-${index}`} aria-controls="configuration-tabpanel" />
+          ))}
         </Tabs>
 
-        <div className="configuration-tab-body">
+        <div
+          className="configuration-tab-body"
+          role="tabpanel"
+          id="configuration-tabpanel"
+          aria-labelledby={`configuration-tab-${tabIndex}`}
+        >
           {tabIndex === 0 && <TabApplication />}
           {tabIndex === 1 && <TabBoards onBoardAdd={onClose} />}
           {tabIndex === 2 && <TabEndpoints />}

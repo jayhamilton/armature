@@ -1,0 +1,94 @@
+.markdown-editor {
+  border: 1px solid var(--app-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.markdown-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  background: var(--app-background);
+  border-bottom: 1px solid var(--app-border);
+}
+
+.markdown-toolbar .MuiIconButton-root {
+  width: 32px;
+  height: 32px;
+}
+
+.markdown-toolbar .material-icons {
+  font-size: 18px !important;
+}
+
+.illustration-size-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px 0;
+}
+
+.illustration-size-label {
+  font-size: 0.75rem;
+  color: var(--app-text-secondary);
+  margin-right: 4px;
+}
+
+.illustration-size-option {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--app-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--app-text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.illustration-size-option.selected {
+  background-color: var(--app-brand-tint-strong);
+  border-color: var(--app-brand);
+  color: var(--app-brand);
+}
+
+.toolbar-text-icon {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.markdown-panes {
+  display: flex;
+  height: 260px;
+}
+
+.markdown-textarea {
+  flex: 1 1 50%;
+  resize: none;
+  border: none;
+  border-right: 1px solid var(--app-border);
+  outline: none;
+  padding: 10px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: inherit;
+  background: var(--app-surface);
+}
+
+.markdown-preview {
+  flex: 1 1 50%;
+  overflow-y: auto;
+  padding: 10px 14px;
+  background: var(--app-surface);
+}
+
+.markdown-preview-placeholder {
+  color: var(--app-text-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
+.markdown-preview-body {
+  font-size: 0.9rem;
+}

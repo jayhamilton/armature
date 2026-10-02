@@ -1,0 +1,62 @@
+name: Web conformance
+
+# One Playwright suite run against a host (see web/conformance/README.md).
+# React only for now; the Angular host runs the same suite locally
+# (decision 4 in SPEC-INC-00d).
+
+on:
+  push:
+    paths:
+      - "web/**"
+      - ".github/workflows/web-conformance.yml"
+  pull_request:
+    paths:
+      - "web/**"
+      - ".github/workflows/web-conformance.yml"
+
+jobs:
+  react:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+          cache-dependency-path: |
+            web/hosts/react/package-lock.json
+            web/conformance/package-lock.json
+
+      - name: Build the React host
+        working-directory: web/hosts/react
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install the conformance suite
+        working-directory: web/conformance
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run typecheck
+
+      - name: Serve the React host
+        working-directory: web/hosts/react
+        run: |
+          npx vite preview --port 4173 --strictPort &
+          for i in $(seq 1 30); do curl -sf http://localhost:4173 > /dev/null && exit 0; sleep 2; done
+          echo "The React host did not start" && exit 1
+
+      - name: Run the suite
+        working-directory: web/conformance
+        env:
+          ARMATURE_HOST_URL: http://localhost:4173
+        run: npm test
+
+      - name: Keep the report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: conformance-react-report
+          path: web/conformance/playwright-report

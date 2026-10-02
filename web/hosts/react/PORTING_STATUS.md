@@ -56,48 +56,46 @@ five side panels as one `openPanel` state instead of five nested
 `mat-drawer-container`s), Board (tabs, rows/columns, drag-and-drop, empty-state tour),
 Layout panel (rows, per-row layout picker, board width), Library panel (collapsed
 icon-rail + expanded cards — not virtualized, see below), Config panel + DynamicForm
-(most control types — see below), Help panel, Board banner, all 11 gadgets
-(BarChart, AreaChart, PieChart, BubbleChart, NumberCard, LineChart, Table, Statistic,
-Text, Video, Illustration), the "Board settings" dialog's **Boards** and
-**Application** tabs (board CRUD, app title, transparent-card toggle).
+(every control type `library.json` uses; see below), Help panel, Board banner, all 11
+gadgets (BarChart, AreaChart, PieChart, BubbleChart, NumberCard, LineChart, Table,
+Statistic, Text, Video, Illustration), and all three "Board settings" tabs:
+**Application** (app title, transparent-card toggle), **Boards** (board CRUD with the
+icon picker), and **Endpoints** (endpoint CRUD against `/api/endpoints`, tags picked
+from the library's vocabulary).
 
-## Stubbed or trimmed — next to port
+Since INC-00d: `IconPicker`, `IllustrationPicker` + `IllustrationMenu`,
+`MarkdownEditor` (toolbar, live preview, insert illustration), `EndpointPicker`
+(endpoints whose tags intersect the gadget's), `TabEndpoints`, and `src/lib/apiFetch.ts`
+(the counterpart of Angular's `TokenInterceptor`; replaced by the `@armature/core` HAL
+client in INC-01). Parity for these is checked by `web/conformance`, which runs the same
+Playwright scenarios against both hosts.
 
-- **Agent module** (`src/app/agent/AgentPanel.tsx`): open/close wiring only. The
-  actual chat loop (`agent.service.ts`), A2UI renderer, and MCP app viewer
-  (`mcp-app-viewer.component.ts`, `mcp-app.service.ts`) aren't ported.
-- **Endpoints tab** (`configuration/tab-endpoints/`): placeholder. Angular original is
-  ~300 lines of endpoint CRUD backing the `endpoint-picker` dynamic-form control.
-- **Dynamic-form controls not fully built out**: `dropdown-ms` (renders as a plain
-  MUI multi-select — fine, but nothing populates its options, see next point),
-  `icon-picker`/`illustration-picker`/`endpoint-picker` (render as plain text inputs
-  instead of the original's dedicated picker UI), `upload`/`date`/`markdown`
-  (functional but simplified — a plain file input / native date input / plain
-  textarea rather than the original's richer widgets), `json-forms` (falls back to
-  the same raw-JSON ace editor as `ace-editor` — `@jsonforms/react` +
-  `@jsonforms/material-renderers` are already project dependencies, just not wired
-  up to a `JsonFormsEditor` component yet).
-- **`UserDataStoreService`/`ScheduleDataStoreService`** (`configuration/tab-user/`,
-  `tab-schedule/`): not ported. These back the `driver`/`qc`/`lead`/`lunch`
-  dropdown-driven options in `DynamicFormProperty`'s `setDropDownOptions` — those
-  specific dropdowns stay empty until this exists.
-- **RBAC** (`_authorization/rbac.directive.ts`, `*checkPermissions` in Menu's
-  template): not ported — every toolbar action is always shown regardless of
-  permissions.
-- **HTTP auth interceptor** (`app.interceptor.ts`): not ported — nothing in this app
-  yet calls a real authenticated backend endpoint (board data is localStorage-only,
-  `AuthenticationService.authenticate()` posts to `environment.apihost` but the login
-  page's demo-mode path, which is what actually runs by default, never reaches it).
-- **Library panel virtualization** (`CdkVirtualScrollViewport`): the library list
-  renders all gadgets directly rather than virtualizing — fine at library.json's
-  current ~11 entries, would want revisiting at real scale.
-- **Row-reorder Flip animation** (`AnimationService.beginLayoutFlip`/
-  `completeLayoutFlip`, GSAP Flip): dropped. `AnimationService` here only keeps the
-  simpler gadget enter/leave fades — React's own reconciliation (gadgets keyed by
-  `instanceId`) already relocates/unmounts smoothly across a layout change without a
-  manual before/after position capture, and Recharts' `ResponsiveContainer` (unlike
-  ngx-charts) uses a `ResizeObserver` so the original's window-`resize`-event
-  workaround for stale chart sizing isn't needed either.
+## Stubbed or trimmed, and where each goes
+
+- **Agent module** (`src/app/agent/AgentPanel.tsx`): open/close wiring only. The chat
+  loop, A2UI renderer, and MCP app viewer are INC-00e.
+- **Dynamic-form controls nobody uses yet**: `dropdown-ms` (plain MUI multi-select),
+  `upload`/`date` (plain file input / native date input), `json-forms` (raw JSON ace
+  editor; `@jsonforms/react` is a dependency but not wired). No `library.json` entry uses
+  these control types, so they stay simplified until one does.
+- **RBAC** (`_authorization/rbac.directive.ts`, `*checkPermissions`): not ported, by
+  decision. INC-01 and INC-02 replace role checks in the UI with HAL links gated by
+  `AccessPolicy`, so a port would be removed two increments later.
+- **Library panel virtualization** (`CdkVirtualScrollViewport`): the list renders all
+  gadgets directly; fine at ~11 entries, revisit with capability manifests (INC-06).
+- **Row-reorder Flip animation** (GSAP Flip): dropped. React's reconciliation (gadgets
+  keyed by `instanceId`) already moves gadgets smoothly across a layout change, and
+  Recharts' `ResponsiveContainer` uses a `ResizeObserver`, so the original's resize
+  workaround isn't needed. Chart libraries are unified in INC-04 (Chart.js custom
+  elements).
+- **Closed side panels stay in the accessibility tree**: unlike Angular's drawers, the
+  React side panels render while closed, so their buttons (for example "Add Row") are
+  still exposed to assistive technology. Found while writing the conformance suite;
+  not yet fixed.
+
+Removed rather than ported: `UserDataStoreService` / `ScheduleDataStoreService` (the
+`driver`/`qc`/`lead`/`lunch` dropdowns). No `library.json` entry used them, and INC-00d
+deleted them from the Angular host too.
 
 ## Running it
 

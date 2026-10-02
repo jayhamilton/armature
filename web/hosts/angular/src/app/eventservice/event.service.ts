@@ -31,8 +31,6 @@ export class EventService {
   private gadgetPropertyChangeSubject: Subject<IEvent> = new Subject<IEvent>();
   private gadgetDeleteSubject: Subject<IEvent> = new Subject<IEvent>();
   private gadgetMoveRequestSubject: Subject<IEvent> = new Subject<IEvent>();
-  private userDataChangedSubject: Subject<IEvent> = new Subject<IEvent>();
-  private scheduleEventDataChangedSubject: Subject<IEvent> = new Subject<IEvent>();
   private chartDataChangedSubject: Subject<IEvent> = new Subject<IEvent>();
   private openConfigPanelSubject: Subject<IEvent> = new Subject<IEvent>();
   private closeConfigPanelSubject: Subject<IEvent> = new Subject<IEvent>();
@@ -270,23 +268,6 @@ export class EventService {
   }
 
 
-  emitUserDataChanged() {
-    this.userDataChangedSubject.next(this.emptyEvent);
-    this.scheduleTick();
-  }
-
-  listenForUserDataChangedEvent(): Observable<IEvent> {
-    return this.userDataChangedSubject.asObservable();
-  }
-
-  emitScheduleEventDataChanged() {
-    this.scheduleEventDataChangedSubject.next(this.emptyEvent);
-    this.scheduleTick();
-  }
-
-  listenForScheduleEventDataChangedEvent(): Observable<IEvent> {
-    return this.scheduleEventDataChangedSubject.asObservable();
-  }
 
   emitChartDataChanged(event: IEvent) {
     console.log('EventService: Emitting chart data change:', event);

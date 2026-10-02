@@ -3,6 +3,7 @@
   mat-button
   #menuTrigger="matMenuTrigger"
   class="icon-picker-trigger"
+  aria-label="Choose an icon"
   [matMenuTriggerFor]="iconMenu"
   [disabled]="disabled"
   matTooltip="Choose an icon">
@@ -34,6 +35,8 @@
           mat-icon-button
           class="icon-picker-option"
           [class.selected]="icon === value"
+          [attr.aria-label]="icon"
+          [attr.aria-pressed]="icon === value"
           [matTooltip]="icon"
           (click)="select(icon); menuTrigger.closeMenu()">
           <mat-icon>{{ icon }}</mat-icon>

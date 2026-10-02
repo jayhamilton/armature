@@ -1,0 +1,96 @@
+/* IllustrationMenu */
+
+.illustration-menu-panel {
+  padding: 12px;
+  width: 360px;
+}
+
+.illustration-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.illustration-menu-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--app-text-secondary);
+  cursor: pointer;
+}
+
+.illustration-menu-option:hover {
+  background-color: var(--app-brand-tint);
+}
+
+.illustration-menu-option.selected {
+  background-color: var(--app-brand-tint-strong);
+  color: var(--app-brand);
+}
+
+.illustration-menu-option img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.illustration-menu-missing-icon.material-icons {
+  width: 56px;
+  height: 56px;
+  font-size: 32px !important;
+  color: var(--app-text-secondary);
+}
+
+.illustration-menu-option-label {
+  font-size: 0.7rem;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.illustration-menu-empty {
+  grid-column: 1 / -1;
+  padding: 16px 4px;
+  text-align: center;
+  color: var(--app-text-secondary);
+  font-size: 0.85rem;
+}
+
+/* IllustrationPicker */
+
+.illustration-picker {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.illustration-picker-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--app-input-border);
+  border-radius: 4px;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  color: var(--app-text-secondary);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.illustration-picker-trigger-thumb {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.illustration-picker-trigger-label {
+  font-size: 0.9rem;
+}

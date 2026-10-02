@@ -708,6 +708,7 @@ Eleven increments, each small enough to finish, demo, and document on its own; n
 | Inc | Theme | Demo at the end | Vision outcome |
 | --- | --- | --- | --- |
 | 00a, 00b, 00c | Scaffold, docs and CI, modules and patterns | New repo builds and runs as before; ADRs and baseline C4; verified modules | All |
+| 00d, 00e | React host parity (settings and forms; the assistant) | Both hosts pass the same conformance suite; React has every function Angular has | Consolidation, Deliver anywhere |
 | 01 | Board resources (TMF 630) | Boards follow you from laptop to phone | Deliver anywhere |
 | 02 | Board lifecycle and HATEOAS | Lock, publish, share appear only when the server offers the link | No assumptions |
 | 03 | Agent on real state | "Build me a board for my services" with preview and undo | No assumptions |

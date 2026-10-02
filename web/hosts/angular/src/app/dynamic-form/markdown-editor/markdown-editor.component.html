@@ -5,6 +5,7 @@
         type="button"
         mat-icon-button
         [matTooltip]="item.tooltip"
+        [attr.aria-label]="item.tooltip"
         [disabled]="disabled"
         (click)="item.action()">
         @if (item.icon) {
@@ -21,6 +22,7 @@
       #illustrationMenuTrigger="matMenuTrigger"
       [matMenuTriggerFor]="illustrationMenu"
       matTooltip="Insert illustration"
+      aria-label="Insert illustration"
       [disabled]="disabled">
       <mat-icon>image</mat-icon>
     </button>
@@ -33,6 +35,7 @@
               type="button"
               class="illustration-size-option"
               [class.selected]="size.value === insertSize"
+              [attr.aria-pressed]="size.value === insertSize"
               (click)="insertSize = size.value">
               {{ size.label }}
             </button>
@@ -48,6 +51,7 @@
     <textarea
       #textareaEl
       class="markdown-textarea"
+      aria-label="Markdown"
       [value]="value"
       [disabled]="disabled"
       (input)="onInput($event)"
@@ -56,7 +60,7 @@
       spellcheck="true">
     </textarea>
 
-    <div class="markdown-preview">
+    <div class="markdown-preview" role="region" aria-label="Preview">
       @if (renderedHtml) {
         <div class="markdown-preview-body" [innerHTML]="renderedHtml"></div>
       } @else {

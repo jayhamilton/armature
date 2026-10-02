@@ -1,0 +1,52 @@
+.icon-picker {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.icon-picker-trigger.MuiButton-root {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--app-input-border);
+  border-radius: 4px;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  color: var(--app-text-secondary);
+  text-transform: none;
+}
+
+.icon-picker-trigger-label {
+  font-size: 0.9rem;
+}
+
+.icon-picker-panel {
+  padding: 12px;
+  width: 320px;
+}
+
+.icon-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.icon-picker-option.MuiIconButton-root {
+  border-radius: 4px;
+}
+
+.icon-picker-option.selected {
+  background-color: var(--app-brand-tint-strong);
+  color: var(--app-brand);
+}
+
+.icon-picker-empty {
+  grid-column: 1 / -1;
+  padding: 16px 4px;
+  text-align: center;
+  color: var(--app-text-secondary);
+  font-size: 0.85rem;
+}
