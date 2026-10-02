@@ -9,23 +9,14 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AppBridge, PostMessageTransport } from '@modelcontextprotocol/ext-apps/app-bridge';
-import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { mountMcpApp, type McpApp } from '@armature/core';
 import { McpAppService } from './mcp-app.service';
 
 /**
- * Renders one MCP App (SEP-1865): a sandboxed iframe hosting the tool's ui://
- * resource, wired up with the official AppBridge so the view gets a real
- * ui/initialize handshake and its tool result, exactly like a first-class MCP
- * Apps host (Claude Desktop, etc.) would do it - not a bespoke shortcut.
- *
- * Single-iframe sandboxing (`sandbox="allow-scripts"`, no `allow-same-origin`,
- * loaded via srcdoc) rather than the reference double-iframe proxy architecture:
- * a deliberate scope call appropriate for today's only source, Armature's own
- * armature-ms - the double-iframe pattern exists to isolate a host from
- * *third-party* server content, which nothing here consumes yet. Revisit before
- * ever pointing this at a server this app doesn't control.
+ * Renders one MCP App (SEP-1865) in a sandboxed iframe. Loading and the AppBridge
+ * handshake are shared with every host in @armature/core (loadMcpApp, mountMcpApp,
+ * which also explains the single iframe sandbox); this component only owns the
+ * iframe and shows the error or the ready view.
  */
 @Component({
   selector: 'app-mcp-app-viewer',
@@ -67,8 +58,7 @@ export class McpAppViewerComponent implements AfterViewInit, OnDestroy {
   ready = false;
   errorMessage?: string;
 
-  private bridge?: AppBridge;
-  private loadListener?: () => void;
+  private unmount?: () => void;
 
   constructor(
     private mcpAppService: McpAppService,
@@ -77,44 +67,22 @@ export class McpAppViewerComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.mcpAppService.loadApp(this.toolName).subscribe({
-      next: ({ client, html, result }) => this.mountApp(client, html, result),
+      next: (app) => this.mountApp(app),
       error: (err) => this.setError(err),
     });
   }
 
-  private mountApp(client: Client, html: string, result: CallToolResult) {
+  private mountApp(app: McpApp) {
     const frame = this.frameRef?.nativeElement;
     if (!frame) return;
 
-    this.loadListener = () => {
-      const contentWindow = frame.contentWindow;
-      if (!contentWindow) return;
-
-      const bridge = new AppBridge(client, { name: 'Armature', version: '1.0.0' }, {});
-      this.bridge = bridge;
-      bridge.oninitialized = () => {
-        bridge.sendToolInput({ arguments: {} });
-        bridge.sendToolResult(result);
+    this.unmount = mountMcpApp(frame, app, {
+      onReady: () => {
         this.ready = true;
         this.cdr.markForCheck();
-      };
-      bridge.onerror = (err: unknown) => this.setError(err);
-      // The view's App instance defaults to autoResize: true (a ResizeObserver on
-      // its own document), sending ui/notifications/size-changed on its own -
-      // without a host-side listener that just goes nowhere and the iframe stays
-      // at the CSS min-height fallback, forcing an inner scrollbar for any content
-      // taller than that.
-      bridge.addEventListener('sizechange', ({ height }) => {
-        if (height != null) {
-          frame.style.height = `${height}px`;
-        }
-      });
-
-      const transport = new PostMessageTransport(contentWindow, contentWindow);
-      bridge.connect(transport).catch((err) => this.setError(err));
-    };
-    frame.addEventListener('load', this.loadListener, { once: true });
-    frame.srcdoc = html;
+      },
+      onError: (err) => this.setError(err),
+    });
   }
 
   private setError(err: unknown) {
@@ -123,10 +91,6 @@ export class McpAppViewerComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    const frame = this.frameRef?.nativeElement;
-    if (frame && this.loadListener) {
-      frame.removeEventListener('load', this.loadListener);
-    }
-    this.bridge?.close();
+    this.unmount?.();
   }
 }

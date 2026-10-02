@@ -27,7 +27,6 @@ export interface AgentPropertyPage {
 export interface AgentProperty {
   key: string;
   value?: unknown;
-  [other: string]: unknown;
 }
 
 /**
