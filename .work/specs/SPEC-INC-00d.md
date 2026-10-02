@@ -51,8 +51,10 @@ scope; see "Out of scope" for the rest and why.
 ### 3. Markdown editor
 
 - `dynamic-form/markdown-editor/MarkdownEditor.tsx`, ported from Angular's
-  `markdown-editor` (181 lines): edit and preview modes, preview rendered with the existing
-  `renderMarkdown` (marked plus DOMPurify), and "insert illustration" via `IllustrationMenu`.
+  `markdown-editor` (181 lines): formatting toolbar, raw text and live preview side by side
+  (corrected during the build: Angular has no separate edit and preview modes), preview rendered
+  with the existing `renderMarkdown` (marked plus DOMPurify), and "insert illustration" via
+  `IllustrationMenu`.
 - Wired to the `markdown` control type (used by the Text gadget).
 
 ### 4. Endpoints: service, tab, and picker
@@ -61,10 +63,13 @@ scope; see "Out of scope" for the rest and why.
   existing backend `/api/endpoints` (`EndpointController`, SPEC-73 start). Same calls as Angular:
   list, create, update, delete.
 - `TabEndpoints.tsx`: replaces the placeholder with the Angular tab's behavior (list, create,
-  edit, delete with the existing `ConfirmDialog`, reset form).
+  edit, delete with the existing `ConfirmDialog`, reset form, tags picked from the library's tag
+  vocabulary through a port of `GadgetTagOptionsService`, authentication type and credential
+  fields).
 - `shared/endpoint-picker/EndpointPicker.tsx`: select an endpoint by name, populated from the
-  service; wired to the `endpoint-picker` control type (used by the Table gadget). The
-  `gadgetTags` filter is a `todo` in Angular too and stays unimplemented in both.
+  service; wired to the `endpoint-picker` control type (used by the Bar Chart gadget; corrected
+  during the build, the draft said Table). The `gadgetTags` filter is implemented in Angular
+  (corrected during the build, the draft said it was a `todo`) and is ported.
 
 ### 5. Authenticated HTTP in the React host
 
@@ -87,10 +92,12 @@ The plan calls for one Playwright suite run against every host. This increment s
 - Backend calls are stubbed with `page.route`, so the suite needs neither the backend nor Ollama.
 - Scenarios, each passing against **both** hosts:
   1. Create a board, pick an icon in Board settings, see that icon in the sidenav.
-  2. Add a Text gadget, edit its markdown, switch to preview, see the rendered heading.
+  2. Add a Text gadget, edit its markdown, see the rendered heading in the preview and on the
+     board.
   3. Add an Illustration gadget, pick an illustration, see it rendered.
   4. Create, edit, and delete an endpoint in the Endpoints tab (stubbed `/api/endpoints`).
-  5. Configure a Table gadget's endpoint through the endpoint picker.
+  5. Configure a Bar Chart gadget's endpoint through the endpoint picker (only endpoints sharing
+     its tags are offered).
 - Selectors use roles and accessible names, not framework specific classes, so the same test works
   on both hosts. Where a host lacks an accessible name, the fix goes in the host.
 - CI: `.github/workflows/web-conformance.yml`, path filtered on `web/**`; builds the React host,
@@ -138,7 +145,7 @@ The plan calls for one Playwright suite run against every host. This increment s
 | Check | Command | Expected |
 | --- | --- | --- |
 | React | `cd web/hosts/react && npm ci && npm run build && npm run lint` | Pass |
-| Angular | `npm ci && npx ng build && npx ng test --watch=false --browsers=ChromeHeadless` | Build passes; 26 of 26 |
+| Angular | `npm ci && npx ng build && npx ng test --watch=false --browsers=ChromeHeadless` | Build passes; 22 of 22 (the 4 specs of the removed datastores go with them) |
 | Conformance, React | `cd web/conformance && ARMATURE_HOST_URL=http://localhost:4173 npx playwright test` | 5 of 5 |
 | Conformance, Angular | same, against `ng serve` | 5 of 5 |
 | Backend, core, diagrams | as in INC-00c | Unchanged, pass |
