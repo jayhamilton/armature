@@ -98,13 +98,23 @@ export function DynamicForm({
     <>
       <form>
         <Tabs value={tabIndex} onChange={(_e, v) => handleTabChange(v)}>
-          {propertyPages.map((page) => (
-            <Tab key={page.groupId} label={page.displayName} />
+          {propertyPages.map((page, index) => (
+            <Tab
+              key={page.groupId}
+              label={page.displayName}
+              id={`property-tab-${index}`}
+              aria-controls={`property-tabpanel-${index}`}
+            />
           ))}
         </Tabs>
 
         {propertyPages[tabIndex] && (
-          <div className="gridContainer">
+          <div
+            className="gridContainer"
+            role="tabpanel"
+            id={`property-tabpanel-${tabIndex}`}
+            aria-labelledby={`property-tab-${tabIndex}`}
+          >
             {propertyPages[tabIndex].properties.map((property) => (
               <div
                 key={property.key}

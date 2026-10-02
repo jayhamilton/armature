@@ -15,6 +15,8 @@
         type="button"
         class="illustration-menu-option"
         [class.selected]="option.id === selected"
+        [attr.aria-label]="option.label"
+        [attr.aria-pressed]="option.id === selected"
         [matTooltip]="option.label"
         (click)="select(option)">
         @if (isBroken(option)) {

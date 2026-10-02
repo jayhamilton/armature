@@ -1,5 +1,5 @@
 import { DataSource } from '@angular/cdk/table';
-import { Component, ChangeDetectionStrategy, ElementRef, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, inject } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -75,6 +75,11 @@ export class TabEndpointsComponent {
   selectedId?: string;
   editMode = false;
 
+  // The app is zoneless, so an HTTP response alone does not schedule change
+  // detection; without this the "No endpoints defined yet." message stayed
+  // hidden after deleting the last endpoint.
+  private readonly changeDetector = inject(ChangeDetectorRef);
+
   constructor(
     private endpointService: EndpointService,
     private tagOptionsService: GadgetTagOptionsService,
@@ -126,6 +131,7 @@ export class TabEndpointsComponent {
       next: (endpoints) => {
         this.endpoints = endpoints;
         this.dataSource.setData(endpoints);
+        this.changeDetector.markForCheck();
       },
       // Backend route isn't built yet (SPEC-73 is a frontend-only pass) -
       // fail quiet rather than surface a dead-endpoint error on every open
@@ -133,6 +139,7 @@ export class TabEndpointsComponent {
       error: () => {
         this.endpoints = [];
         this.dataSource.setData([]);
+        this.changeDetector.markForCheck();
       },
     });
   }

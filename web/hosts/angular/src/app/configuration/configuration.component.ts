@@ -1,5 +1,5 @@
-import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatTabGroup, MatTab, MatTabContent } from '@angular/material/tabs';
 import { TabBoardsComponent } from './tab-boards/tab-boards.component';
@@ -16,12 +16,12 @@ import { MatButton } from '@angular/material/button';
 })
 export class ConfigurationComponent {
 
-  @ViewChild('board',{read: ElementRef}) boardDialog?: ElementRef;
+  // Optional so the component still renders outside a dialog (its spec
+  // creates it directly).
+  private readonly dialogRef = inject(MatDialogRef<ConfigurationComponent>, { optional: true });
 
-  closeDialog(){
-
-    this.boardDialog?.nativeElement.click();
-
+  closeDialog() {
+    this.dialogRef?.close();
   }
 
 }
