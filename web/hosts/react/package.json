@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "core:refresh": "npm --prefix ../../packages/core run build && node -e \"require('fs').rmSync('node_modules/@armature/core',{recursive:true,force:true})\" && npm install"
   },
   "dependencies": {
+    "@armature/core": "file:../../packages/core",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
@@ -18,6 +20,8 @@
     "@jsonforms/core": "^3.8.0",
     "@jsonforms/material-renderers": "^3.8.0",
     "@jsonforms/react": "^3.8.0",
+    "@modelcontextprotocol/ext-apps": "^1.7.5",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@mui/icons-material": "^7.3.11",
     "@mui/material": "^7.3.11",
     "@mui/x-date-pickers": "^8.29.3",

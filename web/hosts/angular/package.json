@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "core:refresh": "npm --prefix ../../packages/core run build && node -e \"require('fs').rmSync('node_modules/@armature/core',{recursive:true,force:true})\" && npm install"
   },
   "private": true,
   "dependencies": {

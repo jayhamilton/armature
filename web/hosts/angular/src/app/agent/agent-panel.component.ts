@@ -239,7 +239,7 @@ interface ChatMessage {
         @if (sending) {
           <div class="agent-panel__message agent-panel__message--assistant">
             <div class="agent-panel__message-role">Assistant</div>
-            <div class="agent-panel__typing" [attr.aria-label]="thinking ? 'Assistant is thinking' : 'Assistant is working'">
+            <div class="agent-panel__typing" role="status" [attr.aria-label]="thinking ? 'Assistant is thinking' : 'Assistant is working'">
               @if (thinking) {
                 <span class="agent-panel__thinking-label">Thinking…</span>
               }
@@ -533,6 +533,12 @@ export class AgentPanelComponent implements OnDestroy {
       case 'RUN_FINISHED': {
         const message = this.currentAssistantMessage;
         this.currentAssistantMessage = undefined;
+        // A run can finish without any text (for example a tool call only), so the
+        // typing indicator is cleared here too, not only on TEXT_MESSAGE_START.
+        this.sending = false;
+        this.thinking = false;
+        this.stopTypingAnimation();
+        this.cdr.markForCheck();
         if (message) {
           this.speak(message.content ?? '');
         }
