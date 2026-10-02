@@ -177,3 +177,24 @@ which is the drift this work exists to stop.
 3. **`fetch` in core** rather than a host supplied HTTP function, with hosts passing auth headers.
 4. **Port the dormant A2UI card** for parity even though nothing produces it today.
 5. **MCP Apps and voice verified manually**, not in the conformance suite.
+
+## Amendments (approved 2026-10-02, after checking this spec against `main` with 00c and 00d merged)
+
+The five decisions above are confirmed. These amendments apply on top of them.
+
+1. **No type switch on the render side in React.** Part components are chosen through a
+   `TypeRegistry` of components keyed by `componentType` in the React host, not a `switch`.
+2. **The Angular template keeps its `@if` chain on `componentType`.** Templates stay unchanged in
+   this increment, so the branch is recorded under "Not done and why" and owned by INC-04, where
+   cards become custom elements.
+3. **Auth headers match `TokenInterceptor` exactly.** `Authorization` is the raw session token.
+   Core sets `Content-Type: application/json` and `Accept: text/event-stream`. Both hosts supply
+   `Authorization` through `options.headers()`. React reads `sessionStorage` as `apiFetch` does,
+   but does not call `apiFetch`, which parses JSON.
+4. **Dependency verdict:** the plan lists `@modelcontextprotocol/ext-apps` as Keep, while the
+   dependency audit says Watch, with 2.x to be evaluated in INC-07. The plan wins. Core and React
+   use the ranges Angular already uses (`sdk` ^1.30.0, `ext-apps` ^1.7.5), and the audit row notes
+   the new users.
+5. **CI:** `react.yml`, `angular.yml`, and `web-conformance.yml` add `web/packages/core/**` to their
+   path filters and build core before installing the host. Hosts depend on
+   `"@armature/core": "file:../../packages/core"`.
