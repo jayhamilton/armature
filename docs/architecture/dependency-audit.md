@@ -90,7 +90,6 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata; updated 
 | `typescript` (dev) | ~6.0.2 | 2026-09 | Watch | As for the Angular host |
 | `@types/react`, `@types/react-dom`, `@types/node` (dev) | ^19, ^24 | 2026-09 | Keep | DefinitelyTyped (Microsoft backed) |
 | `oxlint` (dev) | ^1.79.0 | 2026-09 | Keep | Vendor (VoidZero) |
-| `playwright` (dev) | ^1.62.1 | 2026-09 | Keep | Vendor (Microsoft); listed Keep in the policy table |
 
 ## Web core (`web/packages/core/package.json`)
 
@@ -101,12 +100,22 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata; updated 
 
 Tests use Node's built in `node:test` runner, so core adds no test framework.
 
+## Host conformance suite (`web/conformance/package.json`)
+
+Added in INC-00d. Playwright moved here from the React host's dev dependencies.
+
+| Dependency | Declared | Verdict | Reason |
+| --- | --- | --- | --- |
+| `@playwright/test` (dev) | ^1.62.1 | Keep | Vendor (Microsoft); listed Keep in the policy table |
+| `typescript` (dev) | ~6.0.3 | Watch | As for the hosts; type checks the suite only |
+| `@types/node` (dev) | ^24.19.1 | Keep | DefinitelyTyped |
+
 ## Build and CI tools
 
 | Tool | Version | Verdict | Reason |
 | --- | --- | --- | --- |
 | PlantUML (with its bundled C4-PlantUML library) | 1.2026.8, checksum pinned in `docs/architecture/plantuml.sh` | Keep | Listed Keep in the policy table; build time only |
-| `actions/checkout`, `actions/setup-java`, `actions/setup-node`, `actions/cache` | v4 | Keep | Vendor (GitHub) |
+| `actions/checkout`, `actions/setup-java`, `actions/setup-node`, `actions/cache`, `actions/upload-artifact` | v4 | Keep | Vendor (GitHub) |
 | Temurin JDK | 25 | Keep | Foundation (Eclipse Adoptium) |
 | Node.js | 24.x | Keep | Foundation (OpenJS); satisfies Angular 22's engines range |
 
@@ -115,6 +124,7 @@ Tests use Node's built in `node:test` runner, so core adds no test framework.
 | Increment | Action |
 | --- | --- |
 | INC-00c | Done: removed `json-path`, `spring-restdocs-mockmvc`, `schematics-scss-migrate`, `node-forge`, `@types/dompurify`; aligned `@types/node`. Karma replacement moved to INC-04 |
+| INC-00d | Done: moved Playwright from the React host to `web/conformance` (as `@playwright/test`); added `actions/upload-artifact` for failed conformance reports |
 | INC-01 | Upgrade springdoc to the Boot 4 line; decide Jackson 2 or 3 |
 | INC-04 | Replace Karma (needs a runner added to the policy table); retire ngx-charts, `@types/d3`, and Recharts; decide on MUI majors, `@dnd-kit`, `react-ace`, and zone.js as hosts move onto `@armature/elements`; restore the Angular `initial` budget to 2 MB |
 | INC-07 | Evaluate `@modelcontextprotocol/ext-apps` 2.x |
