@@ -19,7 +19,13 @@
     "catalog": "node scripts/pattern-catalog.mjs --write",
     "catalog:check": "node scripts/pattern-catalog.mjs --check"
   },
+  "peerDependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.7.5",
+    "@modelcontextprotocol/sdk": "^1.30.0"
+  },
   "devDependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.7.5",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@types/node": "^24.13.3",
     "typescript": "~6.0.3"
   }

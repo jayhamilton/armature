@@ -37,5 +37,12 @@ CI fails when either section is out of date (`PatternCatalogTest` in the Backend
 <!-- ts-catalog:start -->
 | Pattern | Role | Symbol | Principle |
 | --- | --- | --- | --- |
+| Strategy with registry | ConcreteStrategy | [`resolveA2uiCard`](../../web/packages/core/src/agent/ui-part-resolvers.ts) | Open/Closed: one part type, registered by its componentType. |
+| Strategy with registry | ConcreteStrategy | [`resolveBoardList`](../../web/packages/core/src/agent/ui-part-resolvers.ts) | Open/Closed: one part type, registered by its componentType. |
+| Strategy with registry | ConcreteStrategy | [`resolveGadgetMove`](../../web/packages/core/src/agent/ui-part-resolvers.ts) | Open/Closed: one part type, registered by its componentType. |
+| Strategy with registry | ConcreteStrategy | [`resolveGadgetRemove`](../../web/packages/core/src/agent/ui-part-resolvers.ts) | Open/Closed: one part type, registered by its componentType. |
+| Strategy with registry | ConcreteStrategy | [`resolveGadgetSuggestion`](../../web/packages/core/src/agent/ui-part-resolvers.ts) | Open/Closed: one part type, registered by its componentType. |
+| Strategy with registry | ConcreteStrategy | [`resolveRowAdd`](../../web/packages/core/src/agent/ui-part-resolvers.ts) | Open/Closed: one part type, registered by its componentType. |
+| Strategy with registry | ConcreteStrategy | [`resolveRowLayout`](../../web/packages/core/src/agent/ui-part-resolvers.ts) | Open/Closed: one part type, registered by its componentType. |
 | Strategy with registry | Registry | [`TypeRegistry`](../../web/packages/core/src/type-registry.ts) | Open/Closed: a new `@type` is a new registration; callers never branch on type. |
 <!-- ts-catalog:end -->

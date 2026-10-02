@@ -23,9 +23,9 @@ function sources(dir) {
   });
 }
 
-/** A doc comment followed by an exported declaration, with its tags. */
+/** A doc comment (never spanning two) followed by an exported declaration, with its tags. */
 const declaration =
-  /\/\*\*([\s\S]*?)\*\/\s*export\s+(?:abstract\s+)?(?:class|interface|function|const|type)\s+(\w+)/g;
+  /\/\*\*((?:(?!\*\/)[\s\S])*)\*\/\s*export\s+(?:abstract\s+|async\s+)?(?:class|interface|function\*?|const|type)\s+(\w+)/g;
 
 /** The text of a block tag: its line plus continuation lines, up to the next line starting with @. */
 function tag(comment, name) {
