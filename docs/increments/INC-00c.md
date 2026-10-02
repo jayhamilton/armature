@@ -56,6 +56,11 @@ monolith.
 - **Build as a gate:** removed surefire's `testFailureIgnore` from `backend/pom.xml` (approved
   mid increment), so a failing test now fails the build and CI. `AgentServiceTest` (live Ollama)
   is tagged `live-model` and excluded by default (approved mid increment; see ADR-0016).
+- **Context test without Ollama** (approved after the first CI run failed):
+  `ArmatureApplicationTests` sets `spring.ai.ollama.init.pull-model-strategy=never`, so it no
+  longer needs a running Ollama. The application's own startup behavior is unchanged. This
+  failure already existed in INC-00b, where `testFailureIgnore` let the Backend workflow report
+  green over it; INC-00b's backend CI result therefore did not prove the context test passed.
 - **Rendering:** `docs/architecture/plantuml.sh` now always passes `-Playout=smetana`, so
   generated diagrams, which cannot carry a layout pragma, need no Graphviz either.
 - **Audit follow ups:** removed `json-path`, `spring-restdocs-mockmvc` (backend),
@@ -102,6 +107,7 @@ Run locally on macOS with JDK 25.0.2 and Node 24.18.1.
 | --- | --- | --- |
 | Backend | `cd backend && ./mvnw test` | **Pass**, exit 0: 59 tests, 0 failures, 0 errors (28 existing tests, which is 36 minus the 8 now opt in, plus `ModularityTest` 2, `ModuleDocumentationTest` 1, `PatternCatalogTest` 3, `BoardLifecycleTest` 25) |
 | Backend, live model (opt in) | `./mvnw test -Dgroups=live-model -DexcludedGroups=` with Ollama running | **Fails**: 8 run, 1 failure (`removeGadgetRequestGroundsQueryInProvidedBoardGadgetTitle`; the model paraphrased the title). Failed 2 of 3 isolated reruns. Pre existing, previously hidden by `testFailureIgnore` |
+| Backend without Ollama (as on CI) | `./mvnw test -Dspring.ai.ollama.base-url=http://localhost:1` | **Pass**, exit 0. Before the fix, `ArmatureApplicationTests` failed here with "Connection refused", the same failure as the first CI run of this branch |
 | Core | `cd web/packages/core && npm ci && npm run build && npm test && npm run catalog:check` | **Pass**: 5 of 5 tests; catalog up to date |
 | Angular | `npm ci && npx ng build && npx ng test --watch=false --browsers=ChromeHeadless` | **Pass**: build (initial 2.24 MB); 26 of 26 tests |
 | React | `npm ci && npm run build` | **Pass** |
@@ -117,7 +123,8 @@ All negative edits were reverted; the tree is clean.
 
 ## Not done and why
 
-- **CI has not run on GitHub** for this branch; it is not pushed.
+- **First GitHub run failed** (Backend workflow, `contextLoads`, no Ollama on the runner); fixed as
+  described above. The result of the rerun is on PR #4.
 - **Karma not replaced** in the Angular host: needs a runner not in the policy table; proposed for
   INC-04.
 - **Board lifecycle not exposed:** no REST resource, links, events, JSON definition, or XState
@@ -132,9 +139,9 @@ All negative edits were reverted; the tree is clean.
   - The spec counted 24 transition cases (4 by 6); there are 5 events, so the matrix is 20.
   - `web/packages/core` has one dev dependency beyond TypeScript: `@types/node`, for `node:test`
     types. Both hosts already use it; it is recorded in the audit.
-  - Three changes beyond the spec: removing `testFailureIgnore` and making live model tests opt in
-    (both approved by you mid increment), and sorting the Documenter's output (needed so the
-    stale SVG check does not churn).
+  - Four changes beyond the spec: removing `testFailureIgnore`, making live model tests opt in,
+    and the context test override (all approved by you mid increment), and sorting the
+    Documenter's output (needed so the stale SVG check does not churn).
 - **Size:** about 920 changed lines, excluding SVG, lock files, and the generated module docs;
   well under the spec's estimate.
 
