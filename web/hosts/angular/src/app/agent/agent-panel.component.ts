@@ -5,31 +5,18 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { interval, map, Observable, of, Subscription } from 'rxjs';
+import { from, interval, Observable, Subscription } from 'rxjs';
+import { parsePayload, resolveUiPart, type ResolvedPart } from '@armature/core';
 import { AgentService, AgentUiPart, AgUiEvent } from './agent.service';
-import { AgentActionService, BoardSummary, GadgetMoveDirection } from './agent-action.service';
+import { AgentActionService } from './agent-action.service';
 import { EventService } from '../eventservice/event.service';
 import { IGadget } from '../gadgets/common/gadget-common/gadget-base/gadget.model';
-import { LayoutType } from '../layout/layout.model';
 import { A2uiNode } from './a2ui/a2ui.model';
 import { A2uiRendererComponent } from './a2ui/a2ui-renderer.component';
 import { McpAppViewerComponent } from './mcp-app-viewer.component';
 
-interface ChatPart extends AgentUiPart {
-  gadgetPreview?: IGadget;
+interface ChatPart extends ResolvedPart<IGadget> {
   a2uiResolution?: 'confirmed' | 'cancelled';
-  boardSummaries?: BoardSummary[];
-  gadgetMoveTarget?: IGadget;
-  gadgetMoveQuery?: string;
-  direction?: GadgetMoveDirection;
-  moved?: boolean;
-  gadgetRemoveTarget?: IGadget;
-  gadgetRemoveQuery?: string;
-  removed?: boolean;
-  rowAdded?: boolean;
-  rowIndex?: number;
-  rowStructure?: LayoutType;
-  rowLayoutApplied?: boolean;
 }
 
 interface ChatMessage {
@@ -252,7 +239,7 @@ interface ChatMessage {
         @if (sending) {
           <div class="agent-panel__message agent-panel__message--assistant">
             <div class="agent-panel__message-role">Assistant</div>
-            <div class="agent-panel__typing" [attr.aria-label]="thinking ? 'Assistant is thinking' : 'Assistant is working'">
+            <div class="agent-panel__typing" role="status" [attr.aria-label]="thinking ? 'Assistant is thinking' : 'Assistant is working'">
               @if (thinking) {
                 <span class="agent-panel__thinking-label">Thinking…</span>
               }
@@ -546,6 +533,12 @@ export class AgentPanelComponent implements OnDestroy {
       case 'RUN_FINISHED': {
         const message = this.currentAssistantMessage;
         this.currentAssistantMessage = undefined;
+        // A run can finish without any text (for example a tool call only), so the
+        // typing indicator is cleared here too, not only on TEXT_MESSAGE_START.
+        this.sending = false;
+        this.thinking = false;
+        this.stopTypingAnimation();
+        this.cdr.markForCheck();
         if (message) {
           this.speak(message.content ?? '');
         }
@@ -634,12 +627,7 @@ export class AgentPanelComponent implements OnDestroy {
   }
 
   parsedPayload(part: AgentUiPart): Record<string, unknown> | undefined {
-    if (typeof part.payload !== 'string') return part.payload as Record<string, unknown> | undefined;
-    try {
-      return JSON.parse(part.payload);
-    } catch {
-      return undefined;
-    }
+    return parsePayload(part);
   }
 
   a2uiNode(part: AgentUiPart): A2uiNode | undefined {
@@ -669,117 +657,12 @@ export class AgentPanelComponent implements OnDestroy {
   }
 
   /**
-   * All parts apply themselves as soon as they resolve to a real gadget/target,
-   * rather than waiting for a manual confirm click — the model only calls these
-   * tools when it has a grounded gadget library or an explicit direction+query to
-   * act on, so the tool call itself is the confirmation. (a2ui-card is the one
-   * exception, and nothing currently produces that componentType — add_gadget went
-   * back to auto-applying via gadget-suggestion after users found the extra confirm
-   * click unwanted friction. The a2ui-card branch below, and
-   * handleA2uiAction/applyGadgetSuggestion, are kept in place unused for a future
-   * flow that genuinely needs a confirm/cancel step, e.g. a destructive remove.)
+   * Resolves a ui part with the resolver registered for its componentType in @armature/core
+   * (one Strategy per part type, so a new part type never edits this panel). Most parts apply
+   * themselves there, for example adding the gadget; a2ui-card is the exception and waits for
+   * handleA2uiAction.
    */
   private resolvePart(part: AgentUiPart): Observable<ChatPart> {
-    if (part.componentType === 'gadget-suggestion') {
-      const payload = this.parsedPayload(part) as
-        | { gadgetComponentType?: string; propertyValues?: Record<string, unknown> }
-        | undefined;
-      const gadgetComponentType = payload?.gadgetComponentType;
-      if (!gadgetComponentType) return of({ ...part });
-
-      return this.agentActionService.findGadgetDefinition(gadgetComponentType).pipe(
-        map((definition) => {
-          if (!definition) {
-            return { ...part, gadgetPreview: definition };
-          }
-          // propertyValues comes from a second, schema-constrained model call
-          // (see AgentService.enrichAddGadgetPartsWithPropertyValues) — when
-          // present, it overlays real content onto the library's default
-          // template instead of adding the gadget with placeholder data.
-          const gadgetPreview = payload?.propertyValues
-            ? this.agentActionService.applyPropertyValues(definition, payload.propertyValues)
-            : definition;
-          this.agentActionService.addGadgetToBoard(gadgetPreview);
-          return { ...part, gadgetPreview };
-        })
-      );
-    }
-
-    // Nothing produces a2ui-card today (see the class doc above resolvePart) - kept
-    // dormant for a future confirm-required flow. Deliberately does NOT auto-apply;
-    // that only happens via handleA2uiAction on a confirm click.
-    if (part.componentType === 'a2ui-card') {
-      const payload = this.parsedPayload(part) as
-        | { gadgetComponentType?: string; propertyValues?: Record<string, unknown> }
-        | undefined;
-      const gadgetComponentType = payload?.gadgetComponentType;
-      if (!gadgetComponentType) return of({ ...part });
-
-      return this.agentActionService.findGadgetDefinition(gadgetComponentType).pipe(
-        map((definition) => {
-          if (!definition) {
-            return { ...part, gadgetPreview: definition };
-          }
-          const gadgetPreview = payload?.propertyValues
-            ? this.agentActionService.applyPropertyValues(definition, payload.propertyValues)
-            : definition;
-          return { ...part, gadgetPreview };
-        })
-      );
-    }
-
-    if (part.componentType === 'board-list') {
-      return this.agentActionService
-        .getBoardSummaries()
-        .pipe(map((boardSummaries) => ({ ...part, boardSummaries })));
-    }
-
-    if (part.componentType === 'gadget-move') {
-      const payload = this.parsedPayload(part) as { direction?: GadgetMoveDirection; gadgetQuery?: string } | undefined;
-      const direction = payload?.direction;
-      const gadgetMoveQuery = payload?.gadgetQuery ?? '';
-      if (!direction) return of({ ...part });
-
-      return this.agentActionService.findGadgetOnBoard(gadgetMoveQuery).pipe(
-        map((gadgetMoveTarget) => {
-          if (gadgetMoveTarget) {
-            this.agentActionService.moveGadget(gadgetMoveTarget.instanceId, direction);
-          }
-          return { ...part, gadgetMoveTarget, gadgetMoveQuery, direction, moved: !!gadgetMoveTarget };
-        })
-      );
-    }
-
-    if (part.componentType === 'gadget-remove') {
-      const payload = this.parsedPayload(part) as { gadgetQuery?: string } | undefined;
-      const gadgetRemoveQuery = payload?.gadgetQuery ?? '';
-
-      return this.agentActionService.findGadgetOnBoard(gadgetRemoveQuery).pipe(
-        map((gadgetRemoveTarget) => {
-          if (gadgetRemoveTarget) {
-            this.agentActionService.removeGadget(gadgetRemoveTarget.instanceId);
-          }
-          return { ...part, gadgetRemoveTarget, gadgetRemoveQuery, removed: !!gadgetRemoveTarget };
-        })
-      );
-    }
-
-    if (part.componentType === 'row-add') {
-      this.agentActionService.addRow();
-      return of({ ...part, rowAdded: true });
-    }
-
-    if (part.componentType === 'row-layout') {
-      const payload = this.parsedPayload(part) as { rowIndex?: number; structure?: string } | undefined;
-      const rowIndex = payload?.rowIndex;
-      const structure = payload?.structure as LayoutType | undefined;
-      if (rowIndex === undefined || !structure) return of({ ...part });
-
-      return this.agentActionService.changeRowLayout(rowIndex, structure).pipe(
-        map((rowLayoutApplied) => ({ ...part, rowIndex, rowStructure: structure, rowLayoutApplied }))
-      );
-    }
-
-    return of({ ...part });
+    return from(resolveUiPart(part, this.agentActionService));
   }
 }

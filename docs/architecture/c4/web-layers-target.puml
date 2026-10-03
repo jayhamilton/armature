@@ -1,7 +1,8 @@
 @startuml web-layers-target
 ' C4 level 2 detail: the plan's web layers ("Multi framework UI"). A target view: today only
-' web/hosts/angular, web/hosts/react, and web/packages/core (the @type registry) exist; elements
-' and the Svelte, Lit, and vanilla hosts are planned. Hosts move onto core and elements in INC-04.
+' web/hosts/angular, web/hosts/react, and web/packages/core exist; elements and the Svelte, Lit,
+' and vanilla hosts are planned. Both hosts use core for the assistant since INC-00e, and move
+' onto elements in INC-04.
 !pragma layout smetana
 !include <C4/C4_Container>
 
@@ -14,7 +15,7 @@ System_Boundary(web, "web/ (pnpm workspace)") {
   Container(angular, "hosts/angular", "Angular", "Full application at parity on conformance scenarios")
   Container(embed, "hosts/svelte, hosts/lit, hosts/vanilla", "Svelte, Lit, plain HTML (planned)", "Embedding hosts: a board and assistant in a small app")
   Container(elements, "@armature/elements", "Lit (planned, INC-04)", "armature-board, armature-gadget-host, armature-assistant, armature-help, armature-problem, built in gadgets")
-  Container(core, "@armature/core", "TypeScript, no framework", "Today: TypeRegistry keyed by @type. Planned: HAL client, local first store and sync, XState machines, when clauses, RFC 9457, AG-UI client")
+  Container(core, "@armature/core", "TypeScript, no framework", "Today: TypeRegistry keyed by @type, AG-UI client and ui part resolvers, MCP Apps loader and bridge. Planned: HAL client, local first store and sync, XState machines, when clauses, RFC 9457")
 }
 
 System_Ext(backend, "armature-ms", "REST (HAL), SSE, AG-UI")

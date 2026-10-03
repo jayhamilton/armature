@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed (stubbed in INC-00c; needs review)
+Accepted (stubbed in INC-00c; accepted by the owner on 2026-10-02, after INC-00c merged)
 
 ## Context and Problem Statement
 

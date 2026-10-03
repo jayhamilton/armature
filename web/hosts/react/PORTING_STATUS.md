@@ -70,10 +70,17 @@ Since INC-00d: `IconPicker`, `IllustrationPicker` + `IllustrationMenu`,
 client in INC-01). Parity for these is checked by `web/conformance`, which runs the same
 Playwright scenarios against both hosts.
 
+Since INC-00e: the **assistant** (`src/app/agent/`): `AgentPanel` (streamed replies,
+thinking and typing indicator, New reply jump, voice input, read aloud), one card per ui
+part type chosen through `partCardRegistry.ts`, `McpAppViewer`, `A2uiRenderer`, and
+`reactAgentActions` (the `AgentActions` port). The AG-UI client, request builder, part
+resolvers, and MCP Apps loader and bridge come from `@armature/core`, shared with the
+Angular host. Gaps, each owned by a later increment: the assistant run is plain component
+state until the XState machine in INC-03; the panel becomes `<armature-assistant>` in
+INC-04; tool call events (`TOOL_CALL_*`) are received but not shown, as in Angular.
+
 ## Stubbed or trimmed, and where each goes
 
-- **Agent module** (`src/app/agent/AgentPanel.tsx`): open/close wiring only. The chat
-  loop, A2UI renderer, and MCP app viewer are INC-00e.
 - **Dynamic-form controls nobody uses yet**: `dropdown-ms` (plain MUI multi-select),
   `upload`/`date` (plain file input / native date input), `json-forms` (raw JSON ace
   editor; `@jsonforms/react` is a dependency but not wired). No `library.json` entry uses

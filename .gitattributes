@@ -1,0 +1,5 @@
+# LF in every checkout, including Windows, so generated files (the pattern catalog, rendered
+# diagrams) compare byte for byte with what is committed. Windows batch files keep CRLF.
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf

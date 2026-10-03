@@ -5,7 +5,7 @@
 //   node scripts/pattern-catalog.mjs --write   rewrite the section
 //   node scripts/pattern-catalog.mjs --check   fail if the section is stale or a pattern has no page
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), "../../../..");
@@ -23,9 +23,9 @@ function sources(dir) {
   });
 }
 
-/** A doc comment followed by an exported declaration, with its tags. */
+/** A doc comment (never spanning two) followed by an exported declaration, with its tags. */
 const declaration =
-  /\/\*\*([\s\S]*?)\*\/\s*export\s+(?:abstract\s+)?(?:class|interface|function|const|type)\s+(\w+)/g;
+  /\/\*\*((?:(?!\*\/)[\s\S])*)\*\/\s*export\s+(?:abstract\s+|async\s+)?(?:class|interface|function\*?|const|type)\s+(\w+)/g;
 
 /** The text of a block tag: its line plus continuation lines, up to the next line starting with @. */
 function tag(comment, name) {
@@ -52,7 +52,8 @@ for (const pkg of readdirSync(packages)) {
         role: tag(comment, "role") ?? "",
         principle: tag(comment, "principle") ?? "",
         symbol,
-        path: relative(repo, file),
+        // Markdown links use "/" on every OS; path.relative uses backslashes on Windows.
+        path: relative(repo, file).split(sep).join("/"),
       });
     }
   }

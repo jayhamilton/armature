@@ -47,7 +47,7 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata; updated 
 | `@angular/cli`, `@angular-devkit/build-angular`, `@angular/compiler-cli` (dev) | ^22.1 | 2026-09 | Keep | Vendor (Google) |
 | `@jsonforms/core`, `angular`, `angular-material`, `material-renderers` | ^3.8.0 | 2026-08 | Keep | Foundation (Eclipse Foundation) |
 | `@modelcontextprotocol/sdk` | ^1.30.0 | 2026-09 | Keep | Official protocol SDK |
-| `@modelcontextprotocol/ext-apps` | ^1.7.5 | 2026-09 | Watch | Official SDK; a 2.0.0 major is out. Evaluate in INC-07 (MCP Apps as gadgets) |
+| `@modelcontextprotocol/ext-apps` | ^1.7.5 | 2026-09 | Keep (policy table), on watch for 2.x | Official SDK, Keep in the plan's policy table. A 2.0.0 major is out; evaluate it in INC-07 (MCP Apps as gadgets). Since INC-00e also used by `@armature/core` and the React host, at the same range |
 | `@swimlane/ngx-charts` | ^25.0.0 | 2026-09 | Retire | Lags Angular majors (policy table); replaced by Chart.js custom elements in INC-04 |
 | `ace-builds` | ^1.43.2 | 2026-05 | Keep | Active, three maintainers |
 | `ace-editor-builds` | ^1.2.4 | n/a | **Removed in INC-00b** | Stale duplicate of `ace-builds`; not imported anywhere |
@@ -90,6 +90,9 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata; updated 
 | `typescript` (dev) | ~6.0.2 | 2026-09 | Watch | As for the Angular host |
 | `@types/react`, `@types/react-dom`, `@types/node` (dev) | ^19, ^24 | 2026-09 | Keep | DefinitelyTyped (Microsoft backed) |
 | `oxlint` (dev) | ^1.79.0 | 2026-09 | Keep | Vendor (VoidZero) |
+| `@modelcontextprotocol/sdk` | ^1.30.0 | 2026-09 | Keep | Added in INC-00e for the assistant's MCP Apps; same range as the Angular host |
+| `@modelcontextprotocol/ext-apps` | ^1.7.5 | 2026-09 | Keep (policy table), on watch for 2.x | Added in INC-00e; as for the Angular host |
+| `@armature/core` | `file:../../packages/core` | n/a | Keep | This repository's own package, installed as a packed copy (`install-links` in `.npmrc`) since INC-00e |
 
 ## Web core (`web/packages/core/package.json`)
 
@@ -97,6 +100,8 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata; updated 
 | --- | --- | --- | --- |
 | `typescript` (dev) | ~6.0.3 | Watch | As for the hosts; same version line |
 | `@types/node` (dev) | ^24.13.3 | Keep | DefinitelyTyped; needed for `node:test` and `node:assert` in tests |
+| `@modelcontextprotocol/sdk` (peer, and dev for build and tests) | ^1.30.0 | Keep | Added in INC-00e: types for the MCP Apps loader. A peer dependency so each host's own copy is used and bundled once |
+| `@modelcontextprotocol/ext-apps` (peer, and dev) | ^1.7.5 | Keep (policy table), on watch for 2.x | Added in INC-00e: `AppBridge` for mounting MCP Apps; a peer for the same reason |
 
 Tests use Node's built in `node:test` runner, so core adds no test framework.
 
@@ -125,6 +130,7 @@ Added in INC-00d. Playwright moved here from the React host's dev dependencies.
 | --- | --- |
 | INC-00c | Done: removed `json-path`, `spring-restdocs-mockmvc`, `schematics-scss-migrate`, `node-forge`, `@types/dompurify`; aligned `@types/node`. Karma replacement moved to INC-04 |
 | INC-00d | Done: moved Playwright from the React host to `web/conformance` (as `@playwright/test`); added `actions/upload-artifact` for failed conformance reports |
+| INC-00e | Done: added the MCP SDKs to `@armature/core` (peer) and the React host at the Angular host's ranges; no new dependency outside the policy table |
 | INC-01 | Upgrade springdoc to the Boot 4 line; decide Jackson 2 or 3 |
 | INC-04 | Replace Karma (needs a runner added to the policy table); retire ngx-charts, `@types/d3`, and Recharts; decide on MUI majors, `@dnd-kit`, `react-ace`, and zone.js as hosts move onto `@armature/elements`; restore the Angular `initial` budget to 2 MB |
 | INC-07 | Evaluate `@modelcontextprotocol/ext-apps` 2.x |

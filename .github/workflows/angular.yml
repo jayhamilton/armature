@@ -4,19 +4,27 @@ on:
   push:
     paths:
       - "web/hosts/angular/**"
+      - "web/packages/core/**"
       - ".github/workflows/angular.yml"
   pull_request:
     paths:
       - "web/hosts/angular/**"
+      - "web/packages/core/**"
       - ".github/workflows/angular.yml"
 
 defaults:
   run:
+    shell: bash
     working-directory: web/hosts/angular
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Windows is a supported platform (ADR-0018); each OS reports on its own.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
@@ -24,7 +32,17 @@ jobs:
         with:
           node-version: 24.x  # Angular 22 requires Node ^22.22.3, ^24.15.0, or >=26
           cache: npm
-          cache-dependency-path: web/hosts/angular/package-lock.json
+          cache-dependency-path: |
+            web/packages/core/package-lock.json
+            web/hosts/angular/package-lock.json
+
+      # The host installs @armature/core as a packed copy of its dist (install-links in .npmrc),
+      # so core is built first.
+      - name: Build @armature/core
+        working-directory: web/packages/core
+        run: |
+          npm ci
+          npm run build
 
       - name: Install dependencies
         run: npm ci

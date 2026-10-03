@@ -176,6 +176,7 @@ export function Sidenav() {
               <Tooltip key={board.id} title={board.title} placement="right" disableHoverListener={navExpanded}>
                 <li
                   className={board.id === selectedBoardId ? 'active' : ''}
+                  aria-current={board.id === selectedBoardId ? 'page' : undefined}
                   onClick={() => selectBoard(board.id)}
                 >
                   <MatIcon className="nav-item-icon">{board.icon || 'dashboard'}</MatIcon>

@@ -1,0 +1,35 @@
+[
+  {
+    "type": "RUN_STARTED",
+    "threadId": "thread-1",
+    "runId": "run-1"
+  },
+  {
+    "type": "TEXT_MESSAGE_START",
+    "messageId": "message-1"
+  },
+  {
+    "type": "TEXT_MESSAGE_CONTENT",
+    "messageId": "message-1",
+    "delta": "I can build "
+  },
+  {
+    "type": "TEXT_MESSAGE_CONTENT",
+    "messageId": "message-1",
+    "delta": "boards, add gadgets, "
+  },
+  {
+    "type": "TEXT_MESSAGE_CONTENT",
+    "messageId": "message-1",
+    "delta": "and explain the current view."
+  },
+  {
+    "type": "TEXT_MESSAGE_END",
+    "messageId": "message-1"
+  },
+  {
+    "type": "RUN_FINISHED",
+    "threadId": "thread-1",
+    "runId": "run-1"
+  }
+]
