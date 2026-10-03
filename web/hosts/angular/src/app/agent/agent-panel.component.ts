@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { from, interval, Observable, Subscription } from 'rxjs';
-import { parsePayload, resolveUiPart, type ResolvedPart } from '@armature/core';
+import { applyA2uiAction, parsePayload, resolveUiPart, type ResolvedPart } from '@armature/core';
 import { AgentService, AgentUiPart, AgUiEvent } from './agent.service';
 import { AgentActionService } from './agent-action.service';
 import { EventService } from '../eventservice/event.service';
@@ -15,9 +15,7 @@ import { A2uiNode } from './a2ui/a2ui.model';
 import { A2uiRendererComponent } from './a2ui/a2ui-renderer.component';
 import { McpAppViewerComponent } from './mcp-app-viewer.component';
 
-interface ChatPart extends ResolvedPart<IGadget> {
-  a2uiResolution?: 'confirmed' | 'cancelled';
-}
+type ChatPart = ResolvedPart<IGadget>;
 
 interface ChatMessage {
   id: number;
@@ -638,22 +636,12 @@ export class AgentPanelComponent implements OnDestroy {
     return this.parsedPayload(part)?.['toolName'] as string | undefined;
   }
 
-  /** Confirm/cancel click handler for an a2ui-card. Cancel is a no-op besides marking the card resolved. */
+  /** Confirm or cancel on an a2ui-card; the rule (only confirm adds the gadget) is in @armature/core. */
   handleA2uiAction(part: ChatPart, action: string) {
-    if (part.a2uiResolution) return;
-    if (action === 'confirm') {
-      this.applyGadgetSuggestion(part);
-      part.a2uiResolution = 'confirmed';
-    } else if (action === 'cancel') {
-      part.a2uiResolution = 'cancelled';
-    }
+    const resolution = applyA2uiAction(part, action, this.agentActionService);
+    if (!resolution) return;
+    part.a2uiResolution = resolution;
     this.cdr.markForCheck();
-  }
-
-  private applyGadgetSuggestion(part: ChatPart) {
-    if (part.gadgetPreview) {
-      this.agentActionService.addGadgetToBoard(part.gadgetPreview);
-    }
   }
 
   /**

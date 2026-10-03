@@ -26,7 +26,12 @@ export interface ResolvedPart<G extends AgentGadget = AgentGadget> extends Agent
   rowIndex?: number;
   rowStructure?: string;
   rowLayoutApplied?: boolean;
+  /** For an `a2ui-card`: what the user chose on the card, once they have chosen. */
+  a2uiResolution?: A2uiResolution;
 }
+
+/** The outcome of a confirm or cancel on an `a2ui-card`. */
+export type A2uiResolution = "confirmed" | "cancelled";
 
 /** Resolves one kind of ui part: looks up what it refers to and, for most kinds, applies it. */
 export type UiPartResolver = <G extends AgentGadget>(
@@ -86,6 +91,28 @@ export async function resolveA2uiCard<G extends AgentGadget>(
   actions: AgentActions<G>,
 ): Promise<ResolvedPart<G>> {
   return { ...part, gadgetPreview: await previewGadget(part, actions) };
+}
+
+/**
+ * Applies the user's choice on an `a2ui-card` (the one part that waits for a click): `confirm`
+ * adds the previewed gadget, `cancel` adds nothing. Both hosts call this from their card, so the
+ * rule is written once.
+ *
+ * @returns the card's new resolution, or undefined when the card is already resolved or the
+ *   action is not one the card offers; the caller then changes nothing.
+ */
+export function applyA2uiAction<G extends AgentGadget>(
+  part: ResolvedPart<G>,
+  action: string,
+  actions: AgentActions<G>,
+): A2uiResolution | undefined {
+  if (part.a2uiResolution) return undefined;
+  if (action === "cancel") return "cancelled";
+  if (action !== "confirm") return undefined;
+  if (part.gadgetPreview) {
+    actions.addGadgetToBoard(part.gadgetPreview);
+  }
+  return "confirmed";
 }
 
 /**

@@ -122,6 +122,7 @@ Every changed package appears in a view: `@armature/core` and both hosts in the 
 | Workflows | Parsed with Ruby's YAML loader | `react.yml`, `angular.yml`, `web-conformance.yml` valid |
 | Backend | `cd backend && JAVA_HOME=~/.jdks/jdk-25.0.2/jdk-25.0.2+10/Contents/Home ./mvnw -q test` | 59 tests in 8 suites, 0 failures (the live model `AgentServiceTest` is excluded by default per ADR-0016; no backend files changed) |
 | Diagrams | `docs/architecture/check-svg.sh` | All 15 up to date |
+| Architecture review (after merge) | `armature-architecture-review` on `c2a9f3e..ffc888e` | 0 high, 3 medium, 2 low, 1 info. Fixed afterwards: the A2UI confirm rule moved into core (`applyA2uiAction`), and the out of scope changes recorded in the spec. Open: the Angular template's part type branches, no contract suite for `AgentActions`, React `AgentPanel` responsibilities, missing pattern markers on the port and its adapters; proposed as INC-00f (architecture guardrails) |
 
 ### Real backend walk
 

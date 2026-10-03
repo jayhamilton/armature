@@ -4,6 +4,7 @@ import TextField from '@mui/material/TextField';
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { firstValueFrom } from 'rxjs';
 import {
+  applyA2uiAction,
   buildAgentRequest,
   resolveUiPart,
   streamChat,
@@ -210,13 +211,10 @@ export function AgentPanel() {
     scrollToBottom();
   }
 
-  /** Confirm or cancel on an a2ui card; only confirm adds the gadget. */
+  /** Confirm or cancel on an a2ui card; the rule (only confirm adds the gadget) is in @armature/core. */
   function onA2uiAction(part: ChatPart, action: string) {
-    if (part.a2uiResolution || (action !== 'confirm' && action !== 'cancel')) return;
-    if (action === 'confirm' && part.gadgetPreview) {
-      reactAgentActions.addGadgetToBoard(part.gadgetPreview);
-    }
-    const a2uiResolution = action === 'confirm' ? 'confirmed' : 'cancelled';
+    const a2uiResolution = applyA2uiAction(part, action, reactAgentActions);
+    if (!a2uiResolution) return;
     setMessages((current) =>
       current.map((message) => ({
         ...message,
