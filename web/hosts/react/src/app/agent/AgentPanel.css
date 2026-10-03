@@ -158,6 +158,11 @@
   gap: 8px;
 }
 
+/* Sentence case, as in the Angular host (MUI buttons default to uppercase). */
+.agent-panel-board-list button {
+  text-transform: none;
+}
+
 .agent-panel-iframe-card iframe {
   width: 100%;
   min-height: 220px;

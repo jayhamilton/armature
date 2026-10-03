@@ -1,0 +1,41 @@
+@startuml assistant-chat
+' One assistant message, end to end, in any host (INC-00e). The host panel owns only state and
+' rendering; streaming, request building, and part resolution live in @armature/core.
+!pragma layout smetana
+skinparam sequenceMessageAlign left
+skinparam responseMessageBelowArrow true
+
+title Assistant chat: "move the bar chart right"
+
+actor User
+participant "AgentPanel\n(React or Angular host)" as Panel
+participant "streamChat\n(@armature/core)" as Client
+participant "AgentController\nPOST /api/agent/chat" as Api
+participant "AgentService\n(model + tools)" as Agent
+participant "resolveUiPart\n(@armature/core registry)" as Resolvers
+participant "AgentActions\n(host implementation)" as Actions
+participant "Board\n(host)" as Board
+
+User -> Panel : types a message, presses Send
+Panel -> Panel : buildAgentRequest(message, selected board, library)
+Panel -> Client : streamChat(request, { headers: Authorization })
+Client -> Api : POST, Accept: text/event-stream
+Api -> Agent : chat(request)
+Agent --> Client : data: RUN_STARTED
+Client --> Panel : RUN_STARTED (show "Thinking…")
+Agent --> Client : data: TEXT_MESSAGE_START, TEXT_MESSAGE_CONTENT …
+Client --> Panel : text deltas (stream the reply)
+Agent --> Client : data: CUSTOM ui-part { componentType: "gadget-move", payload }
+Client --> Panel : ui-part
+Panel -> Resolvers : resolveUiPart(part, actions)
+Resolvers -> Resolvers : registry.resolve("gadget-move")\n→ resolveGadgetMove
+Resolvers -> Actions : getSelectedBoard()
+Actions --> Resolvers : board
+Resolvers -> Resolvers : findGadgetByTitle(board, query)
+Resolvers -> Actions : moveGadget(instanceId, "right")
+Actions -> Board : gadget move event (same path as drag and drop)
+Resolvers --> Panel : resolved part { moved: true, target }
+Panel -> Panel : card from the part card registry\n"Moved right ✓"
+Agent --> Client : data: RUN_FINISHED
+Client --> Panel : RUN_FINISHED (read aloud if on)
+@enduml

@@ -25,6 +25,27 @@ need the same thing in every host and in the backend.
 | Strategy | The registered value, for example a gadget element loader or a data source | One behavior for one `@type` |
 | Client | The code that asks the registry, for example a gadget host | Calls `resolve(type)` and uses the strategy without knowing which one it is |
 
+## Second example: assistant ui parts (INC-00e)
+
+The assistant's reply carries ui parts, each with a `componentType` (`gadget-suggestion`,
+`gadget-move`, `row-layout`, and four more). The Angular panel used to decide what to do with a
+part in a seven branch `if` chain, and every new tool meant editing it. Now
+[`ui-part-resolvers.ts`](../../web/packages/core/src/agent/ui-part-resolvers.ts) in
+`@armature/core` registers one resolver per `componentType` in a `TypeRegistry`, and both hosts
+call `resolveUiPart(part, actions)`:
+
+| Role | In the assistant |
+| --- | --- |
+| Registry | The `TypeRegistry<UiPartResolver>` built by `createUiPartResolvers()` |
+| Strategy | `resolveGadgetSuggestion`, `resolveGadgetMove`, `resolveRowLayout`, and the rest; each looks up what the part refers to and applies it |
+| Client | Each host's panel, through `resolveUiPart`, which never branches on `componentType` |
+
+The resolvers reach the board through `AgentActions`, a port each host implements with its own
+services, so the same resolver changes a React board and an Angular board. The React host uses a
+second registry, [`partCardRegistry.ts`](../../web/hosts/react/src/app/agent/partCardRegistry.ts),
+to choose the card that shows each part, so adding a part type is one resolver in core and one
+card per host, with no existing code edited.
+
 ## Class diagram
 
 ![Strategy with registry class diagram](strategy-registry.svg)
@@ -43,6 +64,9 @@ a concrete implementation.
 [`type-registry.test.ts`](../../web/packages/core/src/type-registry.test.ts): resolving a
 registered type, reporting an unknown one with the types that are registered, refusing a
 duplicate, and listing types.
+[`ui-part-resolvers.test.ts`](../../web/packages/core/src/agent/ui-part-resolvers.test.ts): every
+backend `componentType` has a resolver; each resolver against a fake `AgentActions` (found, not
+found, row out of range); unknown part types pass through unchanged.
 
 ## Exercise
 
