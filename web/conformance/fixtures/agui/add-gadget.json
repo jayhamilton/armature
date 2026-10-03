@@ -1,0 +1,36 @@
+[
+  {
+    "type": "RUN_STARTED",
+    "threadId": "thread-1",
+    "runId": "run-1"
+  },
+  {
+    "type": "TEXT_MESSAGE_START",
+    "messageId": "message-1"
+  },
+  {
+    "type": "TEXT_MESSAGE_CONTENT",
+    "messageId": "message-1",
+    "delta": "Added a Text gadget for your shift notes."
+  },
+  {
+    "type": "TEXT_MESSAGE_END",
+    "messageId": "message-1"
+  },
+  {
+    "type": "CUSTOM",
+    "name": "ui-part",
+    "value": {
+      "id": 1,
+      "text": null,
+      "type": "component",
+      "componentType": "gadget-suggestion",
+      "payload": "{\"gadgetComponentType\":\"TextComponent\",\"propertyValues\":{\"title\":\"Shift notes\"}}"
+    }
+  },
+  {
+    "type": "RUN_FINISHED",
+    "threadId": "thread-1",
+    "runId": "run-1"
+  }
+]

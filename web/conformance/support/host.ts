@@ -76,3 +76,25 @@ export async function closeConfiguration(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Close configuration panel' }).click();
   await expect(page.getByRole('tabpanel', { name: 'Configuration' })).toBeHidden();
 }
+
+/** Opens the assistant panel if it is closed, sends a message, and waits for the reply to land. */
+export async function askAssistant(page: Page, message: string): Promise<void> {
+  const open = page.getByRole('button', { name: 'Open assistant' });
+  if (await open.isVisible()) {
+    await open.click();
+  }
+  const prompt = page.getByRole('textbox', { name: 'Ask the dashboard' });
+  await prompt.fill(message);
+  await page.getByRole('button', { name: 'Send message' }).click();
+  // The typing indicator shows until the reply's text starts; the composer is
+  // usable again once the run is over.
+  await expect(page.getByRole('status', { name: /^Assistant is/ })).toHaveCount(0);
+  await expect(prompt).toBeEnabled();
+}
+
+/** The horizontal position of the only gadget on the board, from its Remove button. */
+export async function gadgetX(page: Page): Promise<number> {
+  const box = await page.getByRole('button', { name: 'Remove', exact: true }).boundingBox();
+  if (!box) throw new Error('No gadget on the board');
+  return box.x;
+}

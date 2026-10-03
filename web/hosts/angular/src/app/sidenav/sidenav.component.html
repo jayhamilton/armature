@@ -39,6 +39,7 @@
       @for (board of boardData; track board.id) {
         <mat-list-item
           [class.active]="board.id === selectedBoardId"
+          [attr.aria-current]="board.id === selectedBoardId ? 'page' : null"
           [matTooltip]="board.title"
           [matTooltipDisabled]="navExpanded"
           matTooltipPosition="right"

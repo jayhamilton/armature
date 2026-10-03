@@ -139,16 +139,16 @@ describe("ui part resolvers", () => {
     it("changes the layout of a row that exists", async () => {
       const actions = new FakeAgentActions([], boardWith());
 
-      const part = await resolveUiPart(component("row-layout", { rowIndex: 0, structure: "3-3-3-3" }), actions);
+      const part = await resolveUiPart(component("row-layout", { rowIndex: 0, structure: "three_col_equal" }), actions);
 
       assert.equal(part.rowLayoutApplied, true);
-      assert.deepEqual(actions.calls, [["changeRowLayout", 0, "3-3-3-3"]]);
+      assert.deepEqual(actions.calls, [["changeRowLayout", 0, "three_col_equal"]]);
     });
 
     it("changes nothing for a row index past the last row", async () => {
       const actions = new FakeAgentActions([], boardWith());
 
-      const part = await resolveUiPart(component("row-layout", { rowIndex: 1, structure: "6-6" }), actions);
+      const part = await resolveUiPart(component("row-layout", { rowIndex: 1, structure: "two_col_equal" }), actions);
 
       assert.equal(part.rowLayoutApplied, false);
       assert.equal(part.rowIndex, 1);
@@ -158,7 +158,7 @@ describe("ui part resolvers", () => {
     it("changes nothing for a negative row index", async () => {
       const actions = new FakeAgentActions([], boardWith());
 
-      const part = await resolveUiPart(component("row-layout", { rowIndex: -1, structure: "6-6" }), actions);
+      const part = await resolveUiPart(component("row-layout", { rowIndex: -1, structure: "two_col_equal" }), actions);
 
       assert.equal(part.rowLayoutApplied, false);
       assert.deepEqual(actions.calls, []);
