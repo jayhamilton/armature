@@ -14,9 +14,19 @@ on:
       - "web/**"
       - ".github/workflows/web-conformance.yml"
 
+# bash on every OS (Git Bash on Windows), so run blocks are the same everywhere.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   react:
-    runs-on: ubuntu-latest
+    # Windows is a supported platform (ADR-0018); each OS reports on its own.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
@@ -50,22 +60,24 @@ jobs:
           npx playwright install --with-deps chromium
           npm run typecheck
 
-      - name: Serve the React host
-        working-directory: web/hosts/react
-        run: |
-          npx vite preview --port 4173 --strictPort &
-          for i in $(seq 1 30); do curl -sf http://localhost:4173 > /dev/null && exit 0; sleep 2; done
-          echo "The React host did not start" && exit 1
-
-      - name: Run the suite
-        working-directory: web/conformance
+      # One step, so the preview server started in the background is still running when the
+      # suite starts on every OS.
+      - name: Serve the React host and run the suite
         env:
           ARMATURE_HOST_URL: http://localhost:4173
-        run: npm test
+        run: |
+          (cd web/hosts/react && npx vite preview --port 4173 --strictPort &)
+          started=false
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4173 > /dev/null; then started=true; break; fi
+            sleep 2
+          done
+          if [ "$started" != true ]; then echo "The React host did not start"; exit 1; fi
+          cd web/conformance && npm test
 
       - name: Keep the report on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: conformance-react-report
+          name: conformance-react-report-${{ matrix.os }}
           path: web/conformance/playwright-report

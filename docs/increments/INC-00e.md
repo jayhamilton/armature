@@ -72,6 +72,11 @@ backslashes); the catalog lists the 7 resolvers.
   host shows.
 - `react.yml`, `angular.yml`, and `web-conformance.yml` build core before installing the host and
   rerun when core changes.
+- Windows: `react.yml`, `angular.yml`, `web-core.yml`, and `web-conformance.yml` run on
+  `ubuntu-latest` and `windows-latest` (bash on both, `fail-fast: false`). The conformance job
+  serves the host and runs the suite in one step, so the background server is still up on
+  Windows. A new `.gitattributes` keeps LF in every checkout (CRLF only for `.cmd` and `.bat`),
+  because Windows runners otherwise check out CRLF and `catalog:check` compares bytes.
 
 Size: 3,324 changed lines excluding lock files, fixtures, and images (core 1,227, of which 512 are
 tests; React 1,111; conformance 195). Above the spec's 1,600 to 1,900 estimate and the 1,500
@@ -162,10 +167,11 @@ sales by region", then "Move the bar chart right", then "Show me a board summary
 - **Ui parts arrive after the text.** The backend sends parts after a second model call, so the
   composer is usable again before the cards appear. Existing backend behavior; INC-03 reworks the
   run.
-- **Not run on Windows.** Windows is a requirement (owner, 2026-10-02). The core install, scripts,
-  and tests were reviewed for it and the one failure found (catalog links) is fixed, but nothing was
-  executed on Windows. The diagram scripts in `docs/architecture/*.sh` (INC-00b) need Git Bash or
-  WSL there.
+- **Not run on Windows yet.** Windows is a requirement (owner, 2026-10-02). The web workflows now
+  have Windows jobs, but nothing has run until the branch is pushed. Two problems were found by
+  review and fixed (catalog links, CRLF checkouts). Not covered by a Windows job: the backend
+  (`backend.yml`) and the diagram check (`docs.yml`, whose `docs/architecture/*.sh` scripts need
+  Git Bash or WSL on a Windows machine).
 - **Small behavior changes in core worth knowing:** a stream that ends without a final blank line
   now delivers its last frame (Angular dropped it); moving or removing a gadget with no
   `instanceId` is skipped rather than sent.
@@ -178,7 +184,7 @@ INC-01 (Board resources) can start when:
 - ADR-0018 is accepted or changed.
 - The host workflows and `web-conformance.yml` run green on GitHub with core built first.
 - Voice input and read aloud are checked by hand in both hosts (or explicitly waived).
-- Core's build and tests, `catalog:check`, both host builds, and the conformance suite are run once
-  on Windows (or a Windows CI job is added).
+- The new `windows-latest` jobs (core, both hosts, conformance) run green, or their failures are
+  fixed.
 - INC-01 builds React first (ADR-0017) and keeps the 11 conformance scenarios passing on both
   hosts.
