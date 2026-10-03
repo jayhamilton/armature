@@ -20,6 +20,7 @@ repository has no npm or pnpm workspace yet, and each host keeps its own lockfil
 - No change to how each host is installed and built (its own `npm ci`, its own lockfile).
 - Works the same on a developer machine and in CI.
 - No new dependency or tool outside the policy table.
+- Works on Windows as well as macOS and Linux, with no symlinks, developer mode, or admin rights.
 
 ## Considered Options
 
@@ -42,6 +43,9 @@ before `npm ci` in each host.
 - Good: the Angular bundle grew by 0.7 kB gzipped when it moved onto core; no SDK is duplicated.
 - Good: hosts consume core exactly as they would a published package, which is the shape the
   embedding hosts (Lit, Svelte, vanilla) will need.
+- Good: nothing depends on symlinks. npm copies the packed files on every platform, and
+  `core:refresh` uses only `npm`, `node`, and `&&`, which run under Windows `cmd.exe` as well as
+  POSIX shells.
 - Bad: a change in core is not picked up by a host until `core:refresh`; forgetting it gives stale
   behavior, not an error.
 - Neutral: a workspace (the third option) remains possible later and would replace the refresh

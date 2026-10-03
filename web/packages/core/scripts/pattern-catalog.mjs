@@ -5,7 +5,7 @@
 //   node scripts/pattern-catalog.mjs --write   rewrite the section
 //   node scripts/pattern-catalog.mjs --check   fail if the section is stale or a pattern has no page
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), "../../../..");
@@ -52,7 +52,8 @@ for (const pkg of readdirSync(packages)) {
         role: tag(comment, "role") ?? "",
         principle: tag(comment, "principle") ?? "",
         symbol,
-        path: relative(repo, file),
+        // Markdown links use "/" on every OS; path.relative uses backslashes on Windows.
+        path: relative(repo, file).split(sep).join("/"),
       });
     }
   }
