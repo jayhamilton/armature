@@ -72,8 +72,10 @@ backslashes); the catalog lists the 7 resolvers.
   host shows.
 - `react.yml`, `angular.yml`, and `web-conformance.yml` build core before installing the host and
   rerun when core changes.
-- Windows: `react.yml`, `angular.yml`, `web-core.yml`, and `web-conformance.yml` run on
-  `ubuntu-latest` and `windows-latest` (bash on both, `fail-fast: false`). The conformance job
+- Windows: every workflow (`backend.yml`, `docs.yml`, `react.yml`, `angular.yml`, `web-core.yml`,
+  `web-conformance.yml`) runs on `ubuntu-latest` and `windows-latest` with `fail-fast: false`. Steps
+  use bash on both, except the backend on Windows, which runs `mvnw.cmd` under `cmd` as a Windows
+  developer would. The conformance job
   serves the host and runs the suite in one step, so the background server is still up on
   Windows. A new `.gitattributes` keeps LF in every checkout (CRLF only for `.cmd` and `.bat`),
   because Windows runners otherwise check out CRLF and `catalog:check` compares bytes.
@@ -169,9 +171,8 @@ sales by region", then "Move the bar chart right", then "Show me a board summary
   run.
 - **Not run on Windows yet.** Windows is a requirement (owner, 2026-10-02). The web workflows now
   have Windows jobs, but nothing has run until the branch is pushed. Two problems were found by
-  review and fixed (catalog links, CRLF checkouts). Not covered by a Windows job: the backend
-  (`backend.yml`) and the diagram check (`docs.yml`, whose `docs/architecture/*.sh` scripts need
-  Git Bash or WSL on a Windows machine).
+  review and fixed (catalog links, CRLF checkouts). On a Windows machine the diagram scripts
+  (`docs/architecture/*.sh`) still need Git Bash or WSL.
 - **Small behavior changes in core worth knowing:** a stream that ends without a final blank line
   now delivers its last frame (Angular dropped it); moving or removing a gadget with no
   `instanceId` is skipped rather than sent.
@@ -184,7 +185,7 @@ INC-01 (Board resources) can start when:
 - ADR-0018 is accepted or changed.
 - The host workflows and `web-conformance.yml` run green on GitHub with core built first.
 - Voice input and read aloud are checked by hand in both hosts (or explicitly waived).
-- The new `windows-latest` jobs (core, both hosts, conformance) run green, or their failures are
-  fixed.
+- The new `windows-latest` jobs (backend, diagrams, core, both hosts, conformance) run green, or
+  their failures are fixed.
 - INC-01 builds React first (ADR-0017) and keeps the 11 conformance scenarios passing on both
   hosts.

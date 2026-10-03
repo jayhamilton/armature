@@ -10,9 +10,19 @@ on:
       - "docs/**"
       - ".github/workflows/docs.yml"
 
+# bash on every OS (Git Bash on Windows): the diagram scripts are bash.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   diagrams:
-    runs-on: ubuntu-latest
+    # Windows is a supported platform (ADR-0018); each OS reports on its own.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
