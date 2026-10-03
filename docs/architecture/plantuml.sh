@@ -15,6 +15,16 @@ else
   JAVA="java"
 fi
 
+# sha256 of a file. GNU sha256sum on Linux and in Git Bash on Windows (which has no shasum);
+# shasum on macOS (which has no sha256sum before macOS 15).
+sha256_of() {
+  if command -v sha256sum > /dev/null; then
+    sha256sum "$1" | cut -d' ' -f1
+  else
+    shasum -a 256 "$1" | cut -d' ' -f1
+  fi
+}
+
 fetch_plantuml() {
   if [[ ! -f "$PLANTUML_JAR" ]]; then
     mkdir -p "$(dirname "$PLANTUML_JAR")"
@@ -24,7 +34,7 @@ fetch_plantuml() {
     mv "$PLANTUML_JAR.part" "$PLANTUML_JAR"
   fi
   local actual
-  actual="$(shasum -a 256 "$PLANTUML_JAR" | cut -d' ' -f1)"
+  actual="$(sha256_of "$PLANTUML_JAR")"
   if [[ "$actual" != "$PLANTUML_SHA256" ]]; then
     echo "PlantUML jar checksum mismatch: expected $PLANTUML_SHA256, got $actual" >&2
     rm -f "$PLANTUML_JAR"
