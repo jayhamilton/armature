@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import type { AgentGadget, AgentUiPart } from "./ag-ui.js";
-import { createUiPartResolvers, resolveUiPart } from "./ui-part-resolvers.js";
+import { applyA2uiAction, createUiPartResolvers, resolveUiPart } from "./ui-part-resolvers.js";
 import { boardWith, FakeAgentActions } from "./fake-agent-actions.test-support.js";
 
 const barChart: AgentGadget = {
@@ -67,6 +67,35 @@ describe("ui part resolvers", () => {
 
     assert.equal(part.gadgetPreview?.title, "Bar Chart");
     assert.deepEqual(actions.calls, []);
+  });
+
+  describe("applyA2uiAction", () => {
+    const card = async (actions: FakeAgentActions) =>
+      resolveUiPart(component("a2ui-card", { gadgetComponentType: "BarChartComponent" }), actions);
+
+    it("confirm adds the previewed gadget and resolves the card", async () => {
+      const actions = new FakeAgentActions([barChart]);
+      const part = await card(actions);
+
+      assert.equal(applyA2uiAction(part, "confirm", actions), "confirmed");
+      assert.deepEqual(actions.calls, [["addGadgetToBoard", part.gadgetPreview]]);
+    });
+
+    it("cancel adds nothing and resolves the card", async () => {
+      const actions = new FakeAgentActions([barChart]);
+
+      assert.equal(applyA2uiAction(await card(actions), "cancel", actions), "cancelled");
+      assert.deepEqual(actions.calls, []);
+    });
+
+    it("changes nothing on a card already resolved, or for an action the card does not offer", async () => {
+      const actions = new FakeAgentActions([barChart]);
+      const part = await card(actions);
+
+      assert.equal(applyA2uiAction({ ...part, a2uiResolution: "cancelled" }, "confirm", actions), undefined);
+      assert.equal(applyA2uiAction(part, "share", actions), undefined);
+      assert.deepEqual(actions.calls, []);
+    });
   });
 
   it("board-list lists the user's boards", async () => {

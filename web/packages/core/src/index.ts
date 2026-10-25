@@ -24,8 +24,10 @@ export {
   type GadgetMoveDirection,
 } from "./agent/agent-actions.js";
 export {
+  applyA2uiAction,
   createUiPartResolvers,
   resolveUiPart,
+  type A2uiResolution,
   type ResolvedPart,
   type UiPartResolver,
 } from "./agent/ui-part-resolvers.js";

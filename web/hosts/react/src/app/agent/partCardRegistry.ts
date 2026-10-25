@@ -14,10 +14,8 @@ import {
   TextPart,
 } from './AgentPartCards';
 
-/** A resolved ui part plus the one piece of state only the panel owns. */
-export interface ChatPart extends ResolvedPart<IGadget> {
-  a2uiResolution?: 'confirmed' | 'cancelled';
-}
+/** A resolved ui part, with this host's gadget type. */
+export type ChatPart = ResolvedPart<IGadget>;
 
 export interface PartCardProps {
   part: ChatPart;

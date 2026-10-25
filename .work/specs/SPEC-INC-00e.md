@@ -198,3 +198,22 @@ The five decisions above are confirmed. These amendments apply on top of them.
 5. **CI:** `react.yml`, `angular.yml`, and `web-conformance.yml` add `web/packages/core/**` to their
    path filters and build core before installing the host. Hosts depend on
    `"@armature/core": "file:../../packages/core"`.
+
+## Changes outside the approved scope (recorded 2026-10-02, after the architecture review)
+
+The architecture review of the merged increment found these changes were made without amending this
+spec. Each was requested or approved by the owner during the session and is described in
+`docs/increments/INC-00e.md`; they are recorded here so the spec matches what was built.
+
+| Change | Why | Where |
+| --- | --- | --- |
+| Hosts install core as a packed copy (`install-links`), with the MCP SDKs as peer dependencies of core, and a `core:refresh` script | A symlinked install duplicated zod and broke the Angular type check; also needed for Windows | ADR-0018 (Proposed), `web/hosts/*/.npmrc` |
+| Core compiles with `moduleResolution: bundler` | The ext-apps type declarations use extensionless relative imports | `web/packages/core/tsconfig.json` |
+| Pattern catalog script: async functions, one doc comment per declaration, `/` in links | The resolvers were missing from the catalog; links broke `catalog:check` on Windows | `web/packages/core/scripts/pattern-catalog.mjs` |
+| `aria-current` on the selected board in both hosts | The board list conformance scenario needed an accessible way to see the open board | `Sidenav.tsx`, `sidenav.component.html` |
+| Angular: a run that finishes without text clears the typing indicator; the indicator has `role="status"` | Parity with React and a role the suite can find | `agent-panel.component.ts` |
+| Windows: every workflow runs on `windows-latest`; `.gitattributes` forces LF (CRLF for `.cmd` and `.bat`); `plantuml.sh` uses `sha256sum` or `shasum` | The owner requires Windows support | `.github/workflows/*`, `.gitattributes`, PR #8 |
+| `applyA2uiAction` in core, used by both hosts | Review finding: both hosts had their own copy of the confirm or cancel rule | `ui-part-resolvers.ts` |
+
+Size: 3,324 changed lines excluding lock files, fixtures, and images, against the 1,600 to 1,900
+estimated above and the plan's guideline of about 1,500 (rule 6, "Readable increments").

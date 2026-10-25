@@ -45,7 +45,8 @@ Hosts depend on `"@armature/core": "file:../../packages/core"` with `install-lin
 `.npmrc`, so npm installs a packed copy of `dist` instead of a symlink. That way the MCP SDKs,
 which core lists as peer dependencies, resolve to the host's own copies and are bundled once.
 Build core before installing a host, and after changing core run `npm run core:refresh` in the
-host (it rebuilds core and reinstalls the copy).
+host (it rebuilds core and reinstalls the copy; in Angular it also clears `.angular/cache`, which
+otherwise keeps the old copy in the Karma test build).
 
 Core compiles with `moduleResolution: bundler`, as both hosts do, because the
 `@modelcontextprotocol/ext-apps` type declarations use extensionless relative imports. The
