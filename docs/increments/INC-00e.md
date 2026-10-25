@@ -84,6 +84,34 @@ Size: 3,324 changed lines excluding lock files, fixtures, and images (core 1,227
 tests; React 1,111; conformance 195). Above the spec's 1,600 to 1,900 estimate and the 1,500
 guideline, mostly core tests and the React cards.
 
+### Fixes after the architecture review (branch `fix/inc-00e-review`)
+
+The architecture review ran after `inc/00e-assistant` was merged (findings in section 5). This
+branch fixes the two findings that belong to this increment; the rest are open (section 6).
+
+- **The A2UI confirm and cancel rule is written once, in core.** Both hosts had their own copy of
+  "only confirm adds the gadget, a resolved card ignores further clicks". It is now
+  [`applyA2uiAction`](../../web/packages/core/src/agent/ui-part-resolvers.ts) in `@armature/core`:
+  it returns the card's new resolution (`confirmed` or `cancelled`), or `undefined` when the card is
+  already resolved or the action is not one the card offers. The `a2uiResolution` field and its
+  `A2uiResolution` type moved onto core's `ResolvedPart`, so each host's `ChatPart` is now a plain
+  alias of `ResolvedPart<IGadget>`
+  ([`agent-panel.component.ts`](../../web/hosts/angular/src/app/agent/agent-panel.component.ts),
+  [`AgentPanel.tsx`](../../web/hosts/react/src/app/agent/AgentPanel.tsx),
+  [`partCardRegistry.ts`](../../web/hosts/react/src/app/agent/partCardRegistry.ts)). Each host keeps
+  only its own way of showing the result (Angular marks for check, React replaces the message).
+  Three tests added in
+  [`ui-part-resolvers.test.ts`](../../web/packages/core/src/agent/ui-part-resolvers.test.ts).
+- **The spec records what was built outside it.** A new closing section of
+  [`SPEC-INC-00e.md`](../../.work/specs/SPEC-INC-00e.md) lists each change made during the session
+  without a spec amendment (packed install, `moduleResolution`, catalog script, `aria-current`,
+  Angular typing indicator, Windows, `applyA2uiAction`), why, and where.
+- **Angular `core:refresh` also clears `.angular/cache`.** Found while making the fix: after
+  refreshing core, the Karma test build kept the old copy of core from the cache. The core
+  [README](../../web/packages/core/README.md) says so.
+
+This branch is 94 lines added and 31 removed.
+
 ## 3. Diagrams changed
 
 - Added [`docs/architecture/sequences/assistant-chat.puml`](../architecture/sequences/assistant-chat.puml)
@@ -95,6 +123,9 @@ guideline, mostly core tests and the React cards.
 
 Every changed package appears in a view: `@armature/core` and both hosts in the web layers view.
 `web/conformance` is test tooling and stays out of the C4 views, as in INC-00d.
+
+The review fix changes no diagram: `applyA2uiAction` sits in the part resolvers module the web
+layers view already shows, and the assistant chat sequence does not draw the dormant A2UI card.
 
 ## 4. Decisions
 
@@ -123,6 +154,23 @@ Every changed package appears in a view: `@armature/core` and both hosts in the 
 | Backend | `cd backend && JAVA_HOME=~/.jdks/jdk-25.0.2/jdk-25.0.2+10/Contents/Home ./mvnw -q test` | 59 tests in 8 suites, 0 failures (the live model `AgentServiceTest` is excluded by default per ADR-0016; no backend files changed) |
 | Diagrams | `docs/architecture/check-svg.sh` | All 15 up to date |
 | Architecture review (after merge) | `armature-architecture-review` on `c2a9f3e..ffc888e` | 0 high, 3 medium, 2 low, 1 info. Fixed afterwards: the A2UI confirm rule moved into core (`applyA2uiAction`), and the out of scope changes recorded in the spec. Open: the Angular template's part type branches, no contract suite for `AgentActions`, React `AgentPanel` responsibilities, missing pattern markers on the port and its adapters; proposed as INC-00f (architecture guardrails) |
+
+### Rerun on `fix/inc-00e-review` (2026-10-24)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Core | `cd web/packages/core && npm ci && npm run build && npm test && npm run catalog:check` | 43 of 43 tests passed in 13 suites (40 before, plus 3 for `applyA2uiAction`); catalog up to date (8 entries) |
+| React build | `cd web/hosts/react && npm ci && npm run build` | Pass (the existing chunk size warning only) |
+| React lint | `npm run lint` | 0 errors, the same 3 warnings in `HelpPanel.tsx`, `Library.tsx`, `Board.tsx` |
+| Angular build | `cd web/hosts/angular && npm ci && rm -rf .angular/cache && npx ng build` | Pass; initial bundle 436.48 kB gzipped |
+| Angular tests | `npx ng test --watch=false --browsers=ChromeHeadless` | 22 of 22 passed |
+| Conformance, React | `ARMATURE_HOST_URL=http://localhost:4173 npx playwright test` (against `vite preview`) | 11 of 11 passed |
+| Conformance, Angular | `ARMATURE_HOST_URL=http://localhost:4300 npx playwright test` (against `ng serve --port 4300`) | 11 of 11 passed |
+| Diagrams | `docs/architecture/check-svg.sh` | All 15 up to date |
+| Backend | not run | No backend files changed on this branch |
+
+No dependency was added, removed, or re-verdicted, so `docs/architecture/dependency-audit.md` is
+unchanged.
 
 ### Real backend walk
 
@@ -174,6 +222,14 @@ sales by region", then "Move the bar chart right", then "Show me a board summary
   have Windows jobs, but nothing has run until the branch is pushed. Two problems were found by
   review and fixed (catalog links, CRLF checkouts). On a Windows machine the diagram scripts
   (`docs/architecture/*.sh`) still need Git Bash or WSL.
+- **Open architecture review findings.** Not fixed on `fix/inc-00e-review`, because each one is
+  larger than a review fix and touches more than this increment: no contract suite that every
+  `AgentActions` implementation must pass; the React `AgentPanel` holds streaming, speech, and
+  message state in one component; the `AgentActions` port and its two adapters carry no pattern
+  markers (`@pattern`, `@role`). The Angular template's part type branches are covered above.
+  Proposed as INC-00f (architecture guardrails), which needs a spec and approval.
+- **The A2UI card has no conformance scenario.** It is dormant (the backend never sends an
+  `a2ui-card`), so `applyA2uiAction` is tested in core only, not through either host.
 - **Small behavior changes in core worth knowing:** a stream that ends without a final blank line
   now delivers its last frame (Angular dropped it); moving or removing a gadget with no
   `instanceId` is skipped rather than sent.
@@ -182,7 +238,10 @@ sales by region", then "Move the bar chart right", then "Show me a board summary
 
 INC-01 (Board resources) can start when:
 
-- This report is reviewed and `inc/00e-assistant` is merged.
+- This report is reviewed and `inc/00e-assistant` is merged (done, PR #7), and so is
+  `fix/inc-00e-review`.
+- The owner decides whether INC-00f (architecture guardrails, for the open review findings) runs
+  before INC-01; if it does, it needs its own spec.
 - ADR-0018 is accepted or changed.
 - The host workflows and `web-conformance.yml` run green on GitHub with core built first.
 - Voice input and read aloud are checked by hand in both hosts (or explicitly waived).
