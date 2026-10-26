@@ -5,11 +5,15 @@ on:
     paths:
       - "web/hosts/react/**"
       - "web/packages/core/**"
+      - "web/hosts/copy-gadget-help.mjs"
+      - "docs/help/gadgets/**"
       - ".github/workflows/react.yml"
   pull_request:
     paths:
       - "web/hosts/react/**"
       - "web/packages/core/**"
+      - "web/hosts/copy-gadget-help.mjs"
+      - "docs/help/gadgets/**"
       - ".github/workflows/react.yml"
 
 defaults:

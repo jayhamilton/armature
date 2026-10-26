@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Gadget help, copied from docs/help/gadgets by `npm run help:copy` (INC-01a)
+public/assets/help/

@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "help:copy": "node ../copy-gadget-help.mjs public/assets/help",
+    "postinstall": "npm run help:copy",
+    "predev": "npm run help:copy",
+    "prebuild": "npm run help:copy",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",

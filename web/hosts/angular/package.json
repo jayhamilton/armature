@@ -2,6 +2,10 @@
   "name": "armature",
   "version": "0.8.0-alpha",
   "scripts": {
+    "help:copy": "node ../copy-gadget-help.mjs src/assets/help",
+    "postinstall": "npm run help:copy",
+    "prestart": "npm run help:copy",
+    "prebuild": "npm run help:copy",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",

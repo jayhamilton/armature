@@ -5,11 +5,15 @@ on:
     paths:
       - "web/hosts/angular/**"
       - "web/packages/core/**"
+      - "web/hosts/copy-gadget-help.mjs"
+      - "docs/help/gadgets/**"
       - ".github/workflows/angular.yml"
   pull_request:
     paths:
       - "web/hosts/angular/**"
       - "web/packages/core/**"
+      - "web/hosts/copy-gadget-help.mjs"
+      - "docs/help/gadgets/**"
       - ".github/workflows/angular.yml"
 
 defaults:

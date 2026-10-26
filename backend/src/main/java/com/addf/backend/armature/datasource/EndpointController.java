@@ -2,6 +2,7 @@ package com.addf.backend.armature.datasource;
 
 import java.util.List;
 
+import com.addf.backend.armature.problem.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
@@ -47,15 +48,16 @@ public class EndpointController {
 
     @Operation(summary = "Update an existing endpoint")
     @PutMapping("/{id}")
-    public ResponseEntity<Endpoint> update(@PathVariable String id, @RequestBody EndpointWriteRequest request) {
-        return store.update(id, request)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public Endpoint update(@PathVariable String id, @RequestBody EndpointWriteRequest request) {
+        return store.update(id, request).orElseThrow(() -> new ResourceNotFoundException("endpoint", id));
     }
 
     @Operation(summary = "Delete an endpoint")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        return store.delete(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        if (!store.delete(id)) {
+            throw new ResourceNotFoundException("endpoint", id);
+        }
+        return ResponseEntity.noContent().build();
     }
 }
