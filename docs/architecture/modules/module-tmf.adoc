@@ -1,0 +1,10 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`com.addf.backend.armature.tmf`
+|Spring components
+|* `c.a.b.a.t.PatchStrategy` (via `c.a.b.a.t.JsonPatch`)
+* `c.a.b.a.t.PatchStrategy` (via `c.a.b.a.t.MergePatch`)
+* `c.a.b.a.t.PatchStrategies`
+* `c.a.b.a.t.QueryEngine`
+|===

@@ -1,0 +1,39 @@
+@startuml board-resources
+' A client builds a board through the TMF 630 resources (INC-01a), and a stale JSON Patch is
+' refused as an RFC 9457 problem. Participant names match the classes in backend/.
+!pragma layout smetana
+skinparam sequenceMessageAlign left
+skinparam responseMessageBelowArrow true
+
+title Board resources: create, place a gadget, patch, and a refused patch
+
+actor Client
+participant "BoardController\nGadgetInstanceController" as Api
+participant "PatchStrategies\n(tmf)" as Patches
+participant "BoardService" as Service
+participant "Board\n(aggregate)" as Board
+participant "BoardRepository\n(in memory adapter)" as Repo
+participant "ProblemAdvice\n(problem)" as Advice
+
+Client -> Api : POST /board {title, rows: [{structure}]}
+Api -> Service : create(details, layouts)
+Service -> Board : create(id, details, DRAFT, rows)
+Service -> Repo : save(board)
+Api --> Client : 201 Created, Location: /board/{id}\n{id, href, @type: Board, state: DRAFT, version: 1}
+
+Client -> Api : POST /gadgetInstance {@type, board.id, row.id, column}
+Api -> Service : addGadgetInstance(boardId, gadget)
+Service -> Repo : findById(boardId)
+Service -> Board : withGadgetPlaced(gadget)
+Service -> Repo : save(board)
+Api --> Client : 201 Created, Location: /gadgetInstance/{id}
+
+Client -> Api : PATCH /board/{id}\nContent-Type: application/json-patch+json\n[{op: test, path: /title, value: "Old"}, ...]
+Api -> Patches : apply(mediaType, representation, patch, editable)
+Patches -> Patches : JsonPatch: test fails
+Patches --> Advice : InvalidPatchException
+Advice --> Client : 422 application/problem+json\n{type: .../problems/invalid-patch, errors: [{pointer: /0}],\n _links.help: /help/problems/invalid-patch}
+
+Client -> Api : GET /help/problems/invalid-patch
+Api --> Client : 200 text/markdown (what happened, why, what you can do)
+@enduml

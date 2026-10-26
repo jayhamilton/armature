@@ -1,0 +1,24 @@
+@startuml adapter
+' Class diagram for docs/patterns/adapter.md: board storage behind a port.
+' Participant names match the classes in backend/src/main/java/com/addf/backend/armature/board.
+hide empty members
+skinparam classAttributeIconSize 0
+
+class BoardService <<Client>>
+
+interface BoardRepository <<SecondaryPort>> {
+  + findAll() : List<Board>
+  + findById(String) : Optional<Board>
+  + findByGadgetInstanceId(String) : Optional<Board>
+  + save(Board) : Board
+  + deleteById(String) : boolean
+}
+
+class InMemoryBoardRepository <<SecondaryAdapter>>
+
+class "PostgreSQL adapter (INC-01b)" as Jdbc <<SecondaryAdapter>>
+
+BoardService --> BoardRepository
+BoardRepository <|.. InMemoryBoardRepository
+BoardRepository <|.. Jdbc
+@enduml
