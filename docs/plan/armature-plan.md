@@ -26,6 +26,7 @@ Board, gadget, capability, and data source resources follow the [TMF 630 REST AP
 | Concern | Armature rule |
 | --- | --- |
 | Identity | Every resource carries `id` and `href` |
+| Identity and evolution | **Deliberate deviation:** no version in resource paths (`/board`, not `/tmf-api/.../v4/board`); the API evolves additively, through new resources, link relations, `@type`s, or media types, so an `href` stays valid for good (ADR-0020, after Roy Fielding's position on REST API versioning) |
 | Polymorphism | `@type`, `@baseType`, `@schemaLocation` on gadgets and capabilities, so a new gadget type extends a base schema instead of changing the API |
 | Selection | `fields=` for attribute selection, always returning `id` and `href` |
 | Filtering and sorting | `attr=value` and operator forms, `sort=-lastUpdate` |

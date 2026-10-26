@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed (stubbed in INC-00e; needs review)
+Accepted (stubbed in INC-00e; accepted by the owner on 2026-10-25, recorded in INC-01a)
 
 ## Context and Problem Statement
 
