@@ -46,6 +46,21 @@ second registry, [`partCardRegistry.ts`](../../web/hosts/react/src/app/agent/par
 to choose the card that shows each part, so adding a part type is one resolver in core and one
 card per host, with no existing code edited.
 
+## Third example: PATCH media types (INC-01a, backend)
+
+Every TMF 630 resource accepts `PATCH` in two formats, chosen by `Content-Type`. Instead of an
+`if` on the media type in each controller, each format is a strategy registered by its media type:
+
+| Role | In the backend |
+| --- | --- |
+| Registry | [`PatchStrategies`](../../backend/src/main/java/com/addf/backend/armature/tmf/PatchStrategies.java), built by Spring from every `PatchStrategy` bean |
+| Strategy | [`PatchStrategy`](../../backend/src/main/java/com/addf/backend/armature/tmf/PatchStrategy.java) |
+| ConcreteStrategy | [`MergePatch`](../../backend/src/main/java/com/addf/backend/armature/tmf/MergePatch.java) (RFC 7386), [`JsonPatch`](../../backend/src/main/java/com/addf/backend/armature/tmf/JsonPatch.java) (RFC 6902) |
+| Client | The board, row, and gadget instance controllers |
+
+Tests: [`PatchTest`](../../backend/src/test/java/com/addf/backend/armature/tmf/PatchTest.java)
+checks both formats against their RFCs' examples.
+
 ## Class diagram
 
 ![Strategy with registry class diagram](strategy-registry.svg)

@@ -7,5 +7,6 @@ PlantUML `.puml` with a rendered `.svg` next to it; participant names match clas
 | Sequence | Shows | Since |
 | --- | --- | --- |
 | [Assistant chat](assistant-chat.svg) ([source](assistant-chat.puml)) | One message streamed from `/api/agent/chat`, a ui part resolved by the core registry, and the host's `AgentActions` changing the board | INC-00e |
+| [Board resources](board-resources.svg) ([source](board-resources.puml)) | A board created and a gadget placed through the TMF 630 resources, then a stale JSON Patch refused as an RFC 9457 problem whose help link resolves | INC-01a |
 
-*Board sync* arrives in INC-01.
+*Board sync* (the local first UI against these resources) arrives in INC-01d.

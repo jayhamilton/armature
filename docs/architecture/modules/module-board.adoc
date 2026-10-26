@@ -3,7 +3,27 @@
 |Base package
 |`com.addf.backend.armature.board`
 |Spring components
-|_Services_
+|_Primary adapters_
+
+* `c.a.b.a.b.BoardController`
+* `c.a.b.a.b.BoardRowController`
+* `c.a.b.a.b.GadgetInstanceController`
+
+_Secondary adapters_
+
+* `c.a.b.a.b.BoardRepository` (via `c.a.b.a.b.internal.InMemoryBoardRepository`)
+
+_Services_
 
 * `c.a.b.a.b.BoardLifecycle`
+* `c.a.b.a.b.BoardService`
+
+_Others_
+
+* `c.a.b.a.b.BoardRepresentations`
+|Bean references
+|* `c.a.b.a.t.QueryEngine` (in TMF 630)
+* `c.a.b.a.t.PatchStrategies` (in TMF 630)
+|Aggregate roots
+|* `c.a.b.a.b.Board`
 |===

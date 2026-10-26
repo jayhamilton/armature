@@ -1,0 +1,13 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`com.addf.backend.armature.help`
+|Spring components
+|_Primary adapters_
+
+* `c.a.b.a.h.HelpController`
+
+_Secondary adapters_
+
+* `c.a.b.a.h.HelpCatalog` (via `c.a.b.a.h.internal.ClasspathHelpCatalog`)
+|===

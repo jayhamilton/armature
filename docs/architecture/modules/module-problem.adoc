@@ -1,0 +1,9 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`com.addf.backend.armature.problem`
+|Spring components
+|_Primary adapters_
+
+* `c.a.b.a.p.ProblemAdvice`
+|===

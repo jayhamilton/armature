@@ -1,0 +1,33 @@
+@startuml
+title <size:24>TMF 630</size>
+
+set separator none
+top to bottom direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Component>
+
+System_Boundary("ArmatureApplication_boundary", "ArmatureApplication", $tags="") {
+  Container_Boundary("ArmatureApplication.ArmatureApplication_boundary", "ArmatureApplication", $tags="") {
+    Component(ArmatureApplication.ArmatureApplication.TMF630, "TMF 630", $techn="Module", $descr="", $tags="", $link="")
+    Component(ArmatureApplication.ArmatureApplication.Patterns, "Patterns", $techn="Module", $descr="", $tags="", $link="")
+    Component(ArmatureApplication.ArmatureApplication.Problem, "Problem", $techn="Module", $descr="", $tags="", $link="")
+  }
+
+}
+
+Rel(ArmatureApplication.ArmatureApplication.Problem, ArmatureApplication.ArmatureApplication.Patterns, "depends on", $techn="", $tags="", $link="")
+Rel(ArmatureApplication.ArmatureApplication.TMF630, ArmatureApplication.ArmatureApplication.Patterns, "depends on", $techn="", $tags="", $link="")
+Rel(ArmatureApplication.ArmatureApplication.TMF630, ArmatureApplication.ArmatureApplication.Problem, "depends on", $techn="", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

@@ -24,7 +24,7 @@ export interface GadgetHeaderProps {
   gadgetPropertyPages: IPropertyPage[];
   gadgetTags: ITag[];
   propertyChangeCallback: ((propertiesJSON: string) => void) | null;
-  /** Slug matching a file under public/assets/help/<helpTopic>.md, rendered in the help panel. */
+  /** Slug matching a file under docs/help/gadgets/<helpTopic>.md (copied to public/assets/help), rendered in the help panel. */
   helpTopic?: string;
   onRemove: () => void;
 }

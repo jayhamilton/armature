@@ -8,10 +8,12 @@ on:
   push:
     paths:
       - "web/**"
+      - "docs/help/gadgets/**"
       - ".github/workflows/web-conformance.yml"
   pull_request:
     paths:
       - "web/**"
+      - "docs/help/gadgets/**"
       - ".github/workflows/web-conformance.yml"
 
 # bash on every OS (Git Bash on Windows), so run blocks are the same everywhere.

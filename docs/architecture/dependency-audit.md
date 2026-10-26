@@ -32,9 +32,9 @@ Audited on 2026-09-26 (INC-00b) against npm and Maven Central metadata; updated 
 | `spring-ai-a2a-server-autoconfigure` (community) | 0.3.0 | Watch | Pre 1.0 community module, as the policy already says; its autoconfiguration is excluded today. Compared with the A2A Java SDK in INC-08 |
 | Spring Modulith BOM: `spring-modulith-starter-core`, `-starter-test` (test), `spring-modulith-docs` (test) | 2.1.1 | Keep | Vendor; listed Keep in the policy table; added in INC-00c (ADR-0008) |
 | jMolecules BOM: `jmolecules-hexagonal-architecture`, `jmolecules-ddd`, `jmolecules-archunit` (test) | 2025.0.2 | Keep | Listed Keep in the policy table; added in INC-00c. Brings ArchUnit 1.4.1 (test) |
-| `jackson-databind` (`com.fasterxml`) | Boot managed | Watch | Jackson 2 declared explicitly while Boot 4 defaults to Jackson 3 (`tools.jackson`); 9 main classes import Jackson 2 annotations. Decide on migration in INC-01 when resources are added |
+| `jackson-databind` (`com.fasterxml`) | Boot managed | Watch | Jackson 2 declared explicitly while Boot 4 defaults to Jackson 3 (`tools.jackson`); 9 main classes import Jackson 2 annotations. Decided in INC-01a: new code uses Jackson 3 (`tools.jackson`, the one Spring MVC uses for the board resources and problems); annotations stay `com.fasterxml.jackson.annotation`, which Jackson 3 shares. The agent module's Jackson 2 `ObjectMapper` use moves to Jackson 3 in INC-03, when its tools move onto `BoardService`; then this dependency is removed |
 | `json-path` | 2.4.0 | **Removed in INC-00c** | Released 2017 and unused in `src/`; `spring-boot-starter-test` brings a managed version |
-| `springdoc-openapi-starter-webmvc-ui` | 2.8.6 | Watch | Community project, active, but 2.x targets Boot 3; the Boot 4 line is 3.x (3.1.1). Tests pass today; upgrade in INC-01 with the first TMF 630 resources |
+| `springdoc-openapi-starter-webmvc-ui` | 2.8.6 | Watch | Community project, active, but 2.x targets Boot 3; the Boot 4 line is 3.x (3.1.1). Re-checked in INC-01a: `/v3/api-docs` and Swagger UI still serve the new resources under Boot 4.1. The upgrade was not in the INC-01a spec, so it moves to INC-01b |
 | `spring-restdocs-mockmvc` (test) | Boot managed | **Removed in INC-00c** | Unused |
 | `spring-boot-maven-plugin`, `maven-surefire-plugin` | Boot managed | Keep | Vendor, foundation (Apache) |
 | Maven wrapper | 3.3.2, Maven 3.9.9 | Keep | Apache Software Foundation |
@@ -131,7 +131,9 @@ Added in INC-00d. Playwright moved here from the React host's dev dependencies.
 | INC-00c | Done: removed `json-path`, `spring-restdocs-mockmvc`, `schematics-scss-migrate`, `node-forge`, `@types/dompurify`; aligned `@types/node`. Karma replacement moved to INC-04 |
 | INC-00d | Done: moved Playwright from the React host to `web/conformance` (as `@playwright/test`); added `actions/upload-artifact` for failed conformance reports |
 | INC-00e | Done: added the MCP SDKs to `@armature/core` (peer) and the React host at the Angular host's ranges; no new dependency outside the policy table |
-| INC-01 | Upgrade springdoc to the Boot 4 line; decide Jackson 2 or 3 |
+| INC-01a | Done: no dependency added (TMF 630 querying, both PATCH formats, and the problem factory are written in house); Jackson 3 chosen for new code |
+| INC-01b | Upgrade springdoc to the Boot 4 line (3.x); PostgreSQL, Spring Data JDBC, Flyway, Testcontainers (all Keep) |
+| INC-03 | Move the agent module off Jackson 2 and remove `com.fasterxml.jackson.core:jackson-databind` |
 | INC-04 | Replace Karma (needs a runner added to the policy table); retire ngx-charts, `@types/d3`, and Recharts; decide on MUI majors, `@dnd-kit`, `react-ace`, and zone.js as hosts move onto `@armature/elements`; restore the Angular `initial` budget to 2 MB |
 | INC-07 | Evaluate `@modelcontextprotocol/ext-apps` 2.x |
 | INC-08 | Compare `spring-ai-a2a` with the A2A Java SDK |

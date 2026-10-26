@@ -40,6 +40,8 @@ For each item, answer pass, fail (with `path:line` and why), or not applicable.
 6. **Ports justified:** a new port has two implementations, or a second one scheduled in the plan.
 7. **Errors:** RFC 9457 problem details only; each new problem type has a page in
    `docs/help/problems/`.
+7a. **No version in paths, changes additive:** no request mapping has a version segment, and no
+   existing resource member changed meaning (ADR-0020; `ApiPathTest`).
 8. **State:** lifecycles use the State pattern behind `LifecycleEngine`; UI flows use XState;
    no Spring Statemachine.
 9. **Dependencies:** anything added is listed in the plan's dependency policy table or was

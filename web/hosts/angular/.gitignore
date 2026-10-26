@@ -44,3 +44,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Gadget help, copied from docs/help/gadgets by `npm run help:copy` (INC-01a)
+/src/assets/help/

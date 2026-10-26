@@ -1,0 +1,56 @@
+@startuml interpreter-specification
+' Class diagram for docs/patterns/interpreter-specification.md: TMF 630 filters as specifications.
+' Participant names match the classes in backend/src/main/java/com/addf/backend/armature/tmf.
+hide empty members
+skinparam classAttributeIconSize 0
+
+class QueryEngine <<Client>> {
+  + apply(resources, QueryParameters, attributes) : Page
+}
+
+class QueryParameters <<record>> {
+  + {static} parse(query) : QueryParameters
+}
+
+class FilterParser <<Parser>> {
+  ~ {static} parse(filters) : Specification
+}
+
+interface Specification <<sealed>> {
+  + isSatisfiedBy(JsonNode) : boolean
+  + paths() : Stream<String>
+}
+
+class AllOf <<record>> {
+  parts : List<Specification>
+}
+
+class AnyOf <<record>> {
+  path : String
+  values : List<String>
+}
+
+class Compare <<record>> {
+  path : String
+  operator : Operator
+  value : String
+}
+
+enum "Compare.Operator" as Operator {
+  GT
+  GTE
+  LT
+  LTE
+  NE
+}
+
+QueryEngine ..> QueryParameters : reads
+QueryParameters ..> FilterParser : filters
+FilterParser ..> Specification : builds
+QueryEngine ..> Specification : evaluates
+Specification <|.. AllOf
+Specification <|.. AnyOf
+Specification <|.. Compare
+AllOf o-- "*" Specification
+Compare --> Operator
+@enduml

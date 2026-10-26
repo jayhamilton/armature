@@ -30,8 +30,8 @@ export class GadgetHeaderComponent implements OnInit, OnDestroy {
   @Input() gadgetPropertyPages: IPropertyPage[] = [];
   @Input() gadgetTags: ITag[] = [];
   @Input() propertyChangeCallback: ((propertiesJSON: string) => void) | null = null;
-  // Slug matching a file under src/assets/help/<helpTopic>.md, rendered in
-  // the help panel. Set as a literal per gadget component (see its .html),
+  // Slug matching a file under docs/help/gadgets/<helpTopic>.md (copied to
+  // src/assets/help at install and build), rendered in the help panel. Set as a literal per gadget component (see its .html),
   // since componentType isn't populated on GadgetBase instances.
   @Input() helpTopic: string = '';
   menuLabel = 'Configure';

@@ -1,0 +1,44 @@
+@startuml builder
+' Class diagram for docs/patterns/builder.md: RFC 9457 problems built in one place.
+' Participant names match the classes in backend/src/main/java/com/addf/backend/armature/problem.
+hide empty members
+skinparam classAttributeIconSize 0
+
+class ProblemAdvice <<Director>> {
+  ~ handleProblem(ProblemException, request)
+  ~ handleUnexpected(Exception, request)
+}
+
+class ProblemException {
+  + type() : ProblemType
+  + detail() : String
+  + errors() : List<FieldProblem>
+}
+
+enum ProblemType {
+  RESOURCE_NOT_FOUND
+  INVALID_QUERY
+  INVALID_PATCH
+  ...
+  + typeUri() : String
+  + helpHref() : String
+}
+
+class ProblemBuilder <<Builder>> {
+  + {static} of(ProblemType) : ProblemBuilder
+  + detail(String) : ProblemBuilder
+  + instance(String) : ProblemBuilder
+  + traceId(String) : ProblemBuilder
+  + error(pointer, detail) : ProblemBuilder
+  + build() : ProblemDetail
+}
+
+class ProblemDetail <<Product>>
+note right of ProblemDetail : type, title, status, detail, instance,\ncode, traceId, errors, _links.help
+
+ProblemAdvice ..> ProblemException : handles
+ProblemException --> ProblemType
+ProblemAdvice ..> ProblemBuilder : uses
+ProblemBuilder ..> ProblemType : fixed parts from
+ProblemBuilder ..> ProblemDetail : creates
+@enduml

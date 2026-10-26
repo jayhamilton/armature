@@ -223,7 +223,7 @@ Boards use the same convention. The icon picker's list lives in [icon-options.ts
 
 ### 5. Help content
 
-Add a markdown file at `src/assets/help/<componentType-slug>.md` (e.g. `bar-chart.md`) describing the gadget's purpose, its configuration options, and the JSON shape its data control expects. It's rendered in the gadget's Help side panel — see [Gadget Help](#gadget-help) above.
+Add a markdown file at `docs/help/gadgets/<componentType-slug>.md` in the repository root (copied into `src/assets/help` by `npm run help:copy`, which runs on install and build) (e.g. `bar-chart.md`) describing the gadget's purpose, its configuration options, and the JSON shape its data control expects. It's rendered in the gadget's Help side panel — see [Gadget Help](#gadget-help) above.
 
 ### JSON Definition
 
