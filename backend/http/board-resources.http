@@ -1,0 +1,185 @@
+# Board resources: every TMF 630 rule, one request each (docs/api/tmf630-conformance.md).
+#
+# Run it against a local backend (cd backend && ./mvnw spring-boot:run) with the VS Code REST
+# Client extension, top to bottom: later requests use ids from earlier ones (# @name).
+# `# @expect <status>` is the status each request must return. HttpFileTest replays this file
+# against the application in every build, so the file and the API cannot drift apart.
+
+@baseUrl = http://localhost:8080
+
+### Create a board: 201, Location, id, href, @type, state DRAFT
+# @name board
+# @expect 201
+POST {{baseUrl}}/board
+Content-Type: application/json
+
+{
+  "title": "Network overview",
+  "description": "http-file",
+  "rows": [{ "structure": "two_col_equal" }]
+}
+
+### Create a second board, to have something to filter and sort
+# @name second
+# @expect 201
+POST {{baseUrl}}/board
+Content-Type: application/json
+
+{ "title": "Billing", "description": "http-file" }
+
+### Read a board
+# @expect 200
+GET {{baseUrl}}/board/{{board.response.body.$.id}}
+
+### Attribute selection: only title and state (plus id, href, @type)
+# @expect 200
+GET {{baseUrl}}/board/{{board.response.body.$.id}}?fields=title,state
+
+### Attribute selection: fields=none
+# @expect 200
+GET {{baseUrl}}/board/{{board.response.body.$.id}}?fields=none
+
+### Filtering: equality
+# @expect 200
+GET {{baseUrl}}/board?description=http-file&title=Billing
+
+### Filtering: any of
+# @expect 200
+GET {{baseUrl}}/board?description=http-file&title=Billing,Network%20overview
+
+### Filtering: operator form
+# @expect 200
+GET {{baseUrl}}/board?description=http-file&lastUpdate.gte=2026-01-01
+
+### Sorting: descending, then a second key
+# @expect 200
+GET {{baseUrl}}/board?description=http-file&sort=-lastUpdate,title
+
+### Pagination: a partial page is 206 with X-Total-Count and X-Result-Count
+# @expect 206
+GET {{baseUrl}}/board?description=http-file&sort=title&offset=0&limit=1
+
+### Merge patch (RFC 7386)
+# @expect 200
+PATCH {{baseUrl}}/board/{{board.response.body.$.id}}
+Content-Type: application/merge-patch+json
+
+{ "icon": "router", "contentWidth": "narrow" }
+
+### JSON Patch (RFC 6902), guarded by a test operation
+# @expect 200
+PATCH {{baseUrl}}/board/{{board.response.body.$.id}}
+Content-Type: application/json-patch+json
+
+[
+  { "op": "test", "path": "/title", "value": "Network overview" },
+  { "op": "replace", "path": "/title", "value": "Network health" }
+]
+
+### Add a row
+# @name row
+# @expect 201
+POST {{baseUrl}}/board/{{board.response.body.$.id}}/row
+Content-Type: application/json
+
+{ "structure": "three_col_equal" }
+
+### List a board's rows, filtered by layout
+# @expect 200
+GET {{baseUrl}}/board/{{board.response.body.$.id}}/row?structure=three_col_equal
+
+### Place a gadget instance
+# @name gadget
+# @expect 201
+POST {{baseUrl}}/gadgetInstance
+Content-Type: application/json
+
+{
+  "@type": "BarChartGadget",
+  "title": "Data usage",
+  "board": { "id": "{{board.response.body.$.id}}" },
+  "row": { "id": "{{row.response.body.$.id}}" },
+  "column": 2,
+  "properties": { "showLegend": true }
+}
+
+### List the gadget instances on one board (nested filter)
+# @expect 200
+GET {{baseUrl}}/gadgetInstance?board.id={{board.response.body.$.id}}&fields=title,column
+
+### Move the gadget instance to the first column
+# @expect 200
+PATCH {{baseUrl}}/gadgetInstance/{{gadget.response.body.$.id}}
+Content-Type: application/merge-patch+json
+
+{ "column": 0 }
+
+### Narrow the row to one column; the gadget stays on the board
+# @expect 200
+PATCH {{baseUrl}}/board/{{board.response.body.$.id}}/row/{{row.response.body.$.id}}
+Content-Type: application/merge-patch+json
+
+{ "structure": "one_col" }
+
+### Problem: a stale JSON Patch test is invalid-patch (422), and nothing changes
+# @expect 422
+PATCH {{baseUrl}}/board/{{board.response.body.$.id}}
+Content-Type: application/json-patch+json
+
+[{ "op": "test", "path": "/title", "value": "Network overview" }]
+
+### Problem: read only attributes cannot be patched (422)
+# @expect 422
+PATCH {{baseUrl}}/board/{{board.response.body.$.id}}
+Content-Type: application/merge-patch+json
+
+{ "state": "LOCKED" }
+
+### Problem: plain JSON is not a patch format (415)
+# @expect 415
+PATCH {{baseUrl}}/board/{{board.response.body.$.id}}
+Content-Type: application/json
+
+{ "title": "x" }
+
+### Problem: an unknown attribute in sort is invalid-query (400)
+# @expect 400
+GET {{baseUrl}}/board?sort=titel
+
+### Problem: limit over 100 is invalid-query (400)
+# @expect 400
+GET {{baseUrl}}/board?limit=500
+
+### Problem: a board needs a title (400, errors[] with JSON Pointers)
+# @expect 400
+POST {{baseUrl}}/board
+Content-Type: application/json
+
+{ "contentWidth": "huge" }
+
+### Problem: PUT is not offered (405, Allow header)
+# @expect 405
+PUT {{baseUrl}}/board/{{board.response.body.$.id}}
+Content-Type: application/json
+
+{}
+
+### Problem: an unknown id is resource-not-found (404)
+# @expect 404
+GET {{baseUrl}}/board/no-such-board
+
+### Every problem's help link resolves
+# @expect 200
+GET {{baseUrl}}/help/problems/resource-not-found
+
+### Remove the gadget instance
+# @expect 204
+DELETE {{baseUrl}}/gadgetInstance/{{gadget.response.body.$.id}}
+
+### Delete the boards
+# @expect 204
+DELETE {{baseUrl}}/board/{{board.response.body.$.id}}
+
+###
+# @expect 204
+DELETE {{baseUrl}}/board/{{second.response.body.$.id}}
